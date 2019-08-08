@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=0.7, maximum-scale=1.0, minimum-scale=0.5">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HSN_Wallet</title>
+    <link rel="stylesheet" href="./public/css/index.css">
+    <script src="./public/js/jquery-1.11.3.min.js"></script>
+    <script src="./public/js/index.js"></script>
+</head>
+<body>
+    <div class="hsn_wrap">
+        <div class="hsn_box">
+            <p class="hsn_title">
+                <span class="hsn_title_1">注册</span>
+                <span id="hsnGetUser" class="hsnUser" style="display: inline-block;min-width: 100pt;"></span>
+                邀请你加入HSN
+            </p>
+            <p style="font-size: 16pt;color: #fff;margin-bottom: -5pt;padding-left: 10pt">+86</p>
+            <div>
+                <input class="hsn_input" type="text" id="phone" placeholder="输入手机号码" />
+            </div>
+            <div>
+                <input class="hsn_input" type="text" id="checkCode" placeholder="输入验证码" style="vertical-align: middle;" />
+                <div id="hsnCodeBtn" class="hsn_get_code" onclick="getCode()">获取验证码</div>
+            </div>
+            <div>
+                <input class="hsn_input" type="password" id="password" placeholder="6~12位 大小写字母,数字,符号组合" style="width: 100%" />
+            </div>
+            <div>
+                <input class="hsn_input" type="password" id="checkPassword" placeholder="确认密码" />
+            </div>
+            <div class="hsn_info">
+                <span class="hsnUser" ></span>
+                <span class="hsn_tips">
+                    必填
+                </span>
+            </div>
+        </div>
+
+        <div class="hsn_footer">注册即表示同意节点预选赛规则</div>
+        <div class="hsn_btn" onclick="toRegister()">立即注册</div>
+        <div class="hsn_btn" style="margin: 20pt auto" onclick="goDownload('./download.html')">下载安装</div>
+    </div>
+    <div class="hsn_message">
+        <p>出错了！</p>
+    </div>
+    <div id="homeMsgMask">
+        <img src="./public/img/to_browser.png">
+        <div class="hsn_mask_text">
+            <h2>HSN钱包</h2>
+            <h3>请点击右上角在浏览器中打开该页面</h3>
+        </div>
+
+    </div>
+</body>
+</html>

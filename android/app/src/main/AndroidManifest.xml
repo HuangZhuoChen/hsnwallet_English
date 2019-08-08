@@ -1,0 +1,66 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.hsnwallet">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!--8.0安装需要的权限-->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application android:name=".MainApplication" android:allowBackup="true"
+        android:largeHeap="true"
+        android:icon="@mipmap/ic_launcher" android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:resizeableActivity="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+                        <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>  
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>   
+                <data
+                        android:scheme="simplewallet"
+                        android:host="eos.io">
+                </data>  
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>  
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>   
+                <data
+                        android:scheme="et_sdk"
+                        android:host="et.pull">
+                </data>  
+            </intent-filter>
+        </activity>
+        <!-- 微信Activity -->
+        <activity android:name=".wxapi.WXEntryActivity" android:exported="true"
+            android:label="@string/app_name" />
+        <activity android:name=".wxapi.WXPayEntryActivity"  android:exported="true"
+            android:label="@string/app_name"/>
+        <meta-data android:name="JPUSH_APPKEY" android:value="${JPUSH_APPKEY}" />
+        <meta-data android:name="JPUSH_CHANNEL" android:value="${APP_CHANNEL}" />
+
+        <meta-data android:name="max_aspect" android:value="2.1"/>
+
+        <meta-data android:name="android.notch_support" android:value="true"/>
+        
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+
+    </application>
+
+</manifest>
