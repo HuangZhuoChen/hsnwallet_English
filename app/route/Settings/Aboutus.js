@@ -37,7 +37,7 @@ class Aboutus extends React.Component {
     };
     this.config = [
       {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), disable: false, spot: true, 
-        nameColor: '#FFFFFF',  avatar: UImage.authentication, name: "官网", onPress: this.goOfficialWebsite.bind(this) },
+        nameColor: '#FFFFFF',  avatar: UImage.authentication, name: "Official Website", onPress: this.goOfficialWebsite.bind(this) },
 
       {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), nameColor: '#FFFFFF', spot: true, 
       disable: false,  avatar: UImage.invitation_code, name: "TeleGram", onPress: this.goTelegram.bind(this) },
@@ -49,7 +49,7 @@ class Aboutus extends React.Component {
       //   nameColor: '#FFFFFF',   avatar: UImage.safety_center, name: "微信公众号", onPress: this.goWechatPublic.bind(this) },
 
     {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), disable: false,  spot: true, 
-        nameColor: '#FFFFFF',   avatar: UImage.safety_center, name: "检查更新", subName: "V"+Constants.version, onPress: this.goCheckUpdate.bind(this), redDot: Constants.promptUpgrade},
+        nameColor: '#FFFFFF',   avatar: UImage.safety_center, name: "Check For Updates", subName: "V"+Constants.version, onPress: this.goCheckUpdate.bind(this), redDot: Constants.promptUpgrade},
       
     ];
   }
@@ -106,16 +106,16 @@ class Aboutus extends React.Component {
       callback: (data) => {
         if (data && data.data && data.code == 0) {
           if (data.data.upgradeMethod == "force") {
-            EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", null, () => { Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) }, () => { Utils.cancelUpgrade() })
+            EasyShowLD.dialogShow("Version Update", data.data.intr, "upgrade", null, () => { Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) }, () => { Utils.cancelUpgrade() })
           }else if(data.data.upgradeMethod == "popup"){
-            EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", "取消", () => { Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) }, () => { Utils.cancelUpgrade() })
+            EasyShowLD.dialogShow("Version Update", data.data.intr, "upgrade", "cancel", () => { Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) }, () => { Utils.cancelUpgrade() })
           }else if(data.data.upgradeMethod == "hint"){
-            EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", "取消", () => { Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) }, () => { Utils.cancelUpgrade() })
+            EasyShowLD.dialogShow("Version Update", data.data.intr, "upgrade", "cancel", () => { Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) }, () => { Utils.cancelUpgrade() })
           }else{
-            EasyToast.show('当前已是最新版本');
+            EasyToast.show("It's the latest version");
           }
         }else{
-          EasyToast.show('当前已是最新版本');
+          EasyToast.show("It's the latest version");
         }
       }
     })
@@ -134,7 +134,7 @@ class Aboutus extends React.Component {
         <LinearGradient colors={["#4F5162","#1E202C"]}  style={styles.linearout}>
           <View style={styles.outsource}>
             <View style={styles.headout}>
-              <Text style={styles.headtext}>关于我们</Text>
+              <Text style={styles.headtext}>About Us</Text>
               <Image source={UImage.blue_logo} style={styles.headimg}/>
             </View>
             <View style={{flex: 3, paddingHorizontal: ScreenUtil.autowidth(10), justifyContent: 'space-around',}}>

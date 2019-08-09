@@ -35,7 +35,7 @@ class SetTeamname extends BaseComponent {
     this.state = {
       teamname: '',
       teamnameSize: 16,
-      teamnamePlaceholder:"请输入团队名称",
+      teamnamePlaceholder:"Please enter the team name",
     };
   }
 
@@ -46,19 +46,19 @@ class SetTeamname extends BaseComponent {
 
   async signout () {
     if(this.state.teamname==""){
-      EasyToast.show('请输入团队名称');
+      EasyToast.show('Please enter the team name');
       return;
     }
     if(this.state.teamname.length > 14){
-      EasyToast.show('团队名称字数最多14个字符');
+      EasyToast.show('Team name word count up to 14 characters');
       return;
     }
-    EasyShowLD.loadingShow('修改中...');
+    EasyShowLD.loadingShow('Modificating...');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/getsetteamname',payload:{ teamName: this.state.teamname } });
     if(resp){
       EasyShowLD.loadingClose();
       if(resp.code==0){
-        EasyToast.show("修改成功");
+        EasyToast.show("Modificate successfully");
         Utils.pop(this, 3, true);
       }else{
         EasyToast.show(resp.msg);
@@ -76,14 +76,14 @@ class SetTeamname extends BaseComponent {
               <View style={[styles.outsource,{backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
                 <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
                   <View style={styles.cardHeaderout}>
-                    <Text style={styles.cardHeaderTitle}>设置团队名称</Text>
+                    <Text style={styles.cardHeaderTitle}>Set Team Name</Text>
                     <TextInput ref={(ref) => this._rpass = ref}  
                       autoFocus={false}
                       value={this.state.teamname} 
                       selectionColor={UColor.tintColor} 
                       placeholderTextColor={UColor.lightgray} 
                       onFocus={()=>{this.setState({teamnameSize:32,teamnamePlaceholder:''})}} 
-                      onBlur={()=>{this.state.teamname?"":this.setState({teamnameSize:16,teamnamePlaceholder:'请输入团队名称'})}}
+                      onBlur={()=>{this.state.teamname?"":this.setState({teamnameSize:16,teamnamePlaceholder:'Please enter the team name'})}}
                       style={[styles.inpt,{fontSize: ScreenUtil.setSpText(this.state.teamnameSize)}]}
                       placeholder={this.state.teamnamePlaceholder}  
                       underlineColorAndroid="transparent" 
@@ -95,9 +95,9 @@ class SetTeamname extends BaseComponent {
                   <Image source={UImage.set_logoC} style={styles.footpoho}/>
                 </LinearGradient>
               </View>
-              <Text style={styles.explaintext}>提示:每个用户只能设置一次昵称</Text>
+              <Text style={styles.explaintext}>Notice：Users can only set the name one time</Text>
               <View style={styles.referout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.signout()})}} shadow={true} textColor='#FFFFFF' text={"保存"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.signout()})}} shadow={true} textColor='#FFFFFF' text={"Save"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
               </View>
             </TouchableOpacity>
           </ScrollView>

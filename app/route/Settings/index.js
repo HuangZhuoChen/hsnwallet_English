@@ -33,16 +33,16 @@ class Setting extends BaseComponent {
     };
     this.config = [
       {itemHeight: ScreenUtil.autoheight(49), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "我的钱包", onPress: this.goMyWallet.bind(this)},
+      disable: false, nameColor: '#FFFFFF', name: "My Wallet", onPress: this.goMyWallet.bind(this)},
 
       {itemHeight: ScreenUtil.autoheight(49), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "我的节点",  onPress: this.goMyNode.bind(this) },
+      disable: false, nameColor: '#FFFFFF', name: "My Node",  onPress: this.goMyNode.bind(this) },
 
       {itemHeight: ScreenUtil.autoheight(49), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "我的邀请海报", onPress: this.goInvitecode.bind(this) },
+      disable: false, nameColor: '#FFFFFF', name: "My invitation Poster", onPress: this.goInvitecode.bind(this) },
       
       {itemHeight: ScreenUtil.autoheight(49), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "安全中心", onPress: this.goSafety.bind(this) },
+      disable: false, nameColor: '#FFFFFF', name: "Security", onPress: this.goSafety.bind(this) },
     ];
   }
 
@@ -178,15 +178,15 @@ class Setting extends BaseComponent {
               <View style={styles.footout}>
                 <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.goAnnouncement()})}} style={styles.footitem}>
                   <Image source={UImage.set_talk} style={{width: ScreenUtil.autowidth(16), height: ScreenUtil.autoheight(15),}}/>
-                  <Text style={styles.footitemtext}>公告中心</Text>
+                  <Text style={styles.footitemtext}>Announcement</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.goRuleClause()})}} style={styles.footitem}>
                   <Image source={UImage.set_information} style={{width: ScreenUtil.autowidth(11), height: ScreenUtil.autoheight(14),}}/>
-                  <Text style={styles.footitemtext}>规则说明</Text>
+                  <Text style={styles.footitemtext}>Rules</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.goAboutus()})}} style={styles.footitem}>
                   <Image source={UImage.set_about} style={{width: ScreenUtil.autowidth(14), height: ScreenUtil.autoheight(14),}}/>
-                  <Text style={styles.footitemtext}>关于我们</Text>
+                  <Text style={styles.footitemtext}>About Us</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -194,7 +194,7 @@ class Setting extends BaseComponent {
           </LinearGradient>
         </LinearGradient>
         <View style={styles.referout}>
-          <TextButton onPress={()=>{this.noDoublePress(()=>{this.signout()})}} shadow={true} textColor='#FFFFFF' text={"退出登录"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+          <TextButton onPress={()=>{this.noDoublePress(()=>{this.signout()})}} shadow={true} textColor='#FFFFFF' text={"Sign Out"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
         </View>
       </View>
     )

@@ -175,7 +175,7 @@ class AssetInfo extends BaseComponent {
     return summary.map((item, i) => {
       return (<View key={i} style={{flex: 1, height: ScreenUtil.autoheight(40), flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', 
       paddingHorizontal: ScreenUtil.autowidth(10), borderLeftWidth: i==1 ? ScreenUtil.autowidth(1) : 0, borderLeftColor: '#8B8D96',}}>
-        <Text style={styles.headerintext}>{(item.type == "in" ? "总充值 " : "总提币 ")}</Text>
+        <Text style={styles.headerintext}>{(item.type == "in" ? "Total Deposit " : "Total Withdrawal ")}</Text>
         <Text style={styles.headerintext}>{item.totalAmount + (this.state.coinitem.coinName=="USDT"?" U":" HSN")}</Text>
       </View>)
     })
@@ -185,7 +185,7 @@ class AssetInfo extends BaseComponent {
     return summary.map((item, i) => {
       return (<View key={i} style={{flex: 1, height: ScreenUtil.autoheight(40), flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', 
       paddingHorizontal: ScreenUtil.autowidth(10), borderLeftWidth: i==1 ? ScreenUtil.autowidth(1) : 0, borderLeftColor: '#8B8D96',}}>
-        <Text style={styles.headerintext}>{(item.type == "out" ? "站内总转出 " : "站内总转入 ")}</Text>
+        <Text style={styles.headerintext}>{(item.type == "out" ? "Internal Withdrawal " : "Internal Depositl ")}</Text>
         <Text style={styles.headerintext}>{item.totalAmount + (this.state.coinitem.coinName=="USDT"?" U":" HSN")}</Text>
       </View>)
     })
@@ -205,8 +205,8 @@ class AssetInfo extends BaseComponent {
             <Text style={styles.headcenter}>{"≈" + Utils.formatCNY(this.props.balanceAvailable)}</Text>
           </View>
           <View style={styles.headbottomout}>
-            <TextButton onPress={()=>{this.noDoublePress(()=>{this._onWithdraw()})}} bgColor='#939499' textColor='#FFFFFF' text={"提币"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
-            <TextButton onPress={()=>{this.noDoublePress(()=>{this._onRecharge()})}} shadow={true} textColor='#FFFFFF' text={"充币"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+            <TextButton onPress={()=>{this.noDoublePress(()=>{this._onWithdraw()})}} bgColor='#939499' textColor='#FFFFFF' text={"Withdraw"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+            <TextButton onPress={()=>{this.noDoublePress(()=>{this._onRecharge()})}} shadow={true} textColor='#FFFFFF' text={"Deposit"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
             <TextButton onPress={()=>{this.noDoublePress(()=>{this._onTransfer()})}} bgColor='#939499' textColor='#FFFFFF' text={"站内转账"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
           </View>
         </View>
@@ -215,8 +215,8 @@ class AssetInfo extends BaseComponent {
       </LinearGradient>
 
       <View style={styles.businestab}>  
-        {this.businesButton(styles.tabStyle, this.state.isAccess, 'isAccess', this.state.coinitem.coinName=="USDT"?'充提记录（U）':'充提记录（HSN）')}  
-        {this.state.coinitem.coinName=="HSN" && this.businesButton(styles.tabStyle, this.state.isReturn, 'isReturn', '返还记录（HSN）')}  
+        {this.businesButton(styles.tabStyle, this.state.isAccess, 'isAccess', this.state.coinitem.coinName=="USDT"?'Withdrawal and Deposit Records(U)':'Withdrawal and Deposit Records(HSN)')}  
+        {this.state.coinitem.coinName=="HSN" && this.businesButton(styles.tabStyle, this.state.isReturn, 'isReturn', 'Refund Records(HSN)')}  
       </View>
       {this.state.isAccess ?
         <View>
@@ -230,10 +230,10 @@ class AssetInfo extends BaseComponent {
             </View>
           </View>
           <View style={{height: ScreenUtil.autoheight(45), flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: ScreenUtil.autowidth(25), }}>
-            <Text style={{flex: 1, color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14),}}>时间</Text>
-            <Text style={{flex: 1, color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14), textAlign: 'center',}}>类型</Text>
-            <Text style={{flex: 1.5, color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14),textAlign: 'center',}}>数量</Text>
-            <Text style={{flex: 1.5, color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14)}}>状态</Text>
+            <Text style={{flex: 1, color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14),}}>Time</Text>
+            <Text style={{flex: 1, color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14), textAlign: 'center',}}>Type</Text>
+            <Text style={{flex: 1.5, color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14),textAlign: 'center',}}>Amount</Text>
+            <Text style={{flex: 1.5, color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14)}}>Status</Text>
           </View>
         </View>
         :

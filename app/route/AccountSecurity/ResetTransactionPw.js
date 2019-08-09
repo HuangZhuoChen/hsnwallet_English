@@ -34,26 +34,26 @@ class ResetTransactionPw extends BaseComponent {
     this.state = {
       usedpassword:"",
       usedpasswordSize:16,
-      usedpasswordPlaceholder:"旧交易密码",
+      usedpasswordPlaceholder:"Old Password",
 
       codeImg: "",
       codeImgSize: 16,
-      codeImgPlaceholder:"请输入图形验证码",
+      codeImgPlaceholder:"Graphic Code",
 
       code:"",
       codeSize:16,
-      codePlaceholder:"验证码",
+      codePlaceholder:"Verification Code",
 
       password:"",
       passwordSize:16,
-      passwordPlaceholder:"新交易密码",
+      passwordPlaceholder:"New Trading Password",
 
       againpassword:"",
       againpasswordSize:16,
-      againpasswordPlaceholder:"确认交易密码",
+      againpasswordPlaceholder:"Confirm Trading Password",
      
       uuid: '',
-      capture:'获取验证码',
+      capture:'Verification Code',
       captureState: false,
     };
   }
@@ -70,11 +70,11 @@ class ResetTransactionPw extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.usedpassword==""){
-      EasyToast.show('请输入旧密码');
+      EasyToast.show('Please enter the old password');
       return;
     }
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.captureState){
@@ -87,7 +87,7 @@ class ResetTransactionPw extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -102,46 +102,46 @@ class ResetTransactionPw extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"获取验证码", captureState: false});
+        th.setState({capture:"Verification Code", captureState: false});
       }
     },1000);
   }
 
   regSubmit = () =>{
     if(this.state.usedpassword==""){
-      EasyToast.show('请输入旧密码');
+      EasyToast.show('Please enter the old password');
       return;
     }
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code.');
       return;
     }
     if(this.state.password==""){
-      EasyToast.show('请输入新密码');
+      EasyToast.show('Please enter a new password');
       return;
     }
     if(this.state.againpassword==""){
-      EasyToast.show('请再次输入新密码');
+      EasyToast.show('Please enter the new password again.');
       return;
     }
     if(this.state.password != this.state.againpassword){
-      EasyToast.show('两次密码不一致');
+      EasyToast.show('Inconsistent passwords');
       return;
     }
     if(this.state.usedpassword.length < Constants.PWD_MIN_LENGTH || this.state.password.length < Constants.PWD_MIN_LENGTH
        || this.state.againpassword.length < Constants.PWD_MIN_LENGTH ){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     this.onchangePwd();
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('修改中...');
+    EasyShowLD.loadingShow('Modificating...');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/resetPayPassword',
       payload:{
         oldTradePassword: Utils.encryptedMsg(this.state.usedpassword),
@@ -156,7 +156,7 @@ class ResetTransactionPw extends BaseComponent {
       EasyShowLD.loadingClose();
       this.refreshImage();
       if(resp.code==0){
-        EasyToast.show("修改成功");
+        EasyToast.show("Successful revision");
         Utils.pop(this, 3, true);
       }else{
         EasyToast.show(resp.msg);
@@ -176,7 +176,7 @@ class ResetTransactionPw extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('未能获取图形验证码，请检查网络！');
+    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -197,7 +197,7 @@ class ResetTransactionPw extends BaseComponent {
               <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
                 <View style={styles.outsource}>
                   <View style={styles.headout}>
-                    <Text style={styles.headtext}>修改交易密码</Text>
+                    <Text style={styles.headtext}>Change Trading Password</Text>
                   </View>
                   <View style={styles.inptout}>
                     <TextInput ref={(ref) => this._rupassword = ref} 
@@ -206,7 +206,7 @@ class ResetTransactionPw extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}  
                       selectionColor={UColor.tintColor} 
                       onFocus={()=>{this.setState({usedpasswordSize:32,usedpasswordPlaceholder:''})}}
-                      onBlur={()=>{this.state.usedpassword?"":this.setState({usedpasswordSize:16,usedpasswordPlaceholder:'旧交易密码'})}}
+                      onBlur={()=>{this.state.usedpassword?"":this.setState({usedpasswordSize:16,usedpasswordPlaceholder:'Old Password'})}}
                       style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.usedpasswordSize),}]}
                       placeholder={this.state.usedpasswordPlaceholder}
                       underlineColorAndroid="transparent" 
@@ -221,7 +221,7 @@ class ResetTransactionPw extends BaseComponent {
                         returnKeyType="next"
                         autoFocus={false}
                         onFocus={()=>{ this.setState({codeImgSize:32,codeImgPlaceholder:''})}} 
-                        onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'输入图形验证码'})}}
+                        onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'Graphic Code'})}}
                         value={this.state.codeImg} 
                         placeholder={this.state.codeImgPlaceholder}
                         selectionColor={UColor.tintColor} 
@@ -244,7 +244,7 @@ class ResetTransactionPw extends BaseComponent {
                         placeholderTextColor={UColor.lightgray}    
                         selectionColor={UColor.tintColor} 
                         onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
-                        onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'验证码'})}}
+                        onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Verification Code '})}}
                         style={[styles.textinpt,{flex: 1,fontSize: ScreenUtil.setSpText(this.state.codeSize),}]}
                         placeholder={this.state.codePlaceholder}
                         underlineColorAndroid="transparent" 
@@ -266,7 +266,7 @@ class ResetTransactionPw extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}   
                       selectionColor={UColor.tintColor} 
                       onFocus={()=>{this.setState({passwordSize:32,passwordPlaceholder:''})}}
-                      onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'新交易密码'})}}
+                      onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'New Trading Password'})}}
                       style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize),}]}
                       placeholder={this.state.passwordPlaceholder}
                       underlineColorAndroid="transparent" 
@@ -282,7 +282,7 @@ class ResetTransactionPw extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}  
                       selectionColor={UColor.tintColor} 
                       onFocus={()=>{this.setState({againpasswordSize:32,againpasswordPlaceholder:''})}}
-                      onBlur={()=>{this.state.againpassword?"":this.setState({againpasswordSize:16,againpasswordPlaceholder:'确认交易密码'})}}
+                      onBlur={()=>{this.state.againpassword?"":this.setState({againpasswordSize:16,againpasswordPlaceholder:'Confirm Trading Password'})}}
                       style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.againpasswordSize),}]}
                       placeholder={this.state.againpasswordPlaceholder}
                       underlineColorAndroid="transparent" 
@@ -298,10 +298,10 @@ class ResetTransactionPw extends BaseComponent {
               </LinearGradient>
               <TouchableOpacity style={styles.forgetpass} onPress={()=>{this.noDoublePress(()=>{this.forgetpw()})}}>
                 <Image source={UImage.icon_scret} style={{width:ScreenUtil.setSpText(14),height:ScreenUtil.setSpText(14),marginHorizontal:  ScreenUtil.autowidth(5),}} />
-                <Text style={[styles.forgettext,{color: '#B9BBC1'}]} >{"忘记密码"}</Text>
+                <Text style={[styles.forgettext,{color: '#B9BBC1'}]} >{"Forget Password"}</Text>
               </TouchableOpacity>
               <View style={styles.referout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} shadow={true} textColor='#FFFFFF' text={"重置密码"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} shadow={true} textColor='#FFFFFF' text={"Reset Password"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
               </View>
             </TouchableOpacity>
           </ScrollView>
@@ -340,9 +340,8 @@ const styles = StyleSheet.create({
     paddingTop: ScreenUtil.autoheight(40),
   },
   headtext: {
-    color: '#FFFFFF', 
-    fontWeight:'bold',
-    fontSize: ScreenUtil.setSpText(36),
+    color: '#FFFFFF',
+    fontSize: ScreenUtil.setSpText(28),
   },
   inptout: {
     flex: 4, 
@@ -370,7 +369,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#0DA3DF',
-    width: ScreenUtil.autowidth(90),
+    width: ScreenUtil.autowidth(110),
     height: ScreenUtil.autoheight(25),
     borderRadius: ScreenUtil.autowidth(23),
   },

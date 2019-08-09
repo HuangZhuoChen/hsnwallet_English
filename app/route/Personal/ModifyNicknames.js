@@ -35,7 +35,7 @@ class ModifyNicknames extends BaseComponent {
     this.state = {
       nickname: '',
       nicknameSize: 16,
-      nicknamePlaceholder: this.props.loginUser ? this.props.loginUser.nickName : "请输入昵称",
+      nicknamePlaceholder: this.props.loginUser ? this.props.loginUser.nickName : "Please enter a nickname",
     };
   }
 
@@ -46,19 +46,19 @@ class ModifyNicknames extends BaseComponent {
 
   async signout () {
     if(this.state.nickname==""){
-      EasyToast.show('请输入昵称');
+      EasyToast.show('Please enter a nickname');
       return;
     }
     if(this.state.nickname.length > 14){
-      EasyToast.show('昵称字数最多14个字符');
+      EasyToast.show('The maximum number of nickname words is 14 characters');
       return;
     }
-    EasyShowLD.loadingShow('修改中...');
+    EasyShowLD.loadingShow('Modificating...');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/getsetnickname',payload:{ nickName: this.state.nickname } });
     if(resp){
       EasyShowLD.loadingClose();
       if(resp.code==0){
-        EasyToast.show("修改成功");
+        EasyToast.show("Modificate successfully");
         Utils.pop(this, 3, true);
       }else{
         EasyToast.show(resp.msg);
@@ -76,14 +76,14 @@ class ModifyNicknames extends BaseComponent {
               <View style={[styles.outsource,{backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
                 <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
                   <View style={styles.cardHeaderout}>
-                    <Text style={styles.cardHeaderTitle}>修改昵称</Text>
+                    <Text style={styles.cardHeaderTitle}>Change Your Nick Name</Text>
                     <TextInput ref={(ref) => this._rpass = ref}  
                       value={this.state.nickname} 
                       selectionColor={UColor.tintColor} 
                       placeholderTextColor={UColor.lightgray}
                       autoFocus={false}
                       onFocus={()=>{this.setState({nicknameSize:32,nicknamePlaceholder:''})}} 
-                      onBlur={()=>{this.state.nickname?"":this.setState({nicknameSize:16,nicknamePlaceholder: this.props.loginUser?this.props.loginUser.nickName:"请输入昵称",})}}
+                      onBlur={()=>{this.state.nickname?"":this.setState({nicknameSize:16,nicknamePlaceholder: this.props.loginUser?this.props.loginUser.nickName:"Please enter a nickname",})}}
                       style={[styles.inpt,{fontSize: ScreenUtil.setSpText(this.state.nicknameSize)}]}
                       placeholder={this.state.nicknamePlaceholder}  
                       underlineColorAndroid="transparent" 
@@ -95,9 +95,9 @@ class ModifyNicknames extends BaseComponent {
                   <Image source={UImage.set_logoC} style={styles.footpoho}/>
                 </LinearGradient>
               </View>
-              <Text style={styles.explaintext}>昵称字数限制：14个字符</Text>
+              <Text style={styles.explaintext}>14 digits limitation</Text>
               <View style={styles.referout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.signout()})}}  shadow={true} textColor='#FFFFFF' text={"保存"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.signout()})}}  shadow={true} textColor='#FFFFFF' text={"Save"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
               </View>
             </TouchableOpacity>
           </ScrollView>

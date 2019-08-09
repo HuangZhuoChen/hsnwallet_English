@@ -14,6 +14,7 @@ import {AlertModal} from '../../components/modals/AlertModal'
 import Carousel from 'react-native-banner-carousel';
 import Swiper from 'react-native-swiper';
 import BaseComponent from "../../components/BaseComponent";
+import TextButton from '../../components/TextButton'
 import LinearGradient from 'react-native-linear-gradient'
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
@@ -193,7 +194,17 @@ class Home extends BaseComponent {
       this.setState({isPersonal: false, isTeam: true,});
       this.onTeamRefresh();
     }
-  }  
+  }
+
+  //规则说明
+  goRuleClause () {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('RuleClause', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
 
   render() {
     return (
@@ -217,16 +228,9 @@ class Home extends BaseComponent {
     return(
       <View style={styles.itemheadout}>
         <View style={styles.headerout}>
-          {/* 顶部倒计时 */}
-          <View style={[styles.headout,{top: Constants.FitPhone}]}>
-            <Text style={styles.headtitle}>产矿倒计时</Text>
-            <Text style={styles.headtime}>
-              {(this.state.countDownHome[0]<10?'0':"") + this.state.countDownHome[0]}
-              :
-              {(this.state.countDownHome[1]<10?'0':"") + this.state.countDownHome[1]}
-              :
-              {(this.state.countDownHome[2]<10?'0':"") + this.state.countDownHome[2]}
-            </Text>
+          {/* 规则说明 */}
+          <View style={ styles.rule }>
+            <TextButton onPress={ () => { this.noDoublePress(() => { this.goRuleClause() }) } } text="Rules" textColor="#03060FFF" fontSize={ ScreenUtil.setSpText(12) } bgColor="transparent"></TextButton>
           </View>
           {/* 轮播图 */}
           <Carousel autoplay autoplayTimeout={5000} loop index={0} pageSize={ScreenWidth}
@@ -258,21 +262,21 @@ class Home extends BaseComponent {
         {/* 产出蓝色区域 */}
         <View style={styles.produceout}>
           <LinearGradient colors={["#00D0FF","#0066E9"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.produceLinear}>
-            <Text style={styles.producetoptitle}>今日预产出</Text>
+            <Text style={styles.producetoptitle}>Today's Refund</Text>
             <View style={styles.producebtm}>
               <Text style={styles.producebtmtext}>{this.props.MiningDate.todayOutPut ? parseFloat(this.props.MiningDate.todayOutPut).toFixed() : 0}</Text>
               <Text style={styles.producebtmtitle}>U</Text>
             </View>
           </LinearGradient>
           <LinearGradient colors={["#00D0FF","#0066E9"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.produceLinear}>
-            <Text style={styles.producetoptitle}>总历史产出</Text>
+            <Text style={styles.producetoptitle}>Refunded</Text>
             <View style={styles.producebtm}>
               <Text style={styles.producebtmtext}>{this.props.MiningDate.historyOutPut ? parseFloat(this.props.MiningDate.historyOutPut).toFixed() : 0}</Text>
               <Text style={styles.producebtmtitle}>U</Text>
             </View>
           </LinearGradient>
           <LinearGradient colors={["#00D0FF","#0066E9"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.produceLinear}>
-            <Text style={styles.producetoptitle}>待产出总量</Text>
+            <Text style={styles.producetoptitle}>Tatol Refund</Text>
             <View style={styles.producebtm}>
               <Text style={styles.producebtmtext}>{this.props.MiningDate.totalWaitOutPut ? parseFloat(this.props.MiningDate.totalWaitOutPut).toFixed() : 0}</Text>
               <Text style={styles.producebtmtitle}>U</Text>
@@ -283,8 +287,8 @@ class Home extends BaseComponent {
         <View style={styles.listheadout}>
           <LinearGradient colors={["#4F5162","#1E202C"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{width: ScreenWidth-ScreenUtil.autowidth(30),}}>
             <View style={styles.businestab}>  
-              {this.businesButton(styles.tabStyle, this.state.isPersonal, 'isPersonal', '个人排名')}  
-              {this.businesButton(styles.tabStyle, this.state.isTeam, 'isTeam', '团队排名')}  
+              {this.businesButton(styles.tabStyle, this.state.isPersonal, 'isPersonal', 'Protectors Ranking')}  
+              {this.businesButton(styles.tabStyle, this.state.isTeam, 'isTeam', 'Team Ranking')}  
             </View>
 
             {this.state.isPersonal ?
@@ -386,19 +390,16 @@ const styles = StyleSheet.create({
     width: ScreenWidth, 
     height: 0.6253*ScreenWidth + ScreenUtil.autowidth(27),
   },
-  headout: {
-    width: ScreenWidth/2, 
-    height: ScreenUtil.autoheight(32), 
-    paddingHorizontal: ScreenUtil.autowidth(15), 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'space-around', 
-    backgroundColor: '#FFFFFF', 
-    borderRadius: ScreenUtil.autowidth(23), 
-    position: 'absolute', 
-    left: ScreenWidth/4, 
-    right: ScreenWidth/4, 
-    zIndex: 999,
+  rule: {
+    width: ScreenUtil.autowidth(70),
+    height: ScreenUtil.autoheight(25),
+    borderTopRightRadius: ScreenUtil.autoheight(25) / 2,
+    borderBottomRightRadius: ScreenUtil.autoheight(25) / 2,
+    backgroundColor: '#fff',
+    position: 'absolute',
+    top: ScreenUtil.autoheight(29),
+    left: 0,
+    zIndex: 999
   },
   headtitle: {
     color: '#000000', 
@@ -480,7 +481,7 @@ const styles = StyleSheet.create({
   producetoptitle: {
     color: '#FFFFFF', 
     fontWeight: 'bold',
-    fontSize: ScreenUtil.setSpText(14),
+    fontSize: ScreenUtil.setSpText(13),
   },
   producetoptext: {
     color: '#FFFFFF', 

@@ -30,27 +30,27 @@ class Register extends BaseComponent {
   };
 
   state = {
-    phone:"",
+    phone:"", // 邮箱验证码
     phoneSize:16,
-    phonePlaceholder:"输入手机号码",
+    phonePlaceholder:"Input Email Code",
 
     code:"",
     codeSize:16,
-    codePlaceholder:"输入验证码",
+    codePlaceholder:"Input Verification Code",
 
     password:"",
     passwordSize:16,
-    passwordPlaceholder:"输入登录密码",
+    passwordPlaceholder:"Password",
 
     passwordConfirm:"",
     passwordConfirmSize:16,
-    passwordConfirmPlaceholder:"确认密码",
+    passwordConfirmPlaceholder:"Confirm Password",
 
     invitecode:"",
     invitecodeConfirmSize:16,
-    invitecodeConfirmPlaceholder:"输入邀请码",
+    invitecodeConfirmPlaceholder:"Input Invitation Code",
     
-    capture:'获取验证码',
+    capture:'Receive Code',
     captureState: false,
   }
 
@@ -65,7 +65,7 @@ class Register extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.phone==""){
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your email number');
       return;
     }
     if(this.state.phone.length!=11){
@@ -82,7 +82,7 @@ class Register extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -97,14 +97,14 @@ class Register extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"获取验证码", captureState: false});
+        th.setState({capture:"Receive Code", captureState: false});
       }
     },1000);
   }
 
   regSubmit = () =>{
     if(this.state.phone==""){
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your email number');
       return;
     }
     if(this.state.phone.length!=11){
@@ -112,31 +112,31 @@ class Register extends BaseComponent {
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code.');
       return;
     }
     if(this.state.password=="" || this.state.password.length < 6){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH || 
     this.state.passwordConfirm == "" || this.state.passwordConfirm.length < Constants.PWD_MIN_LENGTH) {
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     if (this.state.password != this.state.passwordConfirm) {
-      EasyToast.show('两次密码不一致');
+      EasyToast.show('Inconsistent passwords');
       return;
     }
     if(this.state.invitecode == ""){
-      EasyToast.show('请输入邀请码');
+      EasyToast.show('Please enter the invitation code.');
       return;
     }
     this.onregister();
   }
 
   async onregister () {
-    EasyShowLD.loadingShow('注册中...');
+    EasyShowLD.loadingShow('Registering...');
     let resp = await Utils.dispatchActiionData(this, {type:'login/register',
       payload:{
         mobile: Utils.encryptedMsg(this.state.phone), 
@@ -149,7 +149,7 @@ class Register extends BaseComponent {
     if(resp){
       EasyShowLD.loadingClose();
       if (resp.code == 0) {
-        EasyToast.show("注册成功");
+        EasyToast.show("Register successfully");
         this.props.navigation.goBack();
         AnalyticsUtil.onEvent('register_ok');
       } else {
@@ -176,16 +176,16 @@ class Register extends BaseComponent {
             <View style={[styles.outsource,{backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
               <LinearGradient colors={["rgba(0, 208, 255, 0.9)","rgba(0, 102, 233, 0.9)"]} style={styles.linearout}>
                 <View style={[styles.regTitleWrap, ]}>
-                  <Text style={styles.cardHeaderTitle}>注册</Text>
+                  <Text style={styles.cardHeaderTitle}>REGISTER</Text>
                 </View>
-                <Text style={styles.texttitle}> +86</Text>
+                <Text style={styles.texttitle}>Email</Text>
                 <TextInput ref={(ref) => this._rphone = ref}
                   autoFocus={false}
                   value={this.state.phone}
                   returnKeyType="next"
                   keyboardType="phone-pad"
                   onFocus={()=>{this.setState({phoneSize:32,phonePlaceholder:''})}}
-                  onBlur={()=>{this.state.phone?"":this.setState({phoneSize:16,phonePlaceholder:'输入手机号码'})}}
+                  onBlur={()=>{this.state.phone?"":this.setState({phoneSize:16,phonePlaceholder:'Input Email Code'})}}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.phoneSize),}]}
                   maxLength={11}
                   placeholder={this.state.phonePlaceholder}
@@ -198,7 +198,7 @@ class Register extends BaseComponent {
                   <TextInput ref={(ref) => this._rcode = ref}
                     autoFocus={false}
                     onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
-                    onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'输入验证码'}) }}
+                    onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Input Verification Code'}) }}
                     value={this.state.code}
                     returnKeyType="next"
                     placeholder={this.state.codePlaceholder}
@@ -212,7 +212,7 @@ class Register extends BaseComponent {
                   />
                   <TouchableOpacity style={styles.btnoutsource} onPress={()=>{this.noDoublePress(()=>{this.kcaptrue()})}}>
                     <LinearGradient colors={this.state.captureState ? ["rgba(255, 255, 255, 1)","rgba(255, 255, 255, 0.4)"] : ["#FF0A2F","#FFD083"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.btnout}>
-                      <Text style={{color: this.state.captureState ? '#0085EF' : '#222330',fontSize: ScreenUtil.setSpText(12),}}>{this.state.capture}</Text>
+                      <Text style={{color: this.state.captureState ? '#0085EF' : '#222330',fontSize: ScreenUtil.setSpText(12)}}>{this.state.capture}</Text>
                     </LinearGradient>
                   </TouchableOpacity>
                 </View>
@@ -222,7 +222,7 @@ class Register extends BaseComponent {
                   returnKeyType="go"
                   autoFocus={false}
                   onFocus={()=>{ this.setState({passwordSize:32,passwordPlaceholder:''})}}
-                  onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'新密码'})}}
+                  onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'Password'})}}
                   selectionColor={UColor.tintColor}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize)}]}
                   placeholder={this.state.passwordPlaceholder}
@@ -238,7 +238,7 @@ class Register extends BaseComponent {
                   returnKeyType="next"
                   autoFocus={false}
                   onFocus={()=>{this.setState({passwordConfirmSize:32,passwordConfirmPlaceholder:''})}}
-                  onBlur={()=>{this.state.passwordConfirm?"":this.setState({passwordConfirmSize:16,passwordConfirmPlaceholder:'确认密码'})}}
+                  onBlur={()=>{this.state.passwordConfirm?"":this.setState({passwordConfirmSize:16,passwordConfirmPlaceholder:'Confirm Password'})}}
                   editable={true}
                   selectionColor={UColor.tintColor}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordConfirmSize)}]}
@@ -255,7 +255,7 @@ class Register extends BaseComponent {
                   <TextInput ref={(ref) => this._rinvitecode = ref}
                     autoFocus={false}
                     onFocus={()=>{this.setState({invitecodeSize:32,invitecodeConfirmPlaceholder:''})}}
-                    onBlur={()=>{this.state.invitecode?"":this.setState({invitecodeSize:16,invitecodeConfirmPlaceholder:"输入邀请码",}) }}
+                    onBlur={()=>{this.state.invitecode?"":this.setState({invitecodeSize:16,invitecodeConfirmPlaceholder:"Input Invitation Code",}) }}
                     value={this.state.invitecode}
                     returnKeyType="go"
                     placeholder={this.state.invitecodeConfirmPlaceholder}
@@ -267,15 +267,15 @@ class Register extends BaseComponent {
                     maxLength={Constants.Code_Moide} 
                     onChangeText={(invitecode) => this.setState({ invitecode })} 
                   />
-                  <Text style={{fontSize:ScreenUtil.autowidth(14),lineHeight:ScreenUtil.autowidth(20),}}>必填*</Text>
+                  <Text style={{fontSize:ScreenUtil.autowidth(14),lineHeight:ScreenUtil.autowidth(20),}}>Required*</Text>
                 </View>
               </LinearGradient>
             </View>
             <View style={styles.referout}>
-              <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor="#FFFFFF" text="立即注册"  shadow={true} style={styles.referbtn} />
+              <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor="#FFFFFF" text="Register"  shadow={true} style={styles.referbtn} />
             </View>
             <View style={styles.readout}>
-              <Text style={[styles.readtext,{color: '#808080'}]}>注册即表示同意节点预选赛规则</Text>
+              <Text style={[styles.readtext,{color: '#808080'}]}>I've read & agree with the《Terms of Service》</Text>
             </View>
           </TouchableOpacity>
         </ScrollView>
@@ -315,8 +315,7 @@ const styles = StyleSheet.create({
   },
   cardHeaderTitle:{
     color:'#FFFFFF',
-    fontSize:ScreenUtil.setSpText(36),
-    fontWeight: 'bold',
+    fontSize:ScreenUtil.setSpText(36)
   },
   cardHeaderuid: {
     color:'#fff',

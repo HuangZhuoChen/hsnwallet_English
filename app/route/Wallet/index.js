@@ -56,12 +56,12 @@ class Wallet extends BaseComponent {
           <View style={styles.outsource}>
             <View style={{flex: 1, flexDirection: 'column'}}>
               <View style={styles.headout}>
-                <Text style={styles.headtitle}>我的钱包</Text>
+                <Text style={styles.headtitle}>My Wallet</Text>
                 <View style={styles.headright}>
                   <Image source={(this.props.loginUser&&this.props.loginUser.partnerLevel)?Constants.levelimg[this.props.loginUser.partnerLevel]:UImage.integral_bg} style={styles.headrightimg}/>
                 </View>
               </View>
-              <Text style={styles.headcentertitle}>总资产（USDT）</Text>
+              <Text style={styles.headcentertitle}>Total assets（USDT）</Text>
               <Text style={styles.headcentertext}>{"≈" + Utils.formatCNY(this.props.total)}</Text>
             </View>
             <View style={{flex: 1, justifyContent: 'space-around',}}>

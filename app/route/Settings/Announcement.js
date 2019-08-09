@@ -75,7 +75,7 @@ class Announcement extends BaseComponent {
   render() {
     return (
       <View style={[styles.container,{backgroundColor: UColor.bgColor, }]}>
-        <Header {...this.props} onPressLeft={true} title={"公告中心"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
+        <Header {...this.props} onPressLeft={true} title={"Announcement"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
         <View style={{paddingLeft: ScreenUtil.autowidth(20), paddingRight: ScreenUtil.autowidth(15), flex: 1,}}>
           <FlatList style={{flex: 1,}} 
             data={!this.props.announcementlist ? [] : this.props.announcementlist} 
@@ -117,7 +117,7 @@ class Announcement extends BaseComponent {
     return(
       <LinearGradient colors={["#4D4F60","#20212E"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.notimeout}>
         <Image source={UImage.noRecord} style={styles.defectbgimg}/>
-        <Text style={styles.notimetext}>{"暂无公告"}</Text>
+        <Text style={styles.notimetext}>{"No announcement yet"}</Text>
       </LinearGradient>
     )
   }

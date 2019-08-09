@@ -191,7 +191,7 @@ export class LoadingDialog extends React.Component {
                           <View style={{alignItems: 'center', }}>
                             <ProgressBar style={{width:ScreenWidth-ScreenUtil.autowidth(126), height: ScreenUtil.autowidth(10), marginBottom: ScreenUtil.autoheight(10), backgroundColor: '#E4E4E4', borderRadius:5  }} progress={this.state.progress}/>
                             <View style={{paddingHorizontal: ScreenUtil.autowidth(15), flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}} >
-                              <Text style={styles.contentext}>{"提示: 若更新失败请前往官网下载"}</Text>
+                              <Text style={styles.contentext}>{"Tips: If the update fails, please go to the official website to download it."}</Text>
                               <Text onPress={()=>Utils.goToOfficialWebsite()} style={[styles.contentext,{color:'#3B80F4'}]}>https://invite.wallet.hsn.link</Text>
                             </View>
                             <LinearGradient colors={['#4F5162','#1E202C']}  start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.bottom}>
@@ -204,7 +204,7 @@ export class LoadingDialog extends React.Component {
                           :
                           <View style={{flexDirection: 'column'}} >
                             <View style={{paddingHorizontal: ScreenUtil.autowidth(15), flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}} >
-                              <Text style={styles.contentext}>{"提示: 若更新失败请前往官网下载"}</Text>
+                              <Text style={styles.contentext}>{"Tips: If the update fails, please go to the official website to download it."}</Text>
                               <Text onPress={()=>Utils.goToOfficialWebsite()} style={[styles.contentext,{color:'#3B80F4'}]}>https://invite.wallet.hsn.link</Text>
                             </View>
                             <LinearGradient colors={['#4F5162','#1E202C']}  start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={[styles.bottom, !this.state.disLabel && {justifyContent: 'center',marginBottom:ScreenUtil.autowidth(20)}]}>

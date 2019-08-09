@@ -99,7 +99,7 @@ class Route extends React.Component {
           callback: (data) => {
             if (data && data.code == 0) {
               if (data.data.upgradeMethod == "force") {
-                EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", null, () => { Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) }, () => { Utils.cancelUpgrade() })
+                EasyShowLD.dialogShow("Version Update", data.data.intr, "upgrade", null, () => { Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) }, () => { Utils.cancelUpgrade() })
               }else if(data.data.upgradeMethod == "popup"){
                 // 这段逻辑主要目的：如果是非强制更新只弹出一次弹框，另外取消升级时要显示小红点
                 this.props.dispatch({ type: 'common/getAppVersion', payload: {}, 
@@ -121,7 +121,7 @@ class Route extends React.Component {
                 Constants.promptUpgrade= true;
               }
             }else{
-              console.log('当前已是最新版本');
+              console.log("It's the latest version");
               //新公告弹出框
               this.props.dispatch({ type: 'common/getNewAnnouncement', payload: { },
                 callback: (data) => {
@@ -132,7 +132,7 @@ class Route extends React.Component {
                           <Text style={{color:'#323232',fontSize:ScreenUtil.setSpText(15),paddingBottom:ScreenUtil.autoheight(10)}}>{data.title}</Text>
                           <Text style={{color:'#808080',fontSize:ScreenUtil.setSpText(14),lineHeight:ScreenUtil.autoheight(21)}}>{data.content}</Text>
                         </View>);
-                        AlertModal.show("最新公告", content, '不再提示')
+                        AlertModal.show("Latest Announcement", content, 'No more prompts')
                         this.props.dispatch({ type: 'common/saveNoticeId', payload: {NoticeId: data.id}}); //保存公告ID到本地，让公告框只弹一次
                       }
                     }
@@ -211,7 +211,7 @@ class Route extends React.Component {
         return true;
       }
       this.lastBackPressed = Date.now();
-      EasyToast.show('再按一次退出应用');
+      EasyToast.show('Press once more to exit the application');
       return true;
     } else {
       return false;
@@ -251,7 +251,7 @@ var TabContainer = TabNavigator(
     Home: { 
        screen: Home ,
        navigationOptions : {
-        tabBarLabel: '首页',
+        tabBarLabel: 'Home',
         tabBarIcon: ({ focused}) => (
           <Image resizeMode='contain' source={focused ? UImage.tab_1_h : UImage.tab_1} style={{width: ScreenUtil.autowidth(18), height: ScreenUtil.autowidth(18)}}/>
         ),
@@ -262,7 +262,7 @@ var TabContainer = TabNavigator(
       screen: Nodeapplication,
       navigationOptions : {
         header: null, 
-        tabBarLabel: '节点申请',
+        tabBarLabel: 'Guardian',
         tabBarIcon: ({ focused}) => (
           <Image resizeMode='stretch'
               source={focused ? UImage.tab_2_h : UImage.tab_2} style={{width: ScreenUtil.autowidth(18), height: ScreenUtil.autowidth(18)}}
@@ -273,7 +273,7 @@ var TabContainer = TabNavigator(
     Myinvitation: { 
       screen: Myinvitation,
       navigationOptions : {
-        tabBarLabel: '我的邀请',
+        tabBarLabel: 'My invitation',
         tabBarIcon: ({ focused}) => (
           <Image resizeMode='contain' source={focused ? UImage.tab_3_h : UImage.tab_3} style={{width: ScreenUtil.autowidth(18), height: ScreenUtil.autowidth(18)}}/>
         ),
@@ -284,7 +284,7 @@ var TabContainer = TabNavigator(
        screen: Settings,
        navigationOptions : {
         header:null,
-        tabBarLabel:  '设置', 
+        tabBarLabel: 'My Wallet', 
         tabBarIcon: ({ focused}) => (
           <Image resizeMode='contain' source={focused ? UImage.tab_4_h : UImage.tab_4} style={{width: ScreenUtil.autowidth(18), height: ScreenUtil.autowidth(18)}}/>
         ),
@@ -292,7 +292,7 @@ var TabContainer = TabNavigator(
     }
   },
   {
-    initialRouteName: "Home", // 默认页面组件
+    initialRouteName: "Settings", // 默认页面组件
     lazy: true,
     tabBarPosition: 'bottom', // 显示在底端，android 默认是显示在页面顶端的
     swipeEnabled: false, // 是否可以左右滑动切换tab

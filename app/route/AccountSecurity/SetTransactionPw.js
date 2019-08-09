@@ -34,17 +34,17 @@ class SetTransactionPw extends BaseComponent {
     this.state = {
       code:"",
       codeSize:16,
-      codePlaceholder:"输入验证码",
+      codePlaceholder:"Verification Code",
 
       password:"",
       passwordSize:16,
-      passwordPlaceholder:"输入交易密码",
+      passwordPlaceholder:"New Trading Password",
 
       againpassword:"",
       againpasswordSize:16,
-      againpasswordPlaceholder:"确认交易密码",
+      againpasswordPlaceholder:"Confirm Tirading Password",
 
-      capture:'获取验证码',
+      capture:'Verification Code',
       captureState: false,
     };
   }
@@ -65,7 +65,7 @@ class SetTransactionPw extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully.");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -80,7 +80,7 @@ class SetTransactionPw extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"获取验证码", captureState: false});
+        th.setState({capture:"Verification Code", captureState: false});
       }
     },1000);
     //
@@ -99,30 +99,30 @@ class SetTransactionPw extends BaseComponent {
 
   regSubmit = () =>{
     if(this.state.code==""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code.');
       return;
     }
     if(this.state.password==""){
-      EasyToast.show('请输入交易密码');
+      EasyToast.show('Please enter the transaction password');
       return;
     }
     if(this.state.againpassword==""){
-      EasyToast.show('请再次输入交易密码');
+      EasyToast.show('Please enter the transaction password again');
       return;
     }
     if(this.state.password != this.state.againpassword){
-      EasyToast.show('两次密码不一致');
+      EasyToast.show('Inconsistent passwords');
       return;
     }
     if(this.state.password.length < Constants.PWD_MIN_LENGTH || this.state.againpassword.length < Constants.PWD_MIN_LENGTH ){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     this.onchangePwd();
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('设置中...');
+    EasyShowLD.loadingShow('Setting...');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/setPayPassword',
       payload:{ 
         mobile: this.props.mobile,
@@ -134,7 +134,7 @@ class SetTransactionPw extends BaseComponent {
     if(resp){
       EasyShowLD.loadingClose();
       if(resp.code==0){
-        EasyToast.show("设置成功");
+        EasyToast.show("Successful setup");
         Utils.pop(this, 3, true);
       }else{
         EasyToast.show(resp.msg);
@@ -158,7 +158,7 @@ class SetTransactionPw extends BaseComponent {
               <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
                 <View style={styles.outsource}>
                   <TouchableOpacity style={styles.headout}>
-                    <Text style={styles.headtext}>设置交易密码</Text>
+                    <Text style={styles.headtext}>Set Trading Password</Text>
                   </TouchableOpacity>
                   <View style={styles.inptout}>
                     <Text style={styles.texttitle}>{this.props.mobile}</Text>
@@ -170,7 +170,7 @@ class SetTransactionPw extends BaseComponent {
                         placeholderTextColor={UColor.lightgray}    
                         selectionColor={UColor.tintColor} 
                         onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
-                        onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'输入验证码'})}}
+                        onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Verification Code'})}}
                         style={[styles.textinpt,{flex: 1,fontSize: ScreenUtil.setSpText(this.state.codeSize),}]}
                         placeholder={this.state.codePlaceholder}
                         underlineColorAndroid="transparent" 
@@ -192,7 +192,7 @@ class SetTransactionPw extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}   
                       selectionColor={UColor.tintColor} 
                       onFocus={()=>{this.setState({passwordSize:32,passwordPlaceholder:''})}}
-                      onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'输入交易密码'})}}
+                      onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'New Trading Password'})}}
                       style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize),}]}
                       placeholder={this.state.passwordPlaceholder}
                       underlineColorAndroid="transparent" 
@@ -208,7 +208,7 @@ class SetTransactionPw extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}  
                       selectionColor={UColor.tintColor} 
                       onFocus={()=>{this.setState({againpasswordSize:32,againpasswordPlaceholder:''})}}
-                      onBlur={()=>{this.state.againpassword?"":this.setState({againpasswordSize:16,againpasswordPlaceholder:'确认交易密码'})}}
+                      onBlur={()=>{this.state.againpassword?"":this.setState({againpasswordSize:16,againpasswordPlaceholder:'Confirm Tirading Password'})}}
                       style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.againpasswordSize),}]}
                       placeholder={this.state.againpasswordPlaceholder}
                       underlineColorAndroid="transparent" 
@@ -223,7 +223,7 @@ class SetTransactionPw extends BaseComponent {
                 <Image source={UImage.set_logoB} style={styles.footpoho}/>
               </LinearGradient>
               <View style={styles.referout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} shadow={true} textColor='#FFFFFF' text={"提交"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} shadow={true} textColor='#FFFFFF' text={"Set Password"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
               </View>
             </TouchableOpacity>
           </ScrollView>
@@ -263,8 +263,7 @@ const styles = StyleSheet.create({
   },
   headtext: {
     color: '#FFFFFF', 
-    fontWeight:'bold',
-    fontSize: ScreenUtil.setSpText(36),
+    fontSize: ScreenUtil.setSpText(28),
   },
   inptout: {
     flex: 3, 
@@ -289,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#0DA3DF',
-    width: ScreenUtil.autowidth(90),
+    width: ScreenUtil.autowidth(110),
     height: ScreenUtil.autoheight(25),
     borderRadius: ScreenUtil.autowidth(23),
   },

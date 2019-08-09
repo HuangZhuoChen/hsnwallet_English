@@ -16,6 +16,7 @@ import { LargeList } from "react-native-largelist-v3";
 import {AlertModal} from '../../components/modals/AlertModal'
 import LinearGradient from 'react-native-linear-gradient'
 import BaseComponent from "../../components/BaseComponent";
+import TextButton from '../../components/TextButton'
 
 require('moment/locale/zh-cn');
 var ScreenWidth = Dimensions.get('window').width;
@@ -33,8 +34,8 @@ class Myinvitation extends BaseComponent{
       teamIntegral:"",
       friendsNum: 5,
       inviteCode: "2110453",
-      friendsHeader:['好友等级','用户','好友日返还','邀请奖励'],
-      levelName:['未激活合伙人','初级合伙人','中级合伙人','高级合伙人','超级合伙人'],
+      friendsHeader:["Friends' Grade",'Name','Date','Invitation Awards'], 
+      levelName:['UNACTIVATED PARTNERS','JUNIOR PARTNERS','INTERMEDIATE PARTNERS','SENIOR PARTNERS','SUPER PARTNERS'],
       friendsList:[],
       friDate:moment().format('YYYY/MM/DD'),
       todayTotal:0,
@@ -59,7 +60,7 @@ class Myinvitation extends BaseComponent{
       //未设置团队名称
       const { navigate } = this.props.navigation;
       if(this.props.loginUser && !this.props.loginUser.teamName){
-        let isPay =  await AlertModal.showSync("温馨提示","未设置团队名称，请立即设置","去设置",null,);
+        let isPay =  await AlertModal.showSync("Tips","Team name not set, please set it immediately.","Set","Cancel",);
         if(isPay){
           navigate('SetTeamname', {});
         }
@@ -137,7 +138,7 @@ class Myinvitation extends BaseComponent{
     return (
       <View style={[styles.friendsRow,{opacity:0.3}]}>
         <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowStyle,styles.invHorizontal]}>
-          <Text style={[styles.rowTextStyle,{flex:1,}]}>{"无可显示项"}</Text>
+          <Text style={[styles.rowTextStyle,{flex:1,}]}>{"No non-displayable items"}</Text>
         </LinearGradient>
       </View>
     )
@@ -175,18 +176,21 @@ class Myinvitation extends BaseComponent{
           <View style={styles.invHeader}>
             <LinearGradient style={{paddingBottom: ScreenUtil.autoheight(32),}} colors={['#00ccfe','#0067e9']} start={{x:0,y:0}} end={{x:1,y:1}} >
               {/* 顶部规则说明、超级合伙人、点击分享 */}
-              <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',marginTop: Constants.FitPhone}}>
-                <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.goSomePages(1)})}} style={{flex: 1, alignItems: 'flex-start',}}>
-                  {/* 规则说明 */}
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',marginTop: Constants.FitPhone + 9}}>
+                {/* <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.goSomePages(1)})}} style={{flex: 1, alignItems: 'flex-start',}}>
                   <Image source={UImage.rulesTips} style={{width: ScreenUtil.autowidth(71),height: ScreenUtil.autowidth(25),}}/>
-                </TouchableOpacity>
-                <View style={{flex: 1, alignItems: 'center',}}>
-                  <Text style={{color:"#fff",fontWeight: 'bold',fontSize: ScreenUtil.setSpText(16),}}>{this.state.levelName[this.props.loginUser&&this.props.loginUser.partnerLevel]}</Text>
+                </TouchableOpacity> */}
+                {/* 规则说明 */}
+                <View style={{ flex: 1, alignItems: 'flex-start' }}>
+                  <TextButton onPress={ () => { this.noDoublePress(() => { this.goSomePages(1) }) } } text="Rules" textColor="#00B3F9FF" fontSize={ ScreenUtil.setSpText(12) } bgColor="#fff" style={ styles.rule }></TextButton>
+                </View>
+                <View style={{flex: 2, alignItems: 'center'}}>
+                  <Text style={{color:"#fff",fontSize: ScreenUtil.setSpText(16),}}>{this.state.levelName[this.props.loginUser&&this.props.loginUser.partnerLevel]}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.goSomePages(2)})}} style={{flex: 1, alignItems: 'flex-end', justifyContent: 'center',}}>
-                  <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: ScreenUtil.autowidth(18),}}>
+                  <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: ScreenUtil.autowidth(18)}}>
                     <Image source={UImage.shareIcon} style={{width: ScreenUtil.autowidth(21),height: ScreenUtil.autowidth(22),}}/>
-                    <Text style={{color:"#fff",fontSize: ScreenUtil.setSpText(10),}}>点击分享</Text>
+                    {/* <Text style={{color:"#fff",fontSize: ScreenUtil.setSpText(10),}}>点击分享</Text> */}
                   </View>
                 </TouchableOpacity>
               </View>
@@ -199,32 +203,32 @@ class Myinvitation extends BaseComponent{
                 backgroundColor:"#0071EC"
               }} />
               <View style={[styles.invInfoWrap,styles.invHorizontal]}>
-                <View style={{width:'50%'}}>
-                  <Text style={styles.invInfoTitle}>累计获得奖励（U）</Text>
+                <View style={{width:'59%'}}>
+                  <Text style={styles.invInfoTitle}>Accumulated Reward(H)</Text>
                   <Text style={styles.invInfoContent}>{this.props.loginUser&&this.props.loginUser.inviteRewardUsdt}</Text>
                 </View>
-                <View style={{width:'50%'}}>
-                  <Text style={styles.invInfoTitle}>团队积分</Text>
+                <View style={{width:'41%'}}>
+                  <Text style={styles.invInfoTitle}>Recommendations</Text>
                   <Text style={styles.invInfoContent}>
                     {(this.props.loginUser&&this.props.loginUser.isActive=='no')?'未激活':(this.props.loginUser&&this.props.loginUser.teamPoints)}
                   </Text>
                 </View>
               </View>
               <View style={[styles.invInfoWrap,styles.invHorizontal]}>
-                <View style={{width:'50%'}}>
-                  <Text style={styles.invInfoTitle}>邀请好友（人）</Text>
+                <View style={{width:'59%'}}>
+                  <Text style={styles.invInfoTitle}>Invite Friends</Text>
                   <Text style={styles.invInfoContent}>{this.props.loginUser&&this.props.loginUser.myInviteNumber}</Text>
                 </View>
-                <View style={{width:'50%'}}>
+                {/* <View style={{width:'41%'}}>
                   <Text style={styles.invInfoTitle}>团队名称</Text>
                   <Text style={styles.invInfoContent} onPress={()=>{this.noDoublePress(()=>{this.geSetTeam()})}}>{(this.props.loginUser&&this.props.loginUser.teamName)?this.props.loginUser.teamName:"去设置"}</Text>
-                </View>
+                </View> */}
               </View>
             </LinearGradient>
           </View>
           {/* 我的好友下面日期切换栏 */}
           <View style={{marginTop:ScreenUtil.autoheight(30)}}>
-            <Text style={{color:"#fff",fontSize:ScreenUtil.setSpText(22),textAlign: 'center',fontWeight:'bold'}}>我的好友</Text>
+            <Text style={{color:"#fff",fontSize:ScreenUtil.setSpText(21),textAlign: 'center'}}>My Recommendation</Text>
             <View style={{
               flexDirection:'row',
               justifyContent:'center',
@@ -261,10 +265,10 @@ class Myinvitation extends BaseComponent{
   _renderHeader = () => {
     return(
       <View style={[styles.friendsRow,styles.invHorizontal]}>
-        <Text style={{color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'left'}}>好友等级</Text>
-        <Text style={{flex:2,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>用户</Text>
-        <Text style={{flex:1,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>好友日返还</Text>
-        <Text style={{flex:1,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>邀请奖励</Text>
+        <Text style={{color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'left'}}>Friends' Grade</Text>
+        <Text style={{flex:2,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>Name</Text>
+        <Text style={{flex:1,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>Date</Text>
+        <Text style={{flex:1,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>Invitation Awards</Text>
       </View>
     )
   }
@@ -273,7 +277,7 @@ class Myinvitation extends BaseComponent{
     return(
       <View style={[styles.invHorizontal,{justifyContent:'flex-end',marginVertical: ScreenUtil.autoheight(5)}]}>
         <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowRadius,{width:ScreenUtil.autowidth(173),flexDirection:'row',justifyContent:'center',alignItems:"center"}]}>
-          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(12)}}>今日累计：</Text>
+          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(12)}}>Today's cumulative：</Text>
           <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(20),fontWeight:'bold'}}>{this.state.todayTotal+"U"}</Text>
         </LinearGradient>
       </View>
@@ -294,6 +298,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius:ScreenUtil.autowidth(6),
     borderBottomLeftRadius:ScreenUtil.autowidth(6),
     overflow: 'hidden',
+  },
+  rule: {
+    width: ScreenUtil.autowidth(70),
+    height: ScreenUtil.autoheight(25),
+    borderTopRightRadius: ScreenUtil.autoheight(25) / 2,
+    borderBottomRightRadius: ScreenUtil.autoheight(25) / 2
   },
   invInfoWrap:{
     paddingHorizontal:ScreenUtil.autowidth(31)

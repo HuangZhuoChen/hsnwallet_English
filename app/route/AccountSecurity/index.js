@@ -34,10 +34,10 @@ class AccountSecurity extends React.Component {
     };
     this.config = [
       {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), nameColor: '#FFFFFF', spot: true, 
-      disable: true, avatar: UImage.invitation_code, name: "登录密码", subName: "修改", onPress: this.goLoginPw.bind(this) },
+      disable: true, avatar: UImage.invitation_code, name: "Password", subName: "Change", onPress: this.goLoginPw.bind(this) },
 
       {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), nameColor: '#FFFFFF', spot: true, disable: true,  
-      avatar: UImage.membership_level, name: "交易密码", subName: this.props.SetTradePW ? "去修改" : "未设置", onPress: this.goSetTransaction.bind(this) },
+      avatar: UImage.membership_level, name: "Trading Password", subName: this.props.SetTradePW ? "Set" : "Not set", onPress: this.goSetTransaction.bind(this) },
 
       // {itemHeight: ScreenUtil.autoheight(50),paddingHorizontal: ScreenUtil.autowidth(5), nameColor: '#FFFFFF', spot: true, disable: true, 
       // avatar: UImage.help_center, name: "实名认证", subName:  this.props.authentication ? '已认证' : '未认证', onPress: this.goAuthentication.bind(this) },
@@ -98,7 +98,7 @@ class AccountSecurity extends React.Component {
         <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
           <View style={styles.outsource}>
             <TouchableOpacity style={styles.headout}>
-              <Text style={styles.headtext}>安全管理</Text>
+              <Text style={styles.headtext}>Security</Text>
             </TouchableOpacity>
             <View style={{flex: 3, justifyContent: 'space-around', paddingVertical: ScreenUtil.autoheight(40),}}>
               {this._renderListItem()}

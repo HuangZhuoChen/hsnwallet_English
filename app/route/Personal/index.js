@@ -34,16 +34,16 @@ class Personal extends React.Component {
     };
     this.config = [
       {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), disable: true, spot: true, nameColor: '#FFFFFF', 
-      name: "头像", photo: this.props.loginUser.partnerLevel?Constants.levelimg[this.props.loginUser.partnerLevel]:UImage.integral_bg },
+      name: "Profile Picture", photo: this.props.loginUser.partnerLevel?Constants.levelimg[this.props.loginUser.partnerLevel]:UImage.integral_bg },
 
-      {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, nameColor: '#FFFFFF', name: "昵称",  
+      {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, nameColor: '#FFFFFF', name: "Nick Name",  
       disable: true, subName: this.props.loginUser.nickName, onPress: this.goNicknam.bind(this) },
 
-      {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, nameColor: '#FFFFFF', name: "团队名称",  
-      disable: true, subName: this.props.loginUser.teamName?this.props.loginUser.teamName:'去设置', onPress: this.goTeamname.bind(this) },
+      {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, nameColor: '#FFFFFF', name: "Team Name",  
+      disable: true, subName: this.props.loginUser.teamName?this.props.loginUser.teamName:'set', onPress: this.goTeamname.bind(this) },
       
       {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: true, nameColor: '#FFFFFF', name: "专属邀请码", subName: this.props.loginUser.inviteCode, },
+      disable: true, nameColor: '#FFFFFF', name: "Invitation Code", subName: this.props.loginUser.inviteCode, },
     ];
   }
 
@@ -70,7 +70,7 @@ class Personal extends React.Component {
         const { navigate } = this.props.navigation;
         navigate('SetTeamname', {});
       }else{
-        EasyToast.show("您已设置过团队名称");
+        EasyToast.show("You have set the team name");
       }
     } catch (error) {
       
@@ -99,7 +99,7 @@ class Personal extends React.Component {
         <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
           <View style={styles.outsource}>
             <View style={styles.headout}>
-              <Text style={styles.headtext}>个人信息</Text>
+              <Text style={styles.headtext}>Information</Text>
             </View>
             <View style={{flex: 1, justifyContent: 'center',}}>
               {this._renderListItem()}

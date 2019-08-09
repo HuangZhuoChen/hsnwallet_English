@@ -36,25 +36,25 @@ class LoginPw extends BaseComponent {
     this.state = {
       usedpassword:"",
       usedpasswordSize: 16,
-      usedpasswordPlaceholder:'旧密码',
+      usedpasswordPlaceholder:'Old Password',
 
       codeImg: "",
       codeImgSize: 16,
-      codeImgPlaceholder:"请输入图形验证码",
+      codeImgPlaceholder:"Graphic Code",
 
       password:"",
       passwordSize: 16,
-      passwordPlaceholder:'6~12位 大小写字母，数字，符号组合',
+      passwordPlaceholder:'New Password',
 
       againpassword:"",
       againpasswordSize: 16,
-      againpasswordPlaceholder:'确认密码',
+      againpasswordPlaceholder:'Confirm Password',
       code:"",
       codeSize: 16,
-      codePlaceholder:'验证码',
+      codePlaceholder:'Verification Code',
       
       uuid: '',
-      capture:'获取验证码',
+      capture:'Verification Code',
       captureState: false,
     };
   }
@@ -71,15 +71,15 @@ class LoginPw extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.usedpassword==""){
-      EasyToast.show('请输入旧密码');
+      EasyToast.show('Please enter the old password');
       return;
     }
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.usedpassword.length < Constants.PWD_MIN_LENGTH){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     if(this.state.captureState){
@@ -92,7 +92,7 @@ class LoginPw extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully.");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -107,46 +107,46 @@ class LoginPw extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"获取验证码", captureState: false});
+        th.setState({capture:"Verification Code", captureState: false});
       }
     },1000);
   }
 
   regSubmit = () =>{
     if(this.state.usedpassword==""){
-      EasyToast.show('请输入旧密码');
+      EasyToast.show('Please enter the old password');
       return;
     }
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code');
       return;
     }
     if(this.state.password==""){
-      EasyToast.show('请输入新密码');
+      EasyToast.show('Please enter a new password');
       return;
     }
     if(this.state.againpassword==""){
-      EasyToast.show('请再次输入新密码');
+      EasyToast.show('Please enter the new password again');
       return;
     }
     if(this.state.password != this.state.againpassword){
-      EasyToast.show('两次密码不一致');
+      EasyToast.show('Inconsistent passwords');
       return;
     }
     if(this.state.usedpassword.length < Constants.PWD_MIN_LENGTH || this.state.password.length < Constants.PWD_MIN_LENGTH
       || this.state.againpassword.length < Constants.PWD_MIN_LENGTH){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     this.onchangePwd();
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('修改中...');
+    EasyShowLD.loadingShow('Modificating...');
     let resp = await Utils.dispatchActiionData(this, {type:'login/changePwd',
       payload:{
         oldPassword: Utils.encryptedMsg(this.state.usedpassword), 
@@ -161,7 +161,7 @@ class LoginPw extends BaseComponent {
       EasyShowLD.loadingClose();
       this.refreshImage();
       if(resp.code==0){
-        EasyToast.show("修改成功，请重新登录");
+        EasyToast.show("Successful modification, please login again");
         Utils.pop(this, 3, true);
         NavigationUtil.reset(this.props.navigation, 'Login');
       }else{
@@ -177,7 +177,7 @@ class LoginPw extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('未能获取图形验证码，请检查网络！');
+    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -198,7 +198,7 @@ class LoginPw extends BaseComponent {
               <LinearGradient colors={["#4F5162","#1E202C"]}  style={styles.linearout} >
                 <View style={styles.outsource}>
                   <View style={styles.headout}>
-                    <Text style={styles.headtext}>修改登录密码</Text>
+                    <Text style={styles.headtext}>Change Login Password</Text>
                   </View>
                   <View style={styles.inptout}>
                     <TextInput ref={(ref) => this._rupassword = ref} 
@@ -207,7 +207,7 @@ class LoginPw extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}  
                       selectionColor={UColor.tintColor} 
                       onFocus={()=>{this.setState({usedpasswordSize:32,usedpasswordPlaceholder:''})}}
-                      onBlur={()=>{this.state.usedpassword?"":this.setState({usedpasswordSize:16,usedpasswordPlaceholder:'旧密码'})}}
+                      onBlur={()=>{this.state.usedpassword?"":this.setState({usedpasswordSize:16,usedpasswordPlaceholder:'Old Password'})}}
                       style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.usedpasswordSize),}]}
                       placeholder={this.state.usedpasswordPlaceholder}
                       underlineColorAndroid="transparent" 
@@ -222,7 +222,7 @@ class LoginPw extends BaseComponent {
                         returnKeyType="next"
                         autoFocus={false}
                         onFocus={()=>{ this.setState({codeImgSize:32,codeImgPlaceholder:''})}} 
-                        onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'输入图形验证码'})}}
+                        onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'Graphic Code'})}}
                         value={this.state.codeImg} 
                         placeholder={this.state.codeImgPlaceholder}
                         selectionColor={UColor.tintColor} 
@@ -245,7 +245,7 @@ class LoginPw extends BaseComponent {
                         selectionColor={UColor.tintColor} 
                         returnKeyType="next" 
                         onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
-                        onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'验证码'})}}
+                        onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Verification Code'})}}
                         style={[styles.textinpt,{flex: 1,fontSize: ScreenUtil.setSpText(this.state.codeSize),}]}
                         placeholder={this.state.codePlaceholder}
                         underlineColorAndroid="transparent" 
@@ -266,7 +266,7 @@ class LoginPw extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}   
                       selectionColor={UColor.tintColor} 
                       onFocus={()=>{this.setState({passwordSize:32,passwordPlaceholder:''})}}
-                      onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'6~12位 大小写字母，数字，符号组合'})}}
+                      onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'New Password'})}}
                       style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize),}]}
                       placeholder={this.state.passwordPlaceholder}
                       underlineColorAndroid="transparent" 
@@ -282,7 +282,7 @@ class LoginPw extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}  
                       selectionColor={UColor.tintColor} 
                       onFocus={()=>{this.setState({againpasswordSize:32,againpasswordPlaceholder:''})}}
-                      onBlur={()=>{this.state.againpassword?"":this.setState({againpasswordSize:16,againpasswordPlaceholder:'确认密码'})}}
+                      onBlur={()=>{this.state.againpassword?"":this.setState({againpasswordSize:16,againpasswordPlaceholder:'Confirm Password'})}}
                       style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.againpasswordSize),}]}
                       placeholder={this.state.againpasswordPlaceholder}
                       underlineColorAndroid="transparent" 
@@ -296,9 +296,9 @@ class LoginPw extends BaseComponent {
                 </View>
                 <Image source={UImage.set_logoB} style={styles.footpoho}/>
               </LinearGradient>
-              <Text style={styles.explaintext}>建议设置密码 6~12位 大小写字母，数字，符号组合</Text>
+              <Text style={styles.explaintext}>Notice：6~12 characters(upper letters+digits+symbols)</Text>
               <View style={styles.referout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}}  shadow={true} textColor='#FFFFFF' text={"重置密码"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}}  shadow={true} textColor='#FFFFFF' text={"Reset Password"}  fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
               </View>
             </TouchableOpacity>
           </ScrollView>
@@ -339,8 +339,7 @@ const styles = StyleSheet.create({
   },
   headtext: {
     color: '#FFFFFF', 
-    fontWeight:'bold',
-    fontSize: ScreenUtil.setSpText(36),
+    fontSize: ScreenUtil.setSpText(28),
   },
   inptout: {
     flex: 4, 
@@ -358,7 +357,7 @@ const styles = StyleSheet.create({
     paddingBottom:  ScreenUtil.autoheight(3),
   },
   btnout: {
-    width: ScreenUtil.autowidth(90),
+    width: ScreenUtil.autowidth(110),
     height: ScreenUtil.autoheight(25),
     borderRadius: ScreenUtil.autowidth(23),
     alignItems: 'center',

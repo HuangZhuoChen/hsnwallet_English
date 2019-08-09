@@ -31,28 +31,28 @@ class Forget extends BaseComponent {
     super(props);
     this.state = {
       uuid: '',
-      capture:'获取验证码',
+      capture:'Receive Code',
       captureState: false,
 
       phone:"",
       phoneSize:16,
-      phonePlaceholder:"输入手机号码",
+      phonePlaceholder:"Input Email Code",
 
       codeImg: "",
       codeImgSize: 16,
-      codeImgPlaceholder:"请输入图形验证码",
+      codeImgPlaceholder:"Input Graphic Code",
 
       code:"",
       codeSize:16,
-      codePlaceholder:"输入验证码",
+      codePlaceholder:"Input Verification Code",
 
       password:"",
       passwordSize:16,
-      passwordPlaceholder:"新密码",
+      passwordPlaceholder:"Password",
 
       passwordConfirm:"",
       passwordConfirmSize:16,
-      passwordConfirmPlaceholder:"确认新密码",
+      passwordConfirmPlaceholder:"Confirm Password",
     }
   }
 
@@ -68,7 +68,7 @@ class Forget extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.phone==""){
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your email number');
       return;
     }
     if(this.state.phone.length!=11){
@@ -76,7 +76,7 @@ class Forget extends BaseComponent {
       return;
     }
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.captureState){
@@ -89,7 +89,7 @@ class Forget extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully.");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -104,14 +104,14 @@ class Forget extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"获取验证码", captureState: false});
+        th.setState({capture:"Receive Code", captureState: false});
       }
     },1000);
   }
 
   regSubmit = () =>{
     if(this.state.phone==""){
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your email number');
       return;
     }
     if(this.state.phone.length!=11){
@@ -119,31 +119,31 @@ class Forget extends BaseComponent {
       return;
     }
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code.');
       return;
     }
     if(this.state.password=="" || this.state.password.length < 6){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     if (this.state.password == "" || this.state.password.length < Constants.PWD_MIN_LENGTH || 
     this.state.passwordConfirm == "" || this.state.passwordConfirm.length < Constants.PWD_MIN_LENGTH) {
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     if (this.state.password != this.state.passwordConfirm) {
-      EasyToast.show('两次密码不一致');
+      EasyToast.show('Inconsistent passwords');
       return;
     }
     this.onchangePwd();
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('重置中...');
+    EasyShowLD.loadingShow('Resetting...');
     let resp = await Utils.dispatchActiionData(this, {type:'login/forgetPassword',
       payload:{
         mobile: Utils.encryptedMsg(this.state.phone), 
@@ -158,7 +158,7 @@ class Forget extends BaseComponent {
       EasyShowLD.loadingClose();
       this.refreshImage();
       if(resp.code==0){
-        EasyToast.show("重置成功");
+        EasyToast.show("Reset successfully");
         this.props.navigation.goBack();
       }else{
         EasyToast.show(resp.msg);
@@ -173,7 +173,7 @@ class Forget extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('未能获取图形验证码，请检查网络！');
+    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -193,14 +193,14 @@ class Forget extends BaseComponent {
           <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)} style={{flex: 1}}>
             <View style={[styles.outsource,{backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
               <LinearGradient colors={["rgba(79, 81, 98, 0.9)","rgba(30, 32, 44, 0.9)"]} style={styles.linearout}>
-                <Text style={styles.cardHeaderTitle}>忘记密码</Text>
-                <Text style={styles.texttitle}> +86</Text>
+                <Text style={styles.cardHeaderTitle}>Forgot Password</Text>
+                <Text style={styles.texttitle}>Email</Text>
                 <TextInput ref={(ref) => this._rphone = ref}
                   value={this.state.phone}
                   returnKeyType="next"
                   keyboardType="phone-pad"
                   onFocus={()=>{this.setState({phoneSize:32,phonePlaceholder:''})}}
-                  onBlur={()=>{this.state.phone?"":this.setState({phoneSize:16,phonePlaceholder:'输入手机号码'})}}
+                  onBlur={()=>{this.state.phone?"":this.setState({phoneSize:16,phonePlaceholder:'Input Email Code'})}}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.phoneSize),}]}
                   maxLength={11}
                   placeholder={this.state.phonePlaceholder}
@@ -215,7 +215,7 @@ class Forget extends BaseComponent {
                     returnKeyType="next"
                     autoFocus={false}
                     onFocus={()=>{ this.setState({codeImgSize:32,codeImgPlaceholder:''})}} 
-                    onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'输入图形验证码'})}}
+                    onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'Input Graphic Code'})}}
                     value={this.state.codeImg} 
                     placeholder={this.state.codeImgPlaceholder}
                     selectionColor={UColor.tintColor} 
@@ -235,7 +235,7 @@ class Forget extends BaseComponent {
                   <TextInput ref={(ref) => this._lcode = ref}
                     autoFocus={false}
                     onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
-                    onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'输入验证码'}) }}
+                    onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Input Verification Code'}) }}
                     value={this.state.code}
                     returnKeyType="next"
                     placeholder={this.state.codePlaceholder}
@@ -259,7 +259,7 @@ class Forget extends BaseComponent {
                   returnKeyType="go"
                   autoFocus={false}
                   onFocus={()=>{ this.setState({passwordSize:32,passwordPlaceholder:''})}}
-                  onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'新密码'})}}
+                  onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'Password'})}}
                   selectionColor={UColor.tintColor}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize)}]}
                   placeholder={this.state.passwordPlaceholder}
@@ -275,7 +275,7 @@ class Forget extends BaseComponent {
                   returnKeyType="go"
                   autoFocus={false}
                   onFocus={()=>{this.setState({passwordConfirmSize:32,passwordConfirmPlaceholder:''})}}
-                  onBlur={()=>{this.state.passwordConfirm?"":this.setState({passwordConfirmSize:16,passwordConfirmPlaceholder:'确认密码'})}}
+                  onBlur={()=>{this.state.passwordConfirm?"":this.setState({passwordConfirmSize:16,passwordConfirmPlaceholder:'Confirm Password'})}}
                   editable={true}
                   selectionColor={UColor.tintColor}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordConfirmSize)}]}
@@ -290,7 +290,7 @@ class Forget extends BaseComponent {
               </LinearGradient>
             </View>
             <View style={styles.referout}>
-              <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor="#FFFFFF" text="确认" shadow={true} style={styles.referbtn} />
+              <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor="#FFFFFF" text="Confirm" shadow={true} style={styles.referbtn} />
             </View>
           </TouchableOpacity>
         </ScrollView>

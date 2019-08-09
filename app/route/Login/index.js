@@ -33,24 +33,24 @@ class Login extends BaseComponent {
     super(props);
     this.state = {
       uuid: '',
-      capture: '获取验证码',
+      capture: 'Receive Code',
       captureState: false,
 
       loginPhone: "",
       phoneSize:16,
-      phonePlaceholder:"输入手机号码",
+      phonePlaceholder:"Input Email Code",
 
       codeImg: "",
       codeImgSize: 16,
-      codeImgPlaceholder:"请输入图形验证码",
+      codeImgPlaceholder:"Input Graphic Code",
 
-      checkCode:"", //手机验证码
+      checkCode:"", //邮箱验证码
       codeSize:16,
-      codePlaceholder:"输入验证码",
+      codePlaceholder:"Input Verification Code",
 
       loginPwd: "",
       passwordSize:16,
-      passwordPlaceholder:"输入登录密码",
+      passwordPlaceholder:"Password",
     };
   }
 
@@ -66,7 +66,7 @@ class Login extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.loginPhone==""){
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your mail number');
       return;
     }
     if(this.state.loginPhone.length!=11){
@@ -74,7 +74,7 @@ class Login extends BaseComponent {
       return;
     }
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.captureState){
@@ -87,7 +87,7 @@ class Login extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully.");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -98,7 +98,7 @@ class Login extends BaseComponent {
     setTimeout(function () {
       if (tick == 0) {
         tick = 60;
-        th.setState({ capture: "获取验证码", captureState: false });
+        th.setState({ capture: "Receive Code", captureState: false });
       } else {
         tick--;
         th.setState({ capture: tick + "s", captureState: true })
@@ -109,7 +109,7 @@ class Login extends BaseComponent {
 
   loginKcaptrue = () => {
     if (this.state.loginPhone == "") {
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your email number');
       return;
     }
     if(this.state.loginPhone.length!=11){
@@ -117,22 +117,22 @@ class Login extends BaseComponent {
       return;
     }
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.checkCode == ""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code.');
       return;
     }
     if (this.state.loginPwd == "" || this.state.loginPwd.length < Constants.PWD_MIN_LENGTH) {
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     this.loginSubmit();
   }
 
   async loginSubmit () {
-    EasyShowLD.loadingShow('登录中...');
+    EasyShowLD.loadingShow('Login in...');
     let resp = await Utils.dispatchActiionData(this, {type:'login/login',
       payload:{
         mobile: Utils.encryptedMsg(this.state.loginPhone), 
@@ -146,7 +146,7 @@ class Login extends BaseComponent {
       EasyShowLD.dialogClose();
       this.refreshImage();
       if(resp.code == 0){
-        EasyToast.show("登录成功");
+        EasyToast.show("Successful login");
         NavigationUtil.reset(this.props.navigation, 'Home');
         AnalyticsUtil.onEvent('Sign_inok');
       }else{
@@ -172,7 +172,7 @@ class Login extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('未能获取图形验证码，请检查网络！');
+    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -191,13 +191,28 @@ class Login extends BaseComponent {
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)} style={{flex: 1,}}>
               <View style={[styles.outsource,{backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
                 <LinearGradient colors={["rgba(79, 81, 98, 0.9)","rgba(30, 32, 44, 0.9)"]} style={styles.linearout}>
-                  <Text style={styles.cardHeaderTitle}>登录</Text>
-                  <Text style={styles.inptitle}>+86</Text>
-                  <TextInput ref={(ref) => this._lphone = ref} 
+                  <Text style={styles.cardHeaderTitle}>Log In</Text>
+                  <Text style={styles.inptitle}>Email</Text>
+                  {/* <TextInput ref={(ref) => this._lphone = ref} 
                     returnKeyType="next"
                     autoFocus={false}
                     onFocus={()=>{ this.setState({phoneSize:32,phonePlaceholder:''})}} 
                     onBlur={()=>{ this.state.loginPhone?"":this.setState({phoneSize:16,phonePlaceholder:'输入手机号码'}) }}
+                    value={this.state.loginPhone} 
+                    placeholder={this.state.phonePlaceholder} 
+                    style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.phoneSize),}]}
+                    selectionColor={UColor.tintColor} 
+                    placeholderTextColor={UColor.lightgray}  
+                    underlineColorAndroid="transparent" 
+                    keyboardType="phone-pad" 
+                    maxLength={11}
+                    onChangeText={(loginPhone) => this.setState({ loginPhone })}
+                  /> */}
+                  <TextInput ref={(ref) => this._lphone = ref} 
+                    returnKeyType="next"
+                    autoFocus={false}
+                    onFocus={()=>{ this.setState({phoneSize:32,phonePlaceholder:''})}} 
+                    onBlur={()=>{ this.state.loginPhone?"":this.setState({phoneSize:16,phonePlaceholder:'Input Email Code'}) }}
                     value={this.state.loginPhone} 
                     placeholder={this.state.phonePlaceholder} 
                     style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.phoneSize),}]}
@@ -214,7 +229,7 @@ class Login extends BaseComponent {
                       returnKeyType="next"
                       autoFocus={false}
                       onFocus={()=>{ this.setState({codeImgSize:32,codeImgPlaceholder:''})}} 
-                      onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'输入图形验证码'})}}
+                      onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'Input Graphic Code'})}}
                       value={this.state.codeImg} 
                       placeholder={this.state.codeImgPlaceholder}
                       selectionColor={UColor.tintColor} 
@@ -235,7 +250,7 @@ class Login extends BaseComponent {
                       returnKeyType="next"
                       autoFocus={false}
                       onFocus={()=>{ this.setState({codeSize:32,codePlaceholder:''})}} 
-                      onBlur={()=>{ this.state.checkCode?"":this.setState({codeSize:16,codePlaceholder:'输入验证码'})}}
+                      onBlur={()=>{ this.state.checkCode?"":this.setState({codeSize:16,codePlaceholder:'Input Verification Code'})}}
                       value={this.state.checkCode} 
                       placeholder={this.state.codePlaceholder}
                       selectionColor={UColor.tintColor} 
@@ -257,7 +272,7 @@ class Login extends BaseComponent {
                     returnKeyType="go"     
                     autoFocus={false}
                     onFocus={()=>{this.setState({passwordSize:32,passwordPlaceholder:''})}} 
-                    onBlur={()=>{this.state.loginPwd?"":this.setState({passwordSize:16,passwordPlaceholder:'输入登录密码'})}}
+                    onBlur={()=>{this.state.loginPwd?"":this.setState({passwordSize:16,passwordPlaceholder:'Enter the login password'})}}
                     style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize)}]}
                     value={this.state.loginPwd}   
                     placeholder={this.state.passwordPlaceholder}
@@ -273,13 +288,13 @@ class Login extends BaseComponent {
               </View>
               <TouchableOpacity style={styles.forgetpass} onPress={()=>{this.noDoublePress(()=>{this.forget()})}}>
                 <Image source={UImage.forgetIcon} style={{width:ScreenUtil.setSpText(14),height:ScreenUtil.setSpText(14)}} />
-                <Text style={[styles.forgettext,{color: '#B9BBC1'}]} >{" 忘记密码"}</Text>
+                <Text style={[styles.forgettext,{color: '#B9BBC1'}]} >{" Forgot Password"}</Text>
               </TouchableOpacity>
               <View style={styles.readout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.loginKcaptrue()})}} textColor="#FFFFFF" text={"登录"}  shadow={true} style={styles.readbtn} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.loginKcaptrue()})}} textColor="#FFFFFF" text={"Log In"}  shadow={true} style={styles.readbtn} />
               </View>
               <View style={styles.submitout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor='#3B80F4' text={"注册"}  style={styles.readbtn} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor='#3B80F4' text={"Register"}  style={styles.readbtn} />
               </View>
             </TouchableOpacity>
           </ScrollView>
@@ -315,7 +330,6 @@ const styles = StyleSheet.create({
   cardHeaderTitle:{
     color:'#FFFFFF',
     fontSize:ScreenUtil.setSpText(36),
-    fontWeight: 'bold',
     marginTop: ScreenUtil.autoheight(35),
     marginBottom: ScreenUtil.autoheight(16)
   },
