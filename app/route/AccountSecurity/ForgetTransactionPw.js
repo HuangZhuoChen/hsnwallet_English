@@ -35,23 +35,23 @@ class ForgetTransactionPw extends BaseComponent {
     this.state = {
       code:"",
       codeSize:16,
-      codePlaceholder:"输入验证码",
+      codePlaceholder:"Verification Code",
 
       codeImg: "",
       codeImgSize: 16,
-      codeImgPlaceholder:"请输入图形验证码",
+      codeImgPlaceholder:"Graphic Code",
 
       password:"",
       passwordSize:16,
-      passwordPlaceholder:"输入交易密码",
+      passwordPlaceholder:"New Trading Password",
 
       againpassword:"",
       againpasswordSize:16,
-      againpasswordPlaceholder:"确认交易密码",
+      againpasswordPlaceholder:"Confirm Trading Password",
       
       uuid: '',
       captureState: false,
-      capture:'获取验证码',
+      capture:'Verification Code',
     };
   }
 
@@ -67,7 +67,7 @@ class ForgetTransactionPw extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.captureState){
@@ -80,7 +80,7 @@ class ForgetTransactionPw extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -95,41 +95,41 @@ class ForgetTransactionPw extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"获取验证码", captureState: false});
+        th.setState({capture:"Verification Code", captureState: false});
       }
     },1000);
   }
 
   regSubmit = () =>{
     if(this.state.codeImg == ""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.password==""){
-      EasyToast.show('请输入新交易密码');
+      EasyToast.show('Please enter a new transaction password');
       return;
     }
     if(this.state.againpassword==""){
-      EasyToast.show('请再次新交易密码');
+      EasyToast.show('Please renew the transaction password again');
       return;
     }
     if(this.state.password != this.state.againpassword){
-      EasyToast.show('两次交易密码不一致');
+      EasyToast.show('Inconsistent transaction passwords');
       return;
     }
     if(this.state.password.length < Constants.PWD_MIN_LENGTH || this.state.againpassword.length < Constants.PWD_MIN_LENGTH ){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code.');
       return;
     }
     this.onchangePwd();
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('修改中...');
+    EasyShowLD.loadingShow('Modification in progress');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/forgetPayPassword',
       payload:{
         mobile: Utils.encryptedMsg(this.props.mobile), 
@@ -144,7 +144,7 @@ class ForgetTransactionPw extends BaseComponent {
       EasyShowLD.loadingClose();
       this.refreshImage();
       if(resp.code==0){
-        EasyToast.show("修改成功");
+        EasyToast.show("Successful revision");
         Utils.pop(this, 4, true);
       }else{
         EasyToast.show(resp.msg);
@@ -159,7 +159,7 @@ class ForgetTransactionPw extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('未能获取图形验证码，请检查网络！');
+    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -179,7 +179,7 @@ class ForgetTransactionPw extends BaseComponent {
               <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
                 <View style={styles.outsource}>
                   <View style={styles.headout}>
-                    <Text style={styles.headtext}>忘记交易密码</Text>
+                    <Text style={styles.headtext}>Forget Trading Password</Text>
                   </View>
                   <View style={styles.inptout}>
                     <Text style={styles.texttitle}>{this.props.mobile}</Text>

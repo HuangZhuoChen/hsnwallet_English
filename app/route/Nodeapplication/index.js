@@ -16,6 +16,7 @@ import Carousel from "react-native-banner-carousel";
 import {kapimg} from '../../utils/Api';
 import BaseComponent from "../../components/BaseComponent";
 import {AlertModal,AlertModalView} from '../../components/modals/AlertModal'
+import TextButton from '../../components/TextButton'
 const ScreenWidth = Dimensions.get('window').width;
 
 @connect(({login, Nodeapplication, personal, loading }) => ({...login, ...Nodeapplication, ...personal,
@@ -305,6 +306,16 @@ class Nodeapplication extends BaseComponent {
 
   }
 
+  //规则说明
+  goRuleClause () {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('RuleClause', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
+
   renderPage(image, index) {
     return (
       <View key={index}>
@@ -317,16 +328,34 @@ class Nodeapplication extends BaseComponent {
 
   renderNodeHeader(){
     return (
-      <View>
+      <View style={{ paddingBottom: ScreenUtil.autoheight(20), marginBottom: ScreenUtil.autoheight(15) }}>
         {/* 轮播图 */}
         <Carousel autoplay autoplayTimeout={5000} loop index={0} pageSize={ScreenWidth}
-                  pageIndicatorContainerStyle={{bottom: 0.2*ScreenWidth, zIndex: 999}}
-                  pageIndicatorStyle={{backgroundColor: 'rgba(255, 255, 255, 0.8)', }}
-                  activePageIndicatorStyle={{backgroundColor:'#FFFFFF', }}>
+          pageIndicatorContainerStyle={{bottom: 0.2*ScreenWidth, zIndex: 999}}
+          pageIndicatorStyle={{backgroundColor: 'rgba(255, 255, 255, 0.8)', }}
+          activePageIndicatorStyle={{backgroundColor:'#FFFFFF', }}
+        >
           {this.state.jdBanner.map((image, index) => this.renderPage(image, index))}
         </Carousel>
+        {/* 规则说明 */}
+        <View style={ styles.rule }>
+          <TextButton onPress={ () => { this.noDoublePress(() => { this.goRuleClause() }) } } text="Rules" textColor="#03060FFF" fontSize={ ScreenUtil.setSpText(12) } bgColor="transparent" />
+        </View>
+        {/* 守护进度条 */}
+        <View style={ styles.guard }>
+          <Text style={ styles.guardTitle }>Purchase Progress</Text>
+          <View style={ styles.guardProgress }>
+            <LinearGradient colors={['#FAF961','#FFD600']} start={{x:0,y:0}} end={{x:0,y:1}} style={ [styles.guardCors, { width: ScreenUtil.autowidth(339) * 0.5 }] }>
+              <Text style={{ fontSize: ScreenUtil.setSpText(13), color: '#191B2AFF', paddingRight: ScreenUtil.autowidth(10) }}>50%</Text>
+            </LinearGradient>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ color: '#fff' }}>0</Text>
+            <Text style={{ color: '#fff' }}>10 million</Text>
+          </View>
+        </View>
         {/* 下一轮开抢时间黄色区域 */}
-        <LinearGradient colors={['#FAF961','#FFD600']} start={{x:0,y:0}} end={{x:0,y:1}} style={[styles.sqHorizontal,styles.timeBox,{top: 0.4*ScreenWidth+Constants.FitPhone,justifyContent:"center"}]}>
+        {/* <LinearGradient colors={['#FAF961','#FFD600']} start={{x:0,y:0}} end={{x:0,y:1}} style={[styles.sqHorizontal,styles.timeBox,{top: 0.4*ScreenWidth+Constants.FitPhone,justifyContent:"center"}]}>
           <Image source={UImage.icon_clock} style={{width:ScreenUtil.autowidth(20),height:ScreenUtil.autowidth(20)}} />
           <Text style={{color:"#04025C",marginLeft: ScreenUtil.autowidth(8),marginRight: ScreenUtil.autowidth(16),}}>
             下一轮开抢时间
@@ -342,25 +371,25 @@ class Nodeapplication extends BaseComponent {
           <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:0,y:1}} style={styles.timeBlock}>
             <Text style={styles.timeText}>{this.state.countDown[2]<10?'0'+String(this.state.countDown[2]):this.state.countDown[2]}</Text>
           </LinearGradient>
-        </LinearGradient>
+        </LinearGradient> */}
         {/* 总XXX期文字 */}
-        <View style={{paddingVertical: ScreenUtil.autoheight(20),}}>
+        {/* <View style={{paddingVertical: ScreenUtil.autoheight(20),}}>
           <View style={{flexDirection: 'row', alignItems: 'flex-end',marginBottom: ScreenUtil.autoheight(17)}}>
             <View style={{flex: 1,}}/>
             <Text style={{flex: 1,textAlign:'center',color:"#ffff",fontSize:ScreenUtil.setSpText(21),fontWeight:'bold',}}>{"总" + (this.props.loginUser&&this.props.loginUser.totalIssueNumber?this.props.loginUser.totalIssueNumber:200) + "期"}</Text>
             <Text style={{flex: 1,color:'#FFDB11',fontSize:ScreenUtil.setSpText(14),}}>{this.props.discount==0?"":"(本期"+this.props.discount + "折)"}</Text>
           </View>
-          {/* 第XX赛季、第XX期文字 */}
+          第XX赛季、第XX期文字
           <View style={[styles.sqHorizontal,{flex: 1,paddingHorizontal:ScreenUtil.autowidth(8)}]}>
             <Text style={{flex:1,color:"#ffff",fontSize:ScreenUtil.setSpText(16),textAlign:'center'}}>{this.state.season}</Text>
             <Text style={{flex:1,color:"#ffff",fontSize:ScreenUtil.setSpText(16),textAlign:'center'}}>{this.state.stage}</Text>
           </View>
-        </View>
+        </View> */}
       </View>
     )
   }
 
-  renderCard(item){
+  renderCard(item, index){
     return (
       <View style={[styles.sqCardWrap,{opacity:item.nodeLast==0?0.3:1}]}>
         <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}}>
@@ -375,13 +404,31 @@ class Nodeapplication extends BaseComponent {
               />
             </View>
           }
+          <View style={ styles.guardCard }>
+            <View style={{ width: ScreenUtil.autowidth(113), alignItems: 'center', justifyContent: 'center' }}>
+              <Image source={ index === 0 ? UImage.guard_bronze : index === 1 ? UImage.guard_silver : index === 2 ? UImage.guard_gold : UImage.guard_diamond } style={{ width: ScreenUtil.autowidth(83), height: ScreenUtil.autoheight(90) }} />
+            </View>
+            <View style={{ flex: 1, paddingTop: ScreenUtil.autoheight(21) }}>
+              <View style={ styles.guardText }>
+                <LinearGradient colors={['#FAD961FF','#E2AF00FF']} start={{x:0,y:0}} end={{x:1,y:1}} style={ styles.guardDescription }>
+                  <Text style={{ fontSize: ScreenUtil.setSpText(8), color: '#843500FF' }}>H</Text>
+                </LinearGradient>
+                <Text style={{ fontSize: ScreenUtil.setSpText(15), color: '#fff', marginRight: ScreenUtil.autowidth(5) }}>At least</Text>
+                <Text style={{ fontSize: ScreenUtil.setSpText(38), color: '#fff', marginBottom: ScreenUtil.autoheight(-6), marginRight: ScreenUtil.autowidth(5) }}>{ index === 0 ? 1000 : index === 1 ? 3000 : index === 2 ? 5000 : 10000 }</Text>
+                <Text style={{ fontSize: ScreenUtil.setSpText(15), color: '#fff' }}>HSN</Text>
+              </View>
+              <LinearGradient colors={['#0066E9FF','#00D0FFFF']} start={{x:0,y:0}} end={{x:1,y:0}} style={ styles.guardPurchase }>
+                <TextButton bgColor="transparent" text="Purchase" textColor="#fff" fontSize={ ScreenUtil.setSpText(15) } />
+              </LinearGradient>
+            </View>
+          </View>
           {/* 节点类型+剩余  文字 */}
-          <View style={[styles.sqHorizontal,styles.sqCardHeader,{}]}>
+          {/* <View style={[styles.sqHorizontal,styles.sqCardHeader,{}]}>
             <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(16),fontWeight: 'bold'}}>{item.name}</Text>
             <Text style={{color:'#00D0FF',fontSize:ScreenUtil.setSpText(12)}}>剩余 {item.nodeLast}/{item.nodeTotal}</Text>
-          </View>
+          </View> */}
           {/* 卡片内容 */}
-          <View style={[styles.sqCardBody,{}]}>
+          {/* <View style={[styles.sqCardBody,{}]}>
             <View style={[styles.sqHorizontal,]}>
               <Text style={[styles.sqCardBodyText,{textAlign:'left'}]}>{item.totalReturnUsdt}U</Text>
               <Text style={[styles.sqCardBodyText]}>{item.returnDay}天</Text>
@@ -395,7 +442,7 @@ class Nodeapplication extends BaseComponent {
               <Text style={[styles.sqCardBodyTitle]}>每日返还</Text>
               <Text style={[styles.sqCardBodyTitle,{textAlign:'right'}]}>总回报率</Text>
             </View>
-            {/* 购买按钮那一行 */}
+            购买按钮那一行
             <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center',paddingTop: ScreenUtil.autoheight(20),}}>
               {this.props.discount == 0 ?
                 <View style={[styles.sqHorizontal,{paddingRight: ScreenUtil.autowidth(10)}]}>
@@ -421,7 +468,7 @@ class Nodeapplication extends BaseComponent {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </View> */}
         </LinearGradient>
         {item.nodeLast==0?<View style={styles.cardMask}></View>:<View/>}
       </View>
@@ -433,18 +480,18 @@ class Nodeapplication extends BaseComponent {
       <View style={[styles.container,{backgroundColor: '#191b2a',}]}>
         <ImageBackground source={UImage.jd_bg} style={{width:'100%',height:"100%"}}>
           <FlatList data={this.state.nodeLists}
-                    ListHeaderComponent={this.renderNodeHeader()}
-                    renderItem={({item})=>this.renderCard(item)}
-                    showsVerticalScrollIndicator={false}
-                    keyExtractor={(item ,index) => "index"+index+item}
-                    refreshControl={
-                      <RefreshControl refreshing={this.props.jdRefreshing}
-                                      colors={[UColor.tintColor]}
-                                      onRefresh={()=>this.jdRefresh()}
-                                      tintColor={UColor.tintColor}
-                                      progressBackgroundColor={UColor.startup}
-                      />
-                    }
+            ListHeaderComponent={this.renderNodeHeader()}
+            renderItem={({item, index})=>this.renderCard(item, index)}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item ,index) => "index"+index+item}
+            refreshControl={
+              <RefreshControl refreshing={this.props.jdRefreshing}
+                colors={[UColor.tintColor]}
+                onRefresh={()=>this.jdRefresh()}
+                tintColor={UColor.tintColor}
+                progressBackgroundColor={UColor.startup}
+              />
+            }
           />
         </ImageBackground>
       </View>
@@ -454,6 +501,47 @@ class Nodeapplication extends BaseComponent {
 }
 
 const styles = StyleSheet.create({
+  rule: {
+    width: ScreenUtil.autowidth(70),
+    height: ScreenUtil.autoheight(25),
+    borderTopRightRadius: ScreenUtil.autoheight(25) / 2,
+    borderBottomRightRadius: ScreenUtil.autoheight(25) / 2,
+    backgroundColor: '#fff',
+    position: 'absolute',
+    top: ScreenUtil.autoheight(29),
+    left: 0,
+    zIndex: 999
+  },
+
+  guard: {
+    width: ScreenUtil.autowidth(345),
+    position: 'absolute',
+    bottom: 0,
+    left: ScreenUtil.autowidth(15)
+  },
+  guardTitle: {
+    fontSize: ScreenUtil.setSpText(20),
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: ScreenUtil.autoheight(8)
+  },
+  guardProgress: {
+    width: '100%',
+    height: ScreenUtil.autoheight(36),
+    backgroundColor: 'rgba(25, 27, 42, 0.8)',
+    borderColor: '#FCE731FF',
+    borderWidth: ScreenUtil.autowidth(1),
+    padding: ScreenUtil.autowidth(2),
+    borderRadius: ScreenUtil.autoheight(16),
+    marginBottom: ScreenUtil.autoheight(5)
+  },
+  guardCors: {
+    height: '100%',
+    borderRadius: ScreenUtil.autoheight(14),
+    justifyContent: 'center',
+    alignItems: 'flex-end'
+  },
+
   tradepout: {
     flexDirection:'row',
     justifyContent:'center',
@@ -503,12 +591,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sqCardWrap:{
-    width:ScreenWidth-ScreenUtil.autowidth(30),
-    marginHorizontal: ScreenUtil.autowidth(15),
+    width: ScreenUtil.autowidth(333),
+    marginLeft: ScreenUtil.autowidth(21),
     marginVertical: ScreenUtil.autoheight(5),
     borderRadius: ScreenUtil.autowidth(10),
     overflow: 'hidden',
   },
+
+  guardCard: {
+    height: ScreenUtil.autoheight(125),
+    flexDirection: 'row'
+  },
+  guardText: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    height: ScreenUtil.autoheight(51),
+    marginBottom: ScreenUtil.autoheight(5),
+    paddingBottom: ScreenUtil.autoheight(3)
+  },
+  guardDescription: {
+    width: ScreenUtil.autowidth(16),
+    height: ScreenUtil.autowidth(16),
+    borderRadius: ScreenUtil.autowidth(8),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: ScreenUtil.autowidth(6),
+    marginLeft: ScreenUtil.autowidth(4),
+    marginBottom: ScreenUtil.autoheight(1)
+  },
+  guardPurchase: {
+    width: ScreenUtil.autowidth(197),
+    height: ScreenUtil.autoheight(28),
+    borderRadius: ScreenUtil.autowidth(14)
+  },
+  
   sqCardHeader:{
     backgroundColor:'rgba(0, 0, 0, 0.3)',
     paddingHorizontal:ScreenUtil.autowidth(12),

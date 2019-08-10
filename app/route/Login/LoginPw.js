@@ -146,7 +146,7 @@ class LoginPw extends BaseComponent {
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('Modificating...');
+    EasyShowLD.loadingShow('Modification in progress');
     let resp = await Utils.dispatchActiionData(this, {type:'login/changePwd',
       payload:{
         oldPassword: Utils.encryptedMsg(this.state.usedpassword), 

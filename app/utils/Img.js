@@ -39,6 +39,15 @@ export default {
   //首页图标
   homeBannerBg: require('../img/home/homeBannerBg.png'),
   team_bg: require('../img/home/team_bg.png'),
+  bronze: require('../img/home/bronze.png'),
+  bronze_light: require('../img/home/bronze-light.png'),
+  silver: require('../img/home/silver.png'),
+  silver_light: require('../img/home/silver-light.png'),
+  gold: require('../img/home/gold.png'),
+  gold_light: require('../img/home/gold-light.png'),
+  diamond: require('../img/home/diamond.png'),
+  diamond_light: require('../img/home/diamond-light.png'),
+
 
   //设置图标
   set_bg: require('../img/set/set_bg.png'),
@@ -78,6 +87,11 @@ export default {
   fireworks: require('../img/nodesq/fireworks.png'),
   icon_lock: require('../img/nodesq/lock_icon.png'),
   sad_face: require('../img/nodesq/sad_face.png'),
+
+  guard_bronze: require('../img/nodesq/guard_bronze.png'),
+  guard_silver: require('../img/nodesq/guard_silver.png'),
+  guard_gold: require('../img/nodesq/guard_gold.png'),
+  guard_diamond: require('../img/nodesq/guard_diamond.png'),
  
   notactive: require('../img/public/notactive.png'),
   early: require('../img/public/early.png'),

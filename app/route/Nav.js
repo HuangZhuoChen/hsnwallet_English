@@ -292,7 +292,7 @@ var TabContainer = TabNavigator(
     }
   },
   {
-    initialRouteName: "Settings", // 默认页面组件
+    initialRouteName: "Nodeapplication", // 默认页面组件
     lazy: true,
     tabBarPosition: 'bottom', // 显示在底端，android 默认是显示在页面顶端的
     swipeEnabled: false, // 是否可以左右滑动切换tab

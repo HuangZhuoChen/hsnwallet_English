@@ -138,7 +138,7 @@ class Setting extends BaseComponent {
   //退出登录
   async signout () {
     var th = this;
-    let isOk = await AlertModal.showSync("提示", "您确定要退出登录？", "是", "否",);
+    let isOk = await AlertModal.showSync("Tips", "Are you sure you want to log out?", "Confirm", "Cancel",);
     if(isOk){
       let resp = await Utils.dispatchActiionData(this, {type:'login/logout',payload:{} });
       if(resp){

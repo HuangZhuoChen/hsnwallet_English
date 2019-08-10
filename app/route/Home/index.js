@@ -244,7 +244,7 @@ class Home extends BaseComponent {
             }
           </Carousel>
           {/* 节点黄色区域 */}
-          <TouchableOpacity onPress={()=>this.onNodeDetailed()} style={styles.headlinearout} activeOpacity={0.8}>
+          {/* <TouchableOpacity onPress={()=>this.onNodeDetailed()} style={styles.headlinearout} activeOpacity={0.8}>
             <LinearGradient colors={["#FAF961","#FFD600"]} style={styles.headlinear} >
               {this.props.nodeDate && this.props.nodeDate.map((item, index) => {
                 return (<View key={index} style={{flex: 1, flexDirection: 'row'}}>
@@ -257,7 +257,14 @@ class Home extends BaseComponent {
                 )
               })}
             </LinearGradient>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          {/* 段位图 */}
+          <View style={ styles.duan }>
+            <Image style={ styles.duanImg } source={ UImage.bronze } />
+            <Image style={ styles.duanImg } source={ UImage.silver } />
+            <Image style={ styles.duanImg } source={ UImage.gold_light } />
+            <Image style={ styles.duanImg } source={ UImage.diamond } />
+          </View>
         </View>
         {/* 产出蓝色区域 */}
         <View style={styles.produceout}>
@@ -290,8 +297,9 @@ class Home extends BaseComponent {
               {this.businesButton(styles.tabStyle, this.state.isPersonal, 'isPersonal', 'Protectors Ranking')}  
               {this.businesButton(styles.tabStyle, this.state.isTeam, 'isTeam', 'Team Ranking')}  
             </View>
+            <View style={ styles.titleLine }></View>
 
-            {this.state.isPersonal ?
+            {/* {this.state.isPersonal ?
               <View style={styles.swiperout}>
                 <LinearGradient colors={["rgba(45, 47, 62, 1)",UColor.bgColor,"rgba(45, 47, 62, 1)"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={[styles.teamout,{flexDirection:'row', justifyContent:'space-between'}]}>
                   <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this._changeSeason('neg')})}}>
@@ -307,68 +315,130 @@ class Home extends BaseComponent {
             <LinearGradient colors={["rgba(45, 47, 62, 1)",UColor.bgColor,"rgba(45, 47, 62, 1)"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.teamout}>
               <Text style={styles.teamtext}>总积分排名</Text>
             </LinearGradient>
+            } */}
+            {
+              this.state.isPersonal ?
+                <View style={styles.itemheadtitleout}>
+                  <Text style={[styles.itemheadtitle,{ width: ScreenUtil.autowidth(59) }]}>Ranking</Text>
+                  <Text style={[styles.itemheadtitle,{ width: ScreenUtil.autowidth(113), textAlign: 'center' }]}>Account</Text>
+                  <Text style={[styles.itemheadtitle,{ width: ScreenUtil.autowidth(45), textAlign: 'center' }]}>Deposit</Text>
+                  <Text style={[styles.itemheadtitle,{ width: ScreenUtil.autowidth(100), textAlign: 'right' }]}>HSN Rewards</Text>
+                </View>
+                :
+                <View style={styles.itemheadtitleout}>
+                  <Text style={[styles.itemheadtitle,{ flex: 1, textAlign: 'center' }]}>Ranking</Text>
+                  <Text style={[styles.itemheadtitle,{ flex: 2, textAlign: 'center' }]}>Account</Text>
+                </View>
             }
-            <View style={styles.itemheadtitleout}>
-              <Text style={[styles.itemheadtitle,{width: ScreenUtil.autowidth(46), textAlign: 'center' }]}>排名</Text>
-              <Text style={[styles.itemheadtitle,{flex: 2, textAlign: 'center'}]}>账户</Text>
-              <Text style={[styles.itemheadtitle,{flex: 1, textAlign: 'center'}]}>积分</Text>
-            </View>
           </LinearGradient>
         </View>
       </View>
     )
   }
   // 排名列表(排前10)
-  _renderItem = ({item, index}) => {            
-    return(<LinearGradient colors={(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)? ["#0066E9","#00D0FF"] : ["#4F5162","#1E202C"]} 
-      start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.itemout}>
-      {(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)?
-        <View style={styles.itemleftout}>
-          <Text style={styles.itemlefttext}>我</Text>
-        </View>
-        :
-        <View style={styles.itemleft}/>
-      }
-      <View style={styles.itemright}>
-        <Text style={(item.rankNo==1||item.rankNo==2||item.rankNo==3)?styles.itemrankinga:styles.itemrankingb}>{item.rankNo}</Text>
-        <View style={styles.itemaccountout}>
-          <Image source={!item.partner_level ? UImage.integral_bg : Constants.levelimg[item.partner_level]} style={styles.itemaccountimg}/>
-          {item.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.nick_name}</Text>}
-          {item.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.team_name}</Text>}
-        </View>
-        <Text style={styles.itemintegral} numberOfLines={1}>{item.points}</Text>
-      </View>
-    </LinearGradient>)
+  _renderItem = ({item, index}) => {
+    if (this.state.isPersonal) { // 个人
+        return (
+          <LinearGradient colors={(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)? ["#0066E9","#00D0FF"] : ["#4F5162","#1E202C"]} 
+          start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.itemout}>
+          {(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)?
+            <View style={styles.itemleftout}>
+              <Text style={styles.itemlefttext}>me</Text>
+            </View>
+            :
+            <View style={styles.itemleft}/>
+          }
+          <View style={styles.itemright}>
+            <Text style={(item.rankNo==1||item.rankNo==2||item.rankNo==3)?styles.itemrankinga:styles.itemrankingb}>{item.rankNo}</Text>
+            <View style={[styles.itemaccountout, {paddingLeft: ScreenUtil.autowidth(5)}]}>
+              <Image source={!item.partner_level ? UImage.integral_bg : Constants.levelimg[item.partner_level]} style={[styles.itemaccountimg, {marginHorizontal: ScreenUtil.autowidth(6)}]}/>
+              {item.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.nick_name}</Text>}
+              {item.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.team_name}</Text>}
+            </View>
+            <Text style={[styles.itemintegral, {textAlign: 'left', paddingLeft: ScreenUtil.autowidth(5)}]} numberOfLines={1}>{item.points}</Text>
+            <Text style={[styles.itemintegral, {textAlign: 'center'}]} numberOfLines={1}>{item.points}</Text>
+          </View>
+        </LinearGradient>
+      )
+    } else { // 团队
+      return (
+        <LinearGradient colors={(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)? ["#0066E9","#00D0FF"] : ["#4F5162","#1E202C"]} 
+          start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.itemout}>
+          {(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)?
+            <View style={styles.itemleftout}>
+              <Text style={styles.itemlefttext}>me</Text>
+            </View>
+            :
+            <View style={styles.itemleft}/>
+          }
+          <View style={styles.itemright}>
+            <Text style={(item.rankNo==1||item.rankNo==2||item.rankNo==3)?[styles.itemrankinga, { flex: 1 }]:[styles.itemrankingb, {flex: 1}]}>{item.rankNo}</Text>
+            <View style={styles.itemaccountout}>
+              <Image source={!item.partner_level ? UImage.integral_bg : Constants.levelimg[item.partner_level]} style={styles.itemaccountimg}/>
+              {item.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.nick_name}</Text>}
+              {item.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.team_name}</Text>}
+            </View>
+          </View>
+        </LinearGradient>
+      )
+    }
   }
   // 当排名大于10额外显示自己排名的一行
   _renderFooter = (self) => {
-    return(<View style={styles.footerout}>
-      <LinearGradient colors={["#4F5162","#1E202C"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{width:ScreenWidth-ScreenUtil.autowidth(30)}}>
-        {self && (self.rankNo > 10 || self.rankNo == 0) &&
-        <LinearGradient colors={["#0066E9","#00D0FF"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.footlinear}>
-          <View style={styles.itemleftout}>
-            <Text style={styles.itemlefttext}>我dfswf</Text>
-          </View>
-          <View style={styles.itemright}>
-            <Text style={styles.itemrankingb}>{self.rankNo}</Text>
-            <View style={styles.itemaccountout}>
-              <Image source={!self.partner_level ? UImage.integral_bg : Constants.levelimg[self.partner_level]} style={styles.itemaccountimg}/> 
-              {self.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{self.nick_name}</Text>}
-              {self.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{self.team_name}</Text>}
-            </View>
-            <Text style={styles.itemintegral} numberOfLines={1}>{self.points}</Text>
-          </View>
-        </LinearGradient>}
-        <View style={styles.itemfooter}></View>
-      </LinearGradient>
-    </View>)
+    if (this.state.isPersonal) {
+      return (
+        <View style={styles.footerout}>
+          <LinearGradient colors={["#4F5162","#1E202C"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{width:ScreenWidth-ScreenUtil.autowidth(30)}}>
+            {self && (self.rankNo > 10 || self.rankNo == 0) &&
+            <LinearGradient colors={["#0066E9","#00D0FF"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.footlinear}>
+              <View style={styles.itemleftout}>
+                <Text style={styles.itemlefttext}>me</Text>
+              </View>
+              <View style={styles.itemright}>
+                <Text style={styles.itemrankingb}>{self.rankNo}</Text>
+                <View style={[styles.itemaccountout, {paddingLeft: ScreenUtil.autowidth(5)}]}>
+                  <Image source={!self.partner_level ? UImage.integral_bg : Constants.levelimg[self.partner_level]} style={[styles.itemaccountimg, {marginHorizontal: ScreenUtil.autowidth(6)}]}/> 
+                  {self.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{self.nick_name}</Text>}
+                  {self.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{self.team_name}</Text>}
+                </View>
+                <Text style={[styles.itemintegral, {textAlign: 'left', paddingLeft: ScreenUtil.autowidth(5)}]} numberOfLines={1}>{self.points}</Text>
+                <Text style={[styles.itemintegral, {textAlign: 'center'}]} numberOfLines={1}>{self.points}</Text>
+              </View>
+            </LinearGradient>}
+            <View style={styles.itemfooter}></View>
+          </LinearGradient>
+        </View>
+      )
+    } else {
+      return (
+        <View style={styles.footerout}>
+          <LinearGradient colors={["#4F5162","#1E202C"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{width:ScreenWidth-ScreenUtil.autowidth(30)}}>
+            {self && (self.rankNo > 10 || self.rankNo == 0) &&
+            <LinearGradient colors={["#0066E9","#00D0FF"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.footlinear}>
+              <View style={styles.itemleftout}>
+                <Text style={styles.itemlefttext}>me</Text>
+              </View>
+              <View style={styles.itemright}>
+                <Text style={[styles.itemrankingb, { flex: 1 }]}>{self.rankNo}</Text>
+                <View style={[styles.itemaccountout, { flex: 2 }]}>
+                  <Image source={!self.partner_level ? UImage.integral_bg : Constants.levelimg[self.partner_level]} style={styles.itemaccountimg}/> 
+                  {self.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{self.nick_name}</Text>}
+                  {self.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{self.team_name}</Text>}
+                </View>
+              </View>
+            </LinearGradient>}
+            <View style={styles.itemfooter}></View>
+          </LinearGradient>
+        </View>
+      )
+    }
   }
 
   createEmptyView = () => {
     return(<LinearGradient colors={["#4F5162","#1E202C"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.emptyView}>
       <View style={styles.notimeout}>
         <Image source={UImage.noRecord} style={styles.defectbgimg}/>
-        <Text style={styles.notimetext}>{"暂无排名"}</Text>
+        <Text style={styles.notimetext}>{"No ranking yet"}</Text>
       </View>
     </LinearGradient>)
   }
@@ -448,6 +518,20 @@ const styles = StyleSheet.create({
     fontSize: ScreenUtil.setSpText(24),
   },
 
+  duan: {
+    width: ScreenUtil.autowidth(346),
+    height: ScreenUtil.autoheight(75),
+    position: 'absolute',
+    bottom: 0,
+    left: ScreenUtil.autowidth(15),
+    flexDirection: 'row',
+    borderRadius: ScreenUtil.autowidth(8),
+    overflow: 'hidden'
+  },
+  duanImg: {
+    flex: 1,
+    height: ScreenUtil.autoheight(75)
+  },
 
   outsource: {
     flexDirection: "column", 
@@ -516,7 +600,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems: 'center',
     justifyContent: 'center',
-    height: ScreenUtil.autoheight(50),
+    height: ScreenUtil.autoheight(67),
     width: ScreenWidth-ScreenUtil.autowidth(30),
   },
   tabStyle: {
@@ -527,6 +611,14 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: ScreenUtil.setSpText(16),
+  },
+
+  titleLine: {
+    marginTop: ScreenUtil.autoheight(7),
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)', 
+    borderBottomWidth: ScreenUtil.autoheight(0.5),
+    marginBottom: ScreenUtil.autoheight(26),
+    marginHorizontal: ScreenUtil.autowidth(15)
   },
   
   swiperout: {
@@ -654,7 +746,7 @@ const styles = StyleSheet.create({
   itemaccountout: {
     flex: 2, 
     flexDirection: 'row', 
-    alignItems: 'center', 
+    alignItems: 'center'
   },
   itemaccountimg: { 
     width: ScreenUtil.autowidth(26), 
@@ -670,7 +762,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     color: '#FFFFFF', 
     textAlign: 'right',
-    fontSize: ScreenUtil.setSpText(16),
+    fontSize: ScreenUtil.setSpText(16)
   },
   itemfooter: {
     width: '100%',

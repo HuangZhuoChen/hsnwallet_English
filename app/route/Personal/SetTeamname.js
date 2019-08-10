@@ -53,12 +53,12 @@ class SetTeamname extends BaseComponent {
       EasyToast.show('Team name word count up to 14 characters');
       return;
     }
-    EasyShowLD.loadingShow('Modificating...');
+    EasyShowLD.loadingShow('Modification in progress');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/getsetteamname',payload:{ teamName: this.state.teamname } });
     if(resp){
       EasyShowLD.loadingClose();
       if(resp.code==0){
-        EasyToast.show("Modificate successfully");
+        EasyToast.show("Successful revision");
         Utils.pop(this, 3, true);
       }else{
         EasyToast.show(resp.msg);

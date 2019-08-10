@@ -141,7 +141,7 @@ class ResetTransactionPw extends BaseComponent {
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('Modificating...');
+    EasyShowLD.loadingShow('Modification in progress');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/resetPayPassword',
       payload:{
         oldTradePassword: Utils.encryptedMsg(this.state.usedpassword),
