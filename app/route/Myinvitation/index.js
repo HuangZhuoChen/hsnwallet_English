@@ -277,7 +277,7 @@ class Myinvitation extends BaseComponent{
     return(
       <View style={[styles.invHorizontal,{justifyContent:'flex-end',marginVertical: ScreenUtil.autoheight(5)}]}>
         <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowRadius,{width:ScreenUtil.autowidth(173),flexDirection:'row',justifyContent:'center',alignItems:"center"}]}>
-          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(12)}}>Today's cumulative：</Text>
+          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(12)}}>Today’s Accumulation：</Text>
           <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(20),fontWeight:'bold'}}>{this.state.todayTotal+"U"}</Text>
         </LinearGradient>
       </View>

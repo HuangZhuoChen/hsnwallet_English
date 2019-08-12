@@ -51,6 +51,7 @@ export default {
 
   //设置图标
   set_bg: require('../img/set/set_bg.png'),
+  set_eye: require('../img/set/set_eye.png'),
   set_logo: require('../img/set/set_logo.png'),
   set_logoA: require('../img/set/set_logoA.png'),
   set_logoB: require('../img/set/set_logoB.png'),
