@@ -29,7 +29,8 @@ class Setting extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      
+      arr: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      isEye: true
     };
   }
 
@@ -82,7 +83,7 @@ class Setting extends BaseComponent {
                 <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>HSN</Text>
               </View>
               <Text style={{ fontSize: ScreenUtil.setSpText(35), color: '#fff' }}>≈</Text>
-              <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>50.0000</Text>
+              <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>{ this.state.isEye ? '50.0000' : '******' }</Text>
             </View>
             <View style={ styles.trade }>
               <View style={ styles.withdraw }>
@@ -132,8 +133,44 @@ class Setting extends BaseComponent {
         </LinearGradient>
         <LinearGradient colors={["#4F5162","#1E202C"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={ styles.purchase }>
           <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff', marginBottom: ScreenUtil.autoheight(19) }}>Purchase</Text>
+          <View style={{ marginBottom: ScreenUtil.autoheight(30) }}>
+            <Text style={{ color: '#fff', fontSize: ScreenUtil.setSpText(18), marginBottom: ScreenUtil.autoheight(1) }}>Real-Time Price</Text>
+            <Text style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: ScreenUtil.setSpText(18) }}>HSN   =   0.89    USDT</Text>
+          </View>
           <View>
-
+            <TouchableOpacity style={ styles.usdtDetail }>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <LinearGradient colors={['#F76D1DFF', '#F9D75FFF']} style={{ width: ScreenUtil.autoheight(24), height: ScreenUtil.autoheight(24), borderRadius: ScreenUtil.autoheight(12), justifyContent: 'center', alignItems: 'center', marginRight: ScreenUtil.autowidth(7) }}>
+                  <Text style={{ fontSize: ScreenUtil.setSpText(19), color: '#fff' }}>T</Text>
+                </LinearGradient>
+                <Text style={{ fontSize: ScreenUtil.setSpText(16), color: '#fff' }}>USDT ></Text>
+              </View>
+              <Text style={{ fontSize: ScreenUtil.setSpText(25), color: '#fff' }}>1000</Text>
+            </TouchableOpacity>
+            {/* 虚线 */}
+            <View style={{ flexDirection: 'row', marginVertical: ScreenUtil.autoheight(11), justifyContent: 'space-around' }}>
+              {
+                this.state.arr.map(() => (
+                  <View style={{ width: ScreenUtil.autowidth(7), height: ScreenUtil.autoheight(1), backgroundColor: '#191B2AFF' }}></View>
+                ))
+              }
+            </View>
+            <View style={ styles.usdtDetail }>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <LinearGradient colors={['#00FFC6', '#14D7D9']} style={{ width: ScreenUtil.autoheight(24), height: ScreenUtil.autoheight(24), borderRadius: ScreenUtil.autoheight(12), justifyContent: 'center', alignItems: 'center', marginRight: ScreenUtil.autowidth(7) }}>
+                  <Text style={{ fontSize: ScreenUtil.setSpText(11), color: '#fff', scaleX: 0.8, fontWeight: 'bold' }}>HSN</Text>
+                </LinearGradient>
+                <Text style={{ fontSize: ScreenUtil.setSpText(16), color: 'rgba(255, 255, 255, 0.5)' }}>HSN ></Text>
+              </View>
+              <Text style={{ fontSize: ScreenUtil.setSpText(25), color: 'rgba(255, 255, 255, 0.5)' }}>888</Text>
+            </View>
+            {/* Purchase按钮 */}
+            <View style={ styles.purchaseButton }>
+              <TextButton text="Purchase" textColor="#fff" fontSize={ ScreenUtil.setSpText(13) } shadow={ true } style={{ width: ScreenUtil.autowidth(230), borderRadius: ScreenUtil.autoheight(20) }} />
+            </View>
+            <View style={{ height: ScreenUtil.autoheight(20) }}>
+              <TextButton text="Records(HSN)" textColor="#fff" bgColor="transparent" underline={ true } fontSize={ ScreenUtil.setSpText(15) } style={{ justifyContent: 'flex-start' }} />
+            </View>
           </View>
         </LinearGradient>
       </>
@@ -238,6 +275,17 @@ const styles = StyleSheet.create({
     paddingTop: ScreenUtil.autoheight(24),
     paddingBottom: ScreenUtil.autoheight(30),
     borderRadius: ScreenUtil.autowidth(10)
+  },
+  usdtDetail: {
+    height: ScreenUtil.autoheight(24),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  purchaseButton: {
+    marginVertical: ScreenUtil.autoheight(19),
+    height: ScreenUtil.autoheight(40),
+    alignItems: 'center'
   }
 });
 
