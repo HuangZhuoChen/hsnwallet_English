@@ -49,7 +49,8 @@ import Announcement from './Settings/Announcement';
 import InviteCode from './Settings/InviteCode';  
 import MyNode from './Settings/MyNode';  
 import NodeDetailed from './Settings/NodeDetailed'; 
-import RuleClause from './Settings/RuleClause'; 
+import RuleClause from './Settings/RuleClause';
+import SelfInfo from './Settings/selfInfo'
 
 import Wallet from './Wallet';   
 import AddingInStationContacts from './Wallet/AddingInStationContacts';
@@ -281,7 +282,7 @@ var TabContainer = TabNavigator(
       }
     },
     Settings: { 
-       screen: Settings,
+       screen: SelfInfo,
        navigationOptions : {
         header:null,
         tabBarLabel: 'My Wallet', 
@@ -400,6 +401,9 @@ const Nav = StackNavigator(
     },
     RuleClause: {
       screen: RuleClause
+    },
+    SelfInfo: {
+      screen: SelfInfo
     },
   
     Wallet: {
