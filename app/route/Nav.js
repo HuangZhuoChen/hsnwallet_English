@@ -37,11 +37,13 @@ import Register from './Login/Register';
 
 import Myinvitation from './Myinvitation';
 
-import Nodeapplication from './Nodeapplication';
+import {Nodeapplication} from './Nodeapplication';
+import GamblingAgreement from './Nodeapplication/GamblingAgreement'
 
 import Personal from './Personal';
 import ModifyNicknames from './Personal/ModifyNicknames'; 
-import SetTeamname from './Personal/SetTeamname'; 
+import SetTeamname from './Personal/SetTeamname';
+import Vam from './Personal/Vam'
 
 import Settings from './Settings'; 
 import Aboutus from './Settings/Aboutus'; 
@@ -50,7 +52,10 @@ import InviteCode from './Settings/InviteCode';
 import MyNode from './Settings/MyNode';  
 import NodeDetailed from './Settings/NodeDetailed'; 
 import RuleClause from './Settings/RuleClause';
-import SelfInfo from './Settings/selfInfo'
+import SelfInfo from './Settings/SelfInfo'
+import WdDpRecords from './Settings/WdDpRecords'
+import RefundRecords from './Settings/RefundRecords'
+import PurchaseRecords from './Settings/PurchaseRecords'
 
 import Wallet from './Wallet';   
 import AddingInStationContacts from './Wallet/AddingInStationContacts';
@@ -234,12 +239,14 @@ class Route extends React.Component {
   }
 
   render() {
-    return (<View style={{ flex: 1 }}>
-      <Nav ref="nav" onNavigationStateChange={(prevNav, nav, action) => { this.switchRoute(prevNav, nav, action) }} />
-      <AlertModalView />
-      <AlertModalExView />
-      <CodeModalView />
-    </View>)
+    return (
+      <View style={{ flex: 1 }}>
+        <Nav ref="nav" onNavigationStateChange={(prevNav, nav, action) => { this.switchRoute(prevNav, nav, action) }} />
+        <AlertModalView />
+        <AlertModalExView />
+        <CodeModalView />
+      </View>
+    )
   }
 }
 
@@ -282,10 +289,10 @@ var TabContainer = TabNavigator(
       }
     },
     Settings: { 
-       screen: SelfInfo,
+       screen: Settings,
        navigationOptions : {
         header:null,
-        tabBarLabel: 'My Wallet', 
+        tabBarLabel: 'My Wallet',
         tabBarIcon: ({ focused}) => (
           <Image resizeMode='contain' source={focused ? UImage.tab_4_h : UImage.tab_4} style={{width: ScreenUtil.autowidth(18), height: ScreenUtil.autowidth(18)}}/>
         ),
@@ -380,6 +387,9 @@ const Nav = StackNavigator(
     SetTeamname: {
       screen: SetTeamname
     },
+    Vam: {
+      screen: Vam
+    },
 
     Settings: {
       screen: Settings
@@ -404,6 +414,15 @@ const Nav = StackNavigator(
     },
     SelfInfo: {
       screen: SelfInfo
+    },
+    WdDpRecords: {
+      screen: WdDpRecords
+    },
+    RefundRecords: {
+      screen: RefundRecords
+    },
+    PurchaseRecords: {
+      screen: PurchaseRecords
     },
   
     Wallet: {
@@ -432,6 +451,11 @@ const Nav = StackNavigator(
     },
     NewAddress: {
       screen:NewAddress
+    },
+
+    //对赌协议
+    GamblingAgreement: {
+      screen: GamblingAgreement
     }
   },
   {

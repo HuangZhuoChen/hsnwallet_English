@@ -85,9 +85,13 @@ class LoginPw extends BaseComponent {
     if(this.state.captureState){
       return;
     }
+    console.log({
+      mail: Utils.encryptedMsg(this.props.mail), 
+      type: 'reset', 
+    })
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mobile: Utils.encryptedMsg(this.props.mobile), 
+        mail: Utils.encryptedMsg(this.props.mail), 
         type: 'reset', 
       } 
     });

@@ -39,7 +39,7 @@ class InStationTransfer extends BaseComponent {
       code: '',
 
       uuid: '',
-      capture: '获取验证码',
+      capture: 'phone code',
       captureState: false,
 
       factAmount: 0, //扣手续费后实际到账数量
@@ -59,19 +59,19 @@ class InStationTransfer extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.address==""){
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your cell phone number');
       return;
     }
     if(this.state.amount==""){
-      EasyToast.show('请输入数量');
+      EasyToast.show('Please enter amount');
       return;
     }
     if(this.state.codeImg==""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.password==""){
-      EasyToast.show('请输入交易密码');
+      EasyToast.show('Please enter the transaction password');
       return;
     }
     if(this.state.captureState){
@@ -84,7 +84,7 @@ class InStationTransfer extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully.");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -99,37 +99,37 @@ class InStationTransfer extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"获取验证码", captureState: false});
+        th.setState({capture:"phone code", captureState: false});
       }
     },1000);
   }
 
   regSubmit = () =>{
     if(this.state.address==""){
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your cell phone number');
       return;
     }
     if(this.state.amount==""){
-      EasyToast.show('请输入数量');
+      EasyToast.show('Please enter amount');
       return;
     }
     if(this.state.codeImg==""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.password==""){
-      EasyToast.show('请输入交易密码');
+      EasyToast.show('Please enter the transaction password');
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code.');
       return;
     }
     this.onchangePwd();
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('转账中...');
+    EasyShowLD.loadingShow('Transfer...');
     let resp = await Utils.dispatchActiionData(this, {type:'assets/getInsideTransfer',
       payload:{
         mobile: this.state.address,
@@ -145,7 +145,7 @@ class InStationTransfer extends BaseComponent {
       this.refreshImage();
       EasyShowLD.loadingClose();
       if(resp.code==0){
-        EasyToast.show("已提交，待主网确认");
+        EasyToast.show("Submitted pending confirmation by the main network");
         await Utils.dispatchActiionData(this, {type:'assets/getInouTorder',payload:{coinName: this.state.coinitem.coinName, pageNo: 1, pageSize: 10 } });
         this.props.navigation.goBack();
       }else{
@@ -175,7 +175,7 @@ class InStationTransfer extends BaseComponent {
       }
       if(strAmount>this.state.coinitem.available){
         this.setState({ amount: '',factAmount:0});
-        EasyToast.show('可转账数量不足，请重新输入');
+        EasyToast.show('The amount of transferable funds is insufficient. Please re-enter it.');
         return ;
       }
       let factAmount = strAmount - this.state.coinitem.transferAmmount;
@@ -192,7 +192,7 @@ class InStationTransfer extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('未能获取图形验证码，请检查网络！');
+    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -206,13 +206,13 @@ class InStationTransfer extends BaseComponent {
   render() {
     return (
       <View style={[styles.container,{backgroundColor: UColor.bgColor, }]}>
-        <Header {...this.props} onPressLeft={true} title={"站内转账"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
+        <Header {...this.props} onPressLeft={true} title={"Internal Transfer"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
         <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "padding" : null} style={{flex: 1}}>
           <ScrollView  keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)} style={{flex: 1,}}>
               <View style={styles.linearout}>
                 <View style={styles.itemout}>
-                  <Text style={styles.texttitle}>HSN账号</Text>
+                  <Text style={styles.texttitle}>HSN Account</Text>
                   <View style={styles.outsource}>
                     <TextInput ref={(ref) => this._raddress = ref}
                       autoFocus={false}
@@ -220,7 +220,7 @@ class InStationTransfer extends BaseComponent {
                       selectionColor={UColor.tintColor}
                       placeholderTextColor={UColor.lightgray}
                       style={styles.textinpt}
-                      placeholder={"请输入手机号"}
+                      placeholder={"phone number"}
                       underlineColorAndroid="transparent"
                       returnKeyType="next"
                       keyboardType="phone-pad"
@@ -233,7 +233,7 @@ class InStationTransfer extends BaseComponent {
                 </View>
 
                 <View style={styles.itemout}>
-                  <Text style={styles.texttitle}>转账数量</Text>
+                  <Text style={styles.texttitle}>Transferring Amount</Text>
                   <View style={styles.outsource}>
                     <TextInput  ref={ (ref) => this._ramount = ref} 
                       autoFocus={false} 
@@ -255,19 +255,19 @@ class InStationTransfer extends BaseComponent {
                 </View>
 
                 <View style={styles.footerout}>
-                  <Text style={{color: '#FFFFFF',fontSize: ScreenUtil.setSpText(11),lineHeight: ScreenUtil.autoheight(26),}}>{"实际到账数量：" + this.state.factAmount + " " + this.state.coinitem.coinName}</Text>
+                  <Text style={{color: '#FFFFFF',fontSize: ScreenUtil.setSpText(11),lineHeight: ScreenUtil.autoheight(26),}}>{"Actual amount received：" + this.state.factAmount + " " + this.state.coinitem.coinName}</Text>
                   <View style={styles.footpoho}>
                     <Text style={styles.footertext}>
-                      可转账数量：
+                      Available amount to transfer：
                       <Text style={styles.actualtext}>{Utils.formatCNY(this.props.balanceAvailable)}</Text>
                       {" " + this.state.coinitem.coinName}
                     </Text>
-                    <Text style={styles.footertext}>{"每笔转账手续费：" + this.state.coinitem.transferAmmount + " " + this.state.coinitem.coinName}</Text>
+                    <Text style={styles.footertext}>{"Withdrawal fee：" + this.state.coinitem.transferAmmount + " " + this.state.coinitem.coinName}</Text>
                   </View>
                 </View>
 
                 <View style={[styles.itemout,{paddingTop: ScreenUtil.autoheight(35),}]}>
-                  <Text style={styles.texttitle}>图形验证码</Text>
+                  <Text style={styles.texttitle}>Graphic Code</Text>
                   <View style={styles.outsource}>
                     <TextInput ref={(ref) => this._rcodeImg = ref} 
                       autoFocus={false}
@@ -275,7 +275,7 @@ class InStationTransfer extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}    
                       selectionColor={UColor.tintColor} 
                       style={styles.textinpt}
-                      placeholder={"请输入图形验证码"}
+                      placeholder={"Graphic Code"}
                       underlineColorAndroid="transparent" 
                       returnKeyType="next" 
                       maxLength={Constants.Code_Moide} 
@@ -289,7 +289,7 @@ class InStationTransfer extends BaseComponent {
                 </View>
 
                 <View style={styles.itemout}>
-                  <Text style={styles.texttitle}>交易密码</Text>
+                  <Text style={styles.texttitle}>Trading Password</Text>
                   <View style={styles.outsource}>
                     <TextInput ref={(ref) => this._rpass = ref} 
                       autoFocus={false}
@@ -297,7 +297,7 @@ class InStationTransfer extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}    
                       selectionColor={UColor.tintColor} 
                       style={styles.textinpt}
-                      placeholder={"请输入交易密码"}
+                      placeholder={"Password"}
                       underlineColorAndroid="transparent" 
                       secureTextEntry={true} 
                       returnKeyType="next" 
@@ -308,7 +308,7 @@ class InStationTransfer extends BaseComponent {
                 </View>
 
                 <View style={styles.itemout}>
-                  <Text style={styles.texttitle}>验证码</Text>
+                  <Text style={styles.texttitle}>code</Text>
                   <View style={styles.outsource}>
                     <TextInput ref={(ref) => this._rcode = ref} 
                       autoFocus={false}
@@ -316,7 +316,7 @@ class InStationTransfer extends BaseComponent {
                       placeholderTextColor={UColor.lightgray}    
                       selectionColor={UColor.tintColor} 
                       style={styles.textinpt}
-                      placeholder={"请输入短信验证码"}
+                      placeholder={"email code"}
                       underlineColorAndroid="transparent" 
                       keyboardType="phone-pad" 
                       returnKeyType="go" 
@@ -333,7 +333,7 @@ class InStationTransfer extends BaseComponent {
                 </View>
               </View>
               <View style={styles.referout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} shadow={true} textColor='#FFFFFF' text={"立即转账"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} shadow={true} textColor='#FFFFFF' text={"Confirm"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
               </View>
             </TouchableOpacity>
           </ScrollView>

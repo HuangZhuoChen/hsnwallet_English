@@ -54,6 +54,7 @@ export const nodeList = rootaddr + '/app/node/nodelist'; //节点信息列表
 export const nodeIssue = rootaddr + '/app/issue/latest'; //节点信息
 export const tradePass = rootaddr + '/app/user/buy/node'; //购买节点
 export const decisionjudge = rootaddr + '/app/user/buy/decision/judge'; //节点是否可购买
+export const purchaseProgress = rootaddr + '/app/RateOfOgress'; //购买进度查询
 
 //我的邀请
 export const friendList = rootaddr + '/app/user/invite/friend/list'; //我的好友

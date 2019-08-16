@@ -171,7 +171,7 @@ class Setting extends BaseComponent {
                 </View>
               </TouchableOpacity>
               {/* 我的钱包、我的节点、我的邀请海报、安全中心 */}
-              <View style={{flex: 3, justifyContent: 'center',}}>
+              <View style={{flex: 3, justifyContent: 'center'}}>
                 {this._renderListItem()}
               </View>
 

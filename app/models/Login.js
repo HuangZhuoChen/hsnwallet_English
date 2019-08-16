@@ -17,12 +17,12 @@ export default {
       if (loginUser) {
         const uid = yield call(store.get, 'uid');
         const token = yield call(store.get, 'token');
-        const mobile = yield call(store.get, 'mobile');
+        const mail = yield call(store.get, 'mail');
         Constants.uid = uid;
         Constants.token = token;
-        Constants.mobile = mobile;
+        Constants.mail = mail;
         Constants.loginUser = loginUser;
-        yield put({ type: 'update', payload: { loginUser, uid, token, mobile } });
+        yield put({ type: 'update', payload: { loginUser, uid, token, mail } });
       }
       if (callback) callback(loginUser);
     },
@@ -64,13 +64,15 @@ export default {
           const loginUser = resp.data;
           yield call(store.save, 'uid', loginUser.uid);
           yield call(store.save, 'token', loginUser.token);
-          yield call(store.save, 'mobile', loginUser.mobile);
+          // yield call(store.save, 'mobile', loginUser.mobile);
+          yield call(store.save, 'mail', loginUser.mail);
           yield call(store.save, 'loginUser', loginUser);
           Constants.uid = loginUser.uid;
           Constants.token = loginUser.token;
-          Constants.mobile = loginUser.mobile;
+          Constants.mail = loginUser.mail;
           Constants.loginUser = loginUser;
-          yield put({ type: 'update', payload: { loginUser, uid: loginUser.uid, token: loginUser.token, mobile: loginUser.mobile } });
+          yield put({ type: 'update', payload: { loginUser, uid: loginUser.uid, token: loginUser.token, mail: loginUser.mail } });
+          console.log(132465)
           // yield put({ type: 'personal/isSetPayPassword', payload: {} }) 
           // yield put({ type: 'personal/getfindRealNameInfo', payload: {} })
         }
@@ -112,12 +114,12 @@ export default {
         // yield put({ type: 'AssetsModel/clearAssetInfo', payload: {} });
         yield call(store.delete, 'uid');
         yield call(store.delete, 'token');
-        yield call(store.delete, 'mobile');
+        yield call(store.delete, 'mail');
         yield call(store.delete, 'loginUser');
-        yield put({ type: 'update', payload: { loginUser: null, uid: null, token: null, mobile: null, } });
+        yield put({ type: 'update', payload: { loginUser: null, uid: null, token: null, mail: null, } });
         Constants.uid = null;
         Constants.token = null;
-        Constants.mobile = null;
+        Constants.mail = null;
         Constants.loginUser = null;
         if (callback) callback(true);
       } catch (error) {
@@ -132,7 +134,7 @@ export default {
         if (resp.code == 0) {
           const loginUser = resp.data;
           yield call(store.save, 'loginUser', loginUser);
-          yield put({ type: 'update', payload: { loginUser, uid: loginUser.uid, token: loginUser.token, mobile: loginUser.mobile } });
+          yield put({ type: 'update', payload: { loginUser, uid: loginUser.uid, token: loginUser.token, mail: loginUser.mail } });
         }else{
           if(resp.code == -66){
             yield put({ type: 'logout', payload: {} })

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, StyleSheet, ScrollView, View, Text, Image, Linking, TouchableOpacity, Animated, Easing, FlatList, RefreshControl, Clipboard, ImageBackground} from 'react-native';
+import { Dimensions, StyleSheet, ScrollView, View, Text, Image, Linking, TouchableOpacity, Animated, Easing, FlatList, RefreshControl, Clipboard, ImageBackground, TextInput} from 'react-native';
 import UImage from '../../utils/Img'
 import UColor from '../../utils/Colors'
 import Constants from '../../utils/Constants'
@@ -8,6 +8,9 @@ import ScreenUtil from '../../utils/ScreenUtil'
 import LinearGradient from 'react-native-linear-gradient'
 import BaseComponent from "../../components/BaseComponent";
 import TextButton from '../../components/TextButton'
+import {kapimg} from '../../utils/Api'
+import {EasyToast} from '../../components/Toast'
+import {AlertModal} from '../../components/modals/AlertModal'
 import {Utils} from '../../utils/Utils'
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
@@ -19,28 +22,30 @@ class Setting extends BaseComponent {
     super(props);
     this.state = {
       arr: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      isEye: true
+      isEye: true,
+      usdtAmount: '1000',
+      usdtInput: true,
+      hsnAmount: '',
+      hsnInput: true,
+      usdtTohsn: 0.89,
+      hsnInit: true,
+
+      // 测试
+      tradePassword:"",
+      code: "",
+      uuid: "",
+      hsnBalance: this.props.loginUser.balanceHsnAvailable,
+      usdtBalance: this.props.loginUser.balanceUsdtAvailable
     };
   }
 
   //组件加载完成
   async componentDidMount() {
+    this.setState({
+      hsnAmount: (+this.state.usdtAmount * this.state.usdtTohsn) + ''
+    })
     //获用户信息
-    await Utils.dispatchActiionData(this, {type:'login/findUserInfo',payload:{ } });
-    //获取实名认证信息
-    await Utils.dispatchActiionData(this, {type:'personal/getfindauthentication',payload:{ } });
-    //是否设置了交易密码
-    await Utils.dispatchActiionData(this, {type:'personal/isSetTradePassword',payload:{ } });
-  }
-
-  //关于我们
-  goAboutus () {
-    try {
-      const { navigate } = this.props.navigation;
-      navigate('Aboutus', {});
-    } catch (error) {
-      
-    }
+    await Utils.dispatchActiionData(this, {type:'login/findUserInfo',payload:{ } })
   }
 
   showEye() {
@@ -48,7 +53,7 @@ class Setting extends BaseComponent {
       isEye: !this.state.isEye
     })
   }
-
+  // 个人信息
   goSelfInfo() {
     try {
       const { navigate } = this.props.navigation;
@@ -57,8 +62,73 @@ class Setting extends BaseComponent {
       
     }
   }
+  // 体现
+  goWithdraw() {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('Withdraw', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
+  // 站内转账
+  goInterTransfer() {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('InStationTransfer', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
+  // 充值
+  goDeposit() {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('Recharge', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
+  // 充提记录
+  goWithdrawDepositRecords() {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('WdDpRecords', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
+  // 返还记录
+  goRefundRecords() {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('RefundRecords', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
+  // 闪购记录
+  goPurchaseRecords() {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('PurchaseRecords', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
+  keepFourDecimal(num) {
+    num = parseFloat(num)
+    let m = Math.pow(10, 4)
+    return Math.floor(num * m) / m
+  }
 
   _renderHeader = () => {
+    // if (this.state.hsnInit) {
+    //   this.setState({
+    //     hsnAmount: parseFloat((+this.state.usdtAmount * this.state.usdtTohsn).toFixed(4)) + '',
+    //     hsnInit: false
+    //   })
+    // }
     return (
       <>
         <LinearGradient colors={["#4F5162", "#1E202C"]} style={ styles.walletInfo }>
@@ -76,7 +146,7 @@ class Setting extends BaseComponent {
             </View>
             <View style={ styles.avatar }>
               <Image source={ UImage.integral_bg } style={{ width: ScreenUtil.autowidth(60), height: ScreenUtil.autowidth(60) }} />
-              <Text style={{ fontSize: ScreenUtil.setSpText(15), color: '#fff' }}>beyond</Text>
+              <Text style={{ fontSize: ScreenUtil.setSpText(15), color: '#fff' }}>{this.props.loginUser ? this.props.loginUser.nickName: ''}</Text>
             </View>
           </View>
           {/* HSN栏 */}
@@ -84,29 +154,27 @@ class Setting extends BaseComponent {
             <View style={ styles.hsnTransform }>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={{ width: ScreenUtil.autowidth(135), flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
-                  <LinearGradient colors={['#00FFC6FF', '#14D7D9FF']} style={[styles.hsnIcon]}>
-                    <Text style={{ fontSize: ScreenUtil.setSpText(17), color: '#fff', scaleX: 0.8, fontWeight: 'bold' }}>HSN</Text>
-                  </LinearGradient>
+                  <Image source={UImage.icon_hsn} style={styles.hsnIcon} />
                   <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>HSN</Text>
                 </View>
                 <Text style={{ fontSize: ScreenUtil.setSpText(35), color: '#fff' }}>≈</Text>
               </View>
-              <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>{ this.state.isEye ? '50.0000' : '******' }</Text>
+              <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>{ this.state.isEye ? this.keepFourDecimal(this.state.hsnBalance) : '******' }</Text>
             </View>
             <View style={ styles.trade }>
               <View style={ styles.withdraw }>
-                <TextButton text='Withdraw' bgColor='#FFFFFF80' fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
+                <TextButton onPress={ () => { this.noDoublePress(() => { this.goWithdraw() }) } } text='Withdraw' bgColor='#FFFFFF80' fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
               </View>
               <View style={ styles.interTransfer}>
-                <TextButton text='Internal Transfer' shadow={ true } fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
+                <TextButton onPress={ () => { this.noDoublePress(() => { this.goInterTransfer() }) } } text='Internal Transfer' shadow={ true } fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
               </View>
             </View>
             <View style={ styles.record }>
               <View style={{ height: ScreenUtil.autoheight(19), marginBottom: ScreenUtil.autoheight(11) }}>
-                <TextButton fontSize={ ScreenUtil.setSpText(14) } textColor="#fff" bgColor="transparent" text="Withdrawal and Deposit Records(HSN)" underline={ true } style={{ justifyContent: 'flex-start' }} />
+                <TextButton onPress={ () => { this.noDoublePress(() => { this.goWithdrawDepositRecords() }) } } fontSize={ ScreenUtil.setSpText(14) } textColor="#fff" bgColor="transparent" text="Withdrawal and Deposit Records(HSN)" underline={ true } style={{ justifyContent: 'flex-start' }} />
               </View>
               <View style={{ height: ScreenUtil.autoheight(19) }}>
-                <TextButton fontSize={ ScreenUtil.setSpText(14) } textColor="#fff" bgColor="transparent" text="Refund Records(HSN)" underline={ true } style={{ justifyContent: 'flex-start' }} />
+                <TextButton onPress={ () => { this.noDoublePress(() => { this.goRefundRecords() }) } } fontSize={ ScreenUtil.setSpText(14) } textColor="#fff" bgColor="transparent" text="Refund Records(HSN)" underline={ true } style={{ justifyContent: 'flex-start' }} />
               </View>
             </View>
           </View>
@@ -117,29 +185,27 @@ class Setting extends BaseComponent {
             <View style={ styles.hsnTransform }>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={{ width: ScreenUtil.autowidth(135), flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
-                  <LinearGradient colors={['#F76D1DFF', '#F9D75FFF']} style={[styles.hsnIcon]}>
-                    <Text style={{ fontSize: ScreenUtil.setSpText(26), color: '#fff', scaleX: 0.8, fontWeight: 'bold' }}>T</Text>
-                  </LinearGradient>
+                  <Image source={UImage.icon_usdt} style={styles.hsnIcon} />
                   <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>USDT</Text>
                 </View>
                 <Text style={{ fontSize: ScreenUtil.setSpText(35), color: '#fff' }}>≈</Text>
               </View>
-              <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>{ this.state.isEye ? '66.0000' : '******' }</Text>
+              <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>{ this.state.isEye ? this.keepFourDecimal(this.state.usdtBalance) : '******' }</Text>
             </View>
             <View style={ styles.trade }>
               <View style={ styles.usdtWithdraw }>
-                <TextButton text='Withdraw' bgColor='#FFFFFF80' fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
+                <TextButton onPress={ () => { this.noDoublePress(() => { this.goWithdraw() }) } } text='Withdraw' bgColor='#FFFFFF80' fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
+              </View>
+              <View style={ styles.usdtWithdraw }>
+                <TextButton onPress={ () => { this.noDoublePress(() => { this.goDeposit() }) } } text='Deposit' shadow={ true } fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
               </View>
               <View style={ styles.usdtWithdraw}>
-                <TextButton text='Deposit' shadow={ true } fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
-              </View>
-              <View style={ styles.usdtWithdraw}>
-                <TextButton text='Inter-Transfer' bgColor='#FFFFFF80' fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
+                <TextButton onPress={ () => { this.noDoublePress(() => { this.goInterTransfer() }) } }text='Inter-Transfer' bgColor='#FFFFFF80' fontSize={ ScreenUtil.setSpText(13) } textColor='#fff' style={{ borderRadius: ScreenUtil.autoheight(20) }} />
               </View>
             </View>
             <View style={ styles.record }>
               <View style={{ height: ScreenUtil.autoheight(19) }}>
-                <TextButton fontSize={ ScreenUtil.setSpText(14) } textColor="#fff" bgColor="transparent" text="Withdrawal and Deposit Records(HSN)" underline={ true } style={{ justifyContent: 'flex-start' }} />
+                <TextButton onPress={ () => { this.noDoublePress(() => { this.goWithdrawDepositRecords() }) } } fontSize={ ScreenUtil.setSpText(14) } textColor="#fff" bgColor="transparent" text="Withdrawal and Deposit Records(HSN)" underline={ true } style={{ justifyContent: 'flex-start' }} />
               </View>
             </View>
           </View>
@@ -148,46 +214,166 @@ class Setting extends BaseComponent {
           <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff', marginBottom: ScreenUtil.autoheight(19) }}>Purchase</Text>
           <View style={{ marginBottom: ScreenUtil.autoheight(30) }}>
             <Text style={{ color: '#fff', fontSize: ScreenUtil.setSpText(18), marginBottom: ScreenUtil.autoheight(1) }}>Real-Time Price</Text>
-            <Text style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: ScreenUtil.setSpText(18) }}>HSN   =   0.89    USDT</Text>
+            <Text style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: ScreenUtil.setSpText(18) }}>HSN   =   {this.state.usdtTohsn}    USDT</Text>
           </View>
-          <View>
-            <TouchableOpacity style={ styles.usdtDetail }>
+          <View style={{backgroundColor: 'transparent'}}>
+            <View style={ styles.usdtDetail }>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <LinearGradient colors={['#F76D1DFF', '#F9D75FFF']} style={{ width: ScreenUtil.autoheight(24), height: ScreenUtil.autoheight(24), borderRadius: ScreenUtil.autoheight(12), justifyContent: 'center', alignItems: 'center', marginRight: ScreenUtil.autowidth(7) }}>
-                  <Text style={{ fontSize: ScreenUtil.setSpText(19), color: '#fff' }}>T</Text>
-                </LinearGradient>
+                <Image source={UImage.icon_usdt} style={styles.purchaseIcon} />
                 <Text style={{ fontSize: ScreenUtil.setSpText(16), color: '#fff' }}>USDT ></Text>
               </View>
-              <Text style={{ fontSize: ScreenUtil.setSpText(25), color: '#fff' }}>1000</Text>
-            </TouchableOpacity>
+              <TextInput defaultValue={this.state.usdtAmount} keyboardType='numeric' onChangeText={(text) => {this.onUsdtChange(text)}} onFocus={() => {this.banInput(true)}} style={{flex: 1, textAlign: 'right', fontSize: ScreenUtil.setSpText(25), color: '#fff', height: ScreenUtil.autoheight(34), padding: 0}} />
+            </View>
             {/* 虚线 */}
             <View style={{ flexDirection: 'row', marginVertical: ScreenUtil.autoheight(11), justifyContent: 'space-around' }}>
               {
-                this.state.arr.map(() => (
-                  <View style={{ width: ScreenUtil.autowidth(7), height: ScreenUtil.autoheight(1), backgroundColor: '#191B2AFF' }}></View>
+                this.state.arr.map((val, i) => (
+                  <View key={i} style={{ width: ScreenUtil.autowidth(7), height: ScreenUtil.autoheight(1), backgroundColor: '#191B2AFF' }}></View>
                 ))
               }
             </View>
             <View style={ styles.usdtDetail }>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <LinearGradient colors={['#00FFC6', '#14D7D9']} style={{ width: ScreenUtil.autoheight(24), height: ScreenUtil.autoheight(24), borderRadius: ScreenUtil.autoheight(12), justifyContent: 'center', alignItems: 'center', marginRight: ScreenUtil.autowidth(7) }}>
-                  <Text style={{ fontSize: ScreenUtil.setSpText(11), color: '#fff', scaleX: 0.8, fontWeight: 'bold' }}>HSN</Text>
-                </LinearGradient>
-                <Text style={{ fontSize: ScreenUtil.setSpText(16), color: 'rgba(255, 255, 255, 0.5)' }}>HSN ></Text>
+                <Image source={UImage.icon_hsn} style={styles.purchaseIcon} />
+                <Text style={{ fontSize: ScreenUtil.setSpText(16), color: '#fff' }}>HSN ></Text>
               </View>
-              <Text style={{ fontSize: ScreenUtil.setSpText(25), color: 'rgba(255, 255, 255, 0.5)' }}>888</Text>
+              <TextInput defaultValue={this.state.hsnAmount} keyboardType='numeric' onChangeText={(text) => {this.onHsnChange(text)}} onFocus={() => {this.banInput(false)}} style={{flex: 1, textAlign: 'right', fontSize: ScreenUtil.setSpText(25), color: '#fff', height: ScreenUtil.autoheight(34), padding: 0}} />
             </View>
             {/* Purchase按钮 */}
             <View style={ styles.purchaseButton }>
-              <TextButton text="Purchase" textColor="#fff" fontSize={ ScreenUtil.setSpText(13) } shadow={ true } style={{ width: ScreenUtil.autowidth(230), borderRadius: ScreenUtil.autoheight(20) }} />
+              <TextButton onPress={() => {this.exchange()}} text="Purchase" textColor="#fff" fontSize={ ScreenUtil.setSpText(13) } shadow={ true } style={{ width: ScreenUtil.autowidth(230), borderRadius: ScreenUtil.autoheight(20) }} />
             </View>
             <View style={{ height: ScreenUtil.autoheight(20) }}>
-              <TextButton text="Records(HSN)" textColor="#fff" bgColor="transparent" underline={ true } fontSize={ ScreenUtil.setSpText(15) } style={{ justifyContent: 'flex-start' }} />
+              <TextButton onPress={ () => { this.noDoublePress(() => { this.goPurchaseRecords() }) } } text="Records(HSN)" textColor="#fff" bgColor="transparent" underline={ true } fontSize={ ScreenUtil.setSpText(15) } style={{ justifyContent: 'flex-start' }} />
             </View>
           </View>
         </LinearGradient>
       </>
     )
+  }
+  // USDT、HSN输入框聚焦后禁止另外一个输入框的onTextChange，手动计算赋值
+  banInput(bool) {
+    this.state.usdtInput = bool
+    this.state.hsnInput = !bool
+  }
+  onUsdtChange(val) {
+    if (this.state.usdtInput) {
+      if (val !== '') {
+        this.setState({
+          usdtAmount: Number(parseFloat(val).toFixed(4)) + ''
+        }, () => {
+          this.setState({
+            hsnAmount: Number((this.state.usdtAmount * this.state.usdtTohsn).toFixed(4)) + ''
+          })
+        })
+      } else {
+        this.setState({
+          usdtAmount: ''
+        }, () => {
+          this.setState({
+            hsnAmount: ''
+          })
+        })
+      }
+    }
+  }
+  onHsnChange(val) {
+    if (this.state.hsnInput) {
+      if (val !== '') {
+        this.setState({
+          hsnAmount: Number(parseFloat(val).toFixed(4)) + ''
+        }, () => {
+          this.setState({
+            usdtAmount: Number((parseFloat(this.state.hsnAmount) / this.state.usdtTohsn).toFixed(4)) + ''
+          })
+        })
+      } else {
+        this.setState({
+          hsnAmount: ''
+        }, () => {
+          this.setState({
+            usdtAmount: ''
+          })
+        })
+      }
+    }
+  }
+  async exchange() {
+    try {
+      if (!this.state.usdtAmount) {
+        EasyToast.show('Please enter the number of transactions')
+        return
+      }
+      this.refreshImage()
+      let con = (
+        <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120), height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528}} source={UImage.confirm_bg}>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: ScreenUtil.autoheight(18)}}>
+            <Text style={{fontSize: ScreenUtil.setSpText(19), color: '#fff', marginBottom: ScreenUtil.setSpText(5)}}>You will change</Text>
+            <Text style={{fontSize: ScreenUtil.setSpText(19), color: '#fff'}}>{this.state.usdtAmount} USDT for {this.state.hsnAmount} HSN</Text>
+          </View>
+        </ImageBackground>
+      )
+      let isAuth = await AlertModal.showSync('Confirmation of orders', con, 'Confirm', 'Cancel', true, false, false)
+      if (isAuth) {
+        this.tradePassword()
+      }
+    } catch (error) {
+
+    }
+  }
+  async tradePassword() {
+    try {
+      let _this = this;
+      let con = 
+      <View>
+        <View style={styles.tradepout}>
+          <Image style={styles.tradepwimg} source={UImage.icon_lock} />
+        </View>
+        <View style={{flexDirection:"column",paddingHorizontal: ScreenUtil.autowidth(10),}}>
+          <TextInput autoFocus={true} placeholder={"transaction password"} placeholderTextColor="#999"
+            secureTextEntry={true} defaultValue={this.state.tradePassword} maxLength={Constants.PWD_MAX_LENGTH} style={styles.textinpt}
+            onChangeText={(tradePassword) => this.setState({tradePassword})} selectionColor={"#6DA0F8"} 
+            underlineColorAndroid="transparent" returnKeyType="next"
+          />
+          <TextInput autoFocus={false} placeholder={"Graphic Verification Code"} placeholderTextColor="#999"  
+            secureTextEntry={true}  defaultValue={this.state.code} maxLength={5} style={styles.textinpt} 
+            onChangeText={(code) => this.setState({code})} selectionColor={"#6DA0F8"} 
+            underlineColorAndroid="transparent" returnKeyType="go"    
+          />
+          <View style={{flexDirection:"row",alignItems:"space-between", paddingTop: ScreenUtil.autoheight(10)}}>
+            <Image onError={(e)=>{this.loaderror()}} style={{width:(ScreenWidth-ScreenUtil.autowidth(120))/2, height:ScreenUtil.autowidth(40), marginRight:ScreenUtil.autowidth(10),}} 
+              source={{uri: Constants.defaultrootaddr + kapimg + "?uuid=" + this.state.uuid}} />
+            <TouchableOpacity onPress={()=>{this.refreshImage()}} style={{flexDirection:"row", alignItems: 'center', justifyContent:"center",}}>
+              <Text style={{color: '#888888', fontSize: ScreenUtil.setSpText(10),}}>Invisibility?</Text>
+              <Text style={{color: '#0DA3DF', fontSize: ScreenUtil.setSpText(10),}}>Refresh</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>;
+      let isAuth = await AlertModal.showSync(null,con,"Confirm","Cancel" ,false,()=>{
+        if(_this.state.tradePassword == "" ){
+          EasyToast.show("Please enter the transaction password");
+          return false;
+        }else if(this.state.code == ""){
+          EasyToast.show("Please enter the Graphic Verification Code");
+          return false;
+        }else {
+          return true;
+        }
+      });
+      if(isAuth){
+        this.checkTradePassword(item);
+      }else{
+        this.setState({tradePassword: "", code: ""})
+      }
+    } catch (error) {
+
+    }
+  }
+  async refreshImage () {
+    this.setState({
+      uuid: Math.ceil(Math.random()*10000000000)
+    })
   }
 
   async onRefresh() {
@@ -257,11 +443,10 @@ const styles = StyleSheet.create({
     height: ScreenUtil.autowidth(35)
   },
   hsnIcon: {
-    width: ScreenUtil.autowidth(35),
-    height: ScreenUtil.autowidth(35),
+    width: ScreenUtil.autoheight(35),
+    height: ScreenUtil.autoheight(35),
+    backgroundColor: '#fff',
     borderRadius: ScreenUtil.autowidth(35) / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginRight: ScreenUtil.autowidth(5)
   },
   trade: {
@@ -299,11 +484,40 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
+  purchaseIcon: {
+    width: ScreenUtil.autoheight(24),
+    height: ScreenUtil.autoheight(24),
+    backgroundColor: '#fff',
+    borderRadius: ScreenUtil.autowidth(24) / 2,
+    marginRight: ScreenUtil.autowidth(7)  
+  },
   purchaseButton: {
     marginVertical: ScreenUtil.autoheight(19),
     height: ScreenUtil.autoheight(40),
     alignItems: 'center'
-  }
+  },
+
+  // 交易密码
+  tradepout: {
+    flexDirection:'row',
+    justifyContent:'center',
+    marginVertical: ScreenUtil.autoheight(16)
+  },
+  tradepwimg: {
+    width: ScreenUtil.autowidth(34),
+    height:ScreenUtil.autoheight(47),
+    paddingVertical:ScreenUtil.autoheight(10),
+  },
+  textinpt: {
+    width: '100%',
+    color: "#1A1A1A",
+    opacity: 0.8,
+    fontSize: ScreenUtil.setSpText(18),
+    paddingVertical: ScreenUtil.autoheight(10),
+    paddingHorizontal: ScreenUtil.autowidth(10),
+    borderBottomColor: "#D9D9D9",
+    borderBottomWidth: ScreenUtil.autowidth(1),
+  },
 });
 
 export default Setting;

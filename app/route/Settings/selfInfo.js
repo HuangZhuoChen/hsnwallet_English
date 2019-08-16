@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux'
 import { Dimensions, StyleSheet, ScrollView, View, Text, Image, Linking, TouchableOpacity, Animated, Easing, FlatList, Clipboard, ImageBackground} from 'react-native';
 import UImage from '../../utils/Img'
@@ -36,17 +36,20 @@ class SelfInfo extends BaseComponent {
       
     }
     this.config = [
-      {itemHeight: ScreenUtil.autoheight(49), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "My Wallet", onPress: this.goMyWallet.bind(this)},
+      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+      disable: false, nameColor: '#FFFFFF', name: "Information", onPress: this.goPerson.bind(this)},
 
-      {itemHeight: ScreenUtil.autoheight(49), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "My Node",  onPress: this.goMyNode.bind(this) },
+      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+      disable: false, nameColor: '#FFFFFF', name: "Security",  onPress: this.goSafety.bind(this) },
 
-      {itemHeight: ScreenUtil.autoheight(49), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "My invitation Poster", onPress: this.goInvitecode.bind(this) },
+      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+      disable: false, nameColor: '#FFFFFF', name: "Announcement", onPress: this.goAnnouncement.bind(this) },
       
-      {itemHeight: ScreenUtil.autoheight(49), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "Security", onPress: this.goSafety.bind(this) },
+      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+      disable: false, nameColor: '#FFFFFF', name: "Rules", onPress: this.goRuleClause.bind(this) },
+
+      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+        disable: false, nameColor: '#FFFFFF', name: "About Us", onPress: this.goAboutus.bind(this) },
     ];
   }
 
@@ -59,36 +62,15 @@ class SelfInfo extends BaseComponent {
     //是否设置了交易密码
     await Utils.dispatchActiionData(this, {type:'personal/isSetTradePassword',payload:{ } });
   }
-  // 我的钱包
-  goMyWallet() {
+  // 个人信息
+  goPerson () {
     try {
       const { navigate } = this.props.navigation;
-      navigate('Wallet', {});
+      navigate('Personal', {});
     } catch (error) {
       
     }
   }
-
-  //我的节点
-  goMyNode () {
-    try {
-      const { navigate } = this.props.navigation;
-      navigate('MyNode', {});
-    } catch (error) {
-      
-    }
-  }
-
-  //我的邀请
-  goInvitecode () {
-    try {
-      const { navigate } = this.props.navigation;
-      navigate('InviteCode', {});
-    } catch (error) {
-      
-    }
-  }
-
   //安全中心
   goSafety () {
     try {
@@ -98,7 +80,6 @@ class SelfInfo extends BaseComponent {
       
     }
   }
-
   //公告中心
   goAnnouncement () {
     try {
@@ -108,24 +89,55 @@ class SelfInfo extends BaseComponent {
       
     }
   }
+  //规则说明
+  goRuleClause () {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('RuleClause', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
+  //关于我们
+  goAboutus () {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('Aboutus', {});
+    } catch (error) {
+      
+    }
+  }
+
+  //退出登录
+  async signout () {
+    var th = this;
+    let isOk = await AlertModal.showSync("Tips", "Are you sure you want to log out?", "Confirm", "Cancel",);
+    if(isOk){
+      let resp = await Utils.dispatchActiionData(this, {type:'login/logout',payload:{} });
+      if(resp){
+        NavigationUtil.reset(th.props.navigation, 'Login');
+        AnalyticsUtil.onEvent('Sign_out');
+      }
+    }
+  }
 
   _renderHeader = () => {
     return (
-      <>
+      <View style={ styles.container }>
         <Header {...this.props} onPressLeft={true} title={""} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
         <LinearGradient colors={["#4F5162", "#1E202C"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1.5 }} style={ styles.person }>
           <Image source={ UImage.integral_bg } style={{ width: ScreenUtil.autoheight(60), height: ScreenUtil.autoheight(60) }} />
           <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff', marginVertical: ScreenUtil.autoheight(11) }}>Nick Name：cisay</Text>
           <Text style={{ fontSize: ScreenUtil.setSpText(15), color: '#fff' }}>Email : 8976127328@qq.com</Text>
-          <View style={{ height: ScreenUtil.autoheight(250), justifyContent: 'center' }}>
-            {this._renderListItem()}
+          <View style={{ justifyContent: 'center', marginTop: ScreenUtil.autoheight(10) }}>
+            { this._renderListItem() }
           </View>
           <Image source={UImage.set_logo} style={styles.footerBg}/>
         </LinearGradient>
-        <View style={{ height: ScreenUtil.autoheight(45), alignItems: 'center', marginTop: ScreenUtil.autoheight(35) }}>
-          <TextButton shadow={ true } text="Sign Out" style={{ width: ScreenUtil.autowidth(230), borderRadius: ScreenUtil.autoheight(45) / 2 }} />
+        <View style={{ height: ScreenUtil.autoheight(45), alignItems: 'center', marginTop: ScreenUtil.autoheight(35), marginBottom: ScreenUtil.autoheight(79) }}>
+          <TextButton onPress={ () => { this.noDoublePress(() => this.signout()) } } shadow={ true } text="Sign Out" textColor="#fff" style={{ width: ScreenUtil.autowidth(230), borderRadius: ScreenUtil.autoheight(45) / 2 }} />
         </View>
-      </>
+      </View>
     )
   }
 
@@ -137,14 +149,12 @@ class SelfInfo extends BaseComponent {
 
   render() {
     return (
-      <View style={ styles.container }>
-        <FlatList
-          style={{ flex: 1 }}
-          ListHeaderComponent={this._renderHeader()}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item ,index) => "index"+index+item}
-        />
-      </View>
+      <FlatList
+        style={{ flex: 1 }}
+        ListHeaderComponent={this._renderHeader()}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item ,index) => "index" + index + item}
+      />
     )
   }
 }
@@ -158,10 +168,9 @@ const styles = StyleSheet.create({
   },
   person: {
     width: ScreenUtil.autowidth(340),
-    height: ScreenUtil.autoheight(340),
     borderRadius: ScreenUtil.autowidth(10),
     paddingTop: ScreenUtil.autoheight(30),
-    paddingBottom: ScreenUtil.autoheight(160),
+    paddingBottom: ScreenUtil.autoheight(60),
     paddingHorizontal: ScreenUtil.autowidth(25)
   },
 

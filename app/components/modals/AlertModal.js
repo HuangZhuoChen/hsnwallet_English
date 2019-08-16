@@ -1,10 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import {Dimensions,StyleSheet,Animated,Text,TouchableWithoutFeedback,View,Image,TouchableOpacity,ScrollView} from 'react-native';
 import UImage from '../../utils/Img'
 import ScreenUtil from '../../utils/ScreenUtil';
 import TextButton from '../TextButton';
 import Constants from '../../utils/Constants';
 import LinearGradient from 'react-native-linear-gradient'
+import {Gamble} from '../../route/Nodeapplication'
 
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
@@ -20,23 +22,24 @@ export class AlertModal {
     delete this.map["AlertModal"];
   }
 
-  static show(title,content,ok,cancel,showatmosphere,callback) {
-    this.map["AlertModal"].show(title,content,ok,cancel,showatmosphere,callback);
+  static isUpdate(content) {
+    this.map["AlertModal"].update(content)
   }
 
-  //窗口同步显示
-  static async showSync(title,content,ok,cancel,showatmosphere,verif) {
-    let pthis =this; 
+  static show(title,content,ok,cancel,showatmosphere,verif,callback) {
+    this.map["AlertModal"].show(title,content,ok,cancel,showatmosphere,verif,callback,agree);
+  }
+
+  //窗口同步显示 -- agree表示是否显示对赌协议栏
+  static async showSync(title,content,ok,cancel,showatmosphere,verif,agree) {
+    let pthis =this;
     var p = new Promise(function (resolve, reject) {
       pthis.map["AlertModal"].show(title,content,ok,cancel,showatmosphere,verif,(ret) => {
         resolve(ret);
-      });     
+      },agree);     
     });
     return p;
   }
-
-
-
 }
 
 AlertModal.map = {};
@@ -47,7 +50,11 @@ export class AlertModalView extends React.Component {
       showatmosphere: false,
       modalVisible: false,
       mask: new Animated.Value(0),
-      alert: new Animated.Value(0)
+      alert: new Animated.Value(0),
+      
+      // 测试
+      checked: true,
+      ifAgree: false
     };
 
     constructor(props) {
@@ -55,7 +62,13 @@ export class AlertModalView extends React.Component {
       AlertModal.bind(this);
     }
 
-    show = (title,content,ok,cancel,showatmosphere,verif,callback) =>{
+    update = content => {
+      this.setState({
+        content
+      })
+    }
+
+    show = (title,content,ok,cancel,showatmosphere,verif,callback,agree) =>{
       if(this.isShow||this.state.modalVisible){
         this.state.mask.stopAnimation();
         this.state.alert.stopAnimation();
@@ -66,7 +79,7 @@ export class AlertModalView extends React.Component {
       window.currentDialog = this;
       this.AlertModalCallback = callback;
       this.AlertVerif = verif?verif:null;
-      this.setState({title:title,content:content,ok:ok,cancel:cancel,showatmosphere: showatmosphere,modalVisible:true});
+      this.setState({title:title,content:content,ok:ok,cancel:cancel,showatmosphere: showatmosphere,modalVisible:true,ifAgree:agree});
       Animated.parallel([
         Animated.timing(this.state.mask,{toValue:0.6,duration:100}),
         Animated.timing(this.state.alert,{toValue:1,duration:50})
@@ -106,6 +119,18 @@ export class AlertModalView extends React.Component {
       this.AlertModalCallback && this.AlertModalCallback(true);
     }
 
+    goGamblingAgree() {
+      Gamble.goGamble()
+      this.setState({
+        modalVisible: false
+      })
+    }
+    agree() {
+      this.setState({
+        checked: !this.state.checked
+      })
+    }
+
     render() {
         return (
           this.state.modalVisible && <View style={styles.continer}>
@@ -114,12 +139,21 @@ export class AlertModalView extends React.Component {
                 <Animated.View style={[styles.mask,{opacity:this.state.mask}]}></Animated.View>
                 <View style={[styles.alertContent,Constants.dappHorizontalScreenFlag?{paddingHorizontal:ScreenUtil.screenHeith*3/10}:{padding:ScreenUtil.autowidth(40)}]}>
                   <Animated.View style={[styles.alert,{opacity:this.state.alert}]}>
-                    <TouchableOpacity activeOpacity={1} >
+                    <TouchableOpacity activeOpacity={1}>
                       {this.state.title && <Text style={styles.title}>{this.state.title}</Text>}
                       <View style={styles.ctx}>
                         <ScrollView showsVerticalScrollIndicator={false}>
                           {(typeof(this.state.content)=='string')?<Text style={styles.contentext}>{this.state.content?this.state.content:""}</Text>:this.state.content}
                         </ScrollView>
+                      </View>
+                      <View style={{flexDirection: 'row', justifyContent: 'center', display: this.state.ifAgree ? 'flex' : 'none'}}>
+                        <TouchableOpacity onPress={() => {this.agree()}} style={{marginRight: ScreenUtil.autowidth(8), paddingTop: ScreenUtil.autoheight(2)}}>
+                          <Image source={this.state.checked ? UImage.onAgree : UImage.offAgree} style={{width: ScreenUtil.autowidth(10), height: ScreenUtil.autowidth(10)}} />
+                        </TouchableOpacity>
+                        <Text style={{color: '#181B29', fontSize: ScreenUtil.setSpText(10)}}>Participate In The</Text>
+                        <TouchableOpacity onPress={() => {this.goGamblingAgree()}}>
+                          <Text style={{color: '#2394F8', fontSize: ScreenUtil.setSpText(10)}}>《Valuation Adjustment Mechanism》</Text>
+                        </TouchableOpacity>
                       </View>
                       {this.state.cancel && 
                         <LinearGradient colors={['#4F5162','#1E202C']}  start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.bottom}>
@@ -143,7 +177,11 @@ export class AlertModalView extends React.Component {
                         </LinearGradient>
                       }
                     </TouchableOpacity>
-                    {this.state.showatmosphere && <Image source={UImage.atmosphere} style={styles.footpoho} resizeMode='contain'/>}
+                    {this.state.showatmosphere &&
+                      <View style={styles.footpoho} pointerEvents='none'>
+                        <Image source={UImage.atmosphere} style={{width: ScreenWidth-ScreenUtil.autowidth(58), height: (ScreenWidth-ScreenUtil.autowidth(58)) * 0.871,}} resizeMode='contain'/>
+                      </View>
+                    }
                   </Animated.View>
                 </View>
               </View>
@@ -207,7 +245,7 @@ const styles = StyleSheet.create({
     margin:ScreenUtil.autowidth(10)
   },
   ctx:{
-    marginBottom:ScreenUtil.autoheight(10),
+    marginBottom:ScreenUtil.autoheight(0),
     marginHorizontal:ScreenUtil.autowidth(20),
     maxHeight: ScreenHeight/3*2,
   },
@@ -229,9 +267,9 @@ const styles = StyleSheet.create({
   footpoho: {
     position: 'absolute',
     left: -ScreenUtil.autowidth(10), 
-    bottom: ScreenUtil.autoheight(60),
+    bottom: ScreenUtil.autoheight(50),
     zIndex: 999,
     width: ScreenWidth-ScreenUtil.autowidth(58), 
-    height: (ScreenWidth-ScreenUtil.autowidth(58)) * 0.871,
+    height: (ScreenWidth-ScreenUtil.autowidth(58)) * 0.871
   },
 });

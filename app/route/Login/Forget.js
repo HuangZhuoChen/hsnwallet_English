@@ -71,10 +71,6 @@ class Forget extends BaseComponent {
       EasyToast.show('Please enter your email number');
       return;
     }
-    if(this.state.phone.length!=11){
-      EasyToast.show('请输入11位手机号');
-      return;
-    }
     if(this.state.codeImg == ""){
       EasyToast.show('Please enter the Graphic Verification Code');
       return;
@@ -84,7 +80,7 @@ class Forget extends BaseComponent {
     }
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mobile: Utils.encryptedMsg(this.state.phone), 
+        mail: Utils.encryptedMsg(this.state.phone), 
         type: 'forget', 
       } 
     });
@@ -112,10 +108,6 @@ class Forget extends BaseComponent {
   regSubmit = () =>{
     if(this.state.phone==""){
       EasyToast.show('Please enter your email number');
-      return;
-    }
-    if(this.state.phone.length!=11){
-      EasyToast.show('请输入11位手机号');
       return;
     }
     if(this.state.codeImg == ""){
@@ -146,7 +138,7 @@ class Forget extends BaseComponent {
     EasyShowLD.loadingShow('Resetting...');
     let resp = await Utils.dispatchActiionData(this, {type:'login/forgetPassword',
       payload:{
-        mobile: Utils.encryptedMsg(this.state.phone), 
+        mail: Utils.encryptedMsg(this.state.phone), 
         code: this.state.code, 
         password: Utils.encryptedMsg(this.state.password), 
         confirmPassword: Utils.encryptedMsg(this.state.passwordConfirm),
@@ -199,10 +191,9 @@ class Forget extends BaseComponent {
                   value={this.state.phone}
                   returnKeyType="next"
                   keyboardType="phone-pad"
-                  onFocus={()=>{this.setState({phoneSize:32,phonePlaceholder:''})}}
+                  onFocus={()=>{this.setState({phoneSize:30,phonePlaceholder:''})}}
                   onBlur={()=>{this.state.phone?"":this.setState({phoneSize:16,phonePlaceholder:'Input Email Code'})}}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.phoneSize),}]}
-                  maxLength={11}
                   placeholder={this.state.phonePlaceholder}
                   underlineColorAndroid="transparent"
                   selectionColor={UColor.tintColor}
@@ -214,7 +205,7 @@ class Forget extends BaseComponent {
                   <TextInput ref={(ref) => this._lcodeImg = ref} 
                     returnKeyType="next"
                     autoFocus={false}
-                    onFocus={()=>{ this.setState({codeImgSize:32,codeImgPlaceholder:''})}} 
+                    onFocus={()=>{ this.setState({codeImgSize:30,codeImgPlaceholder:''})}} 
                     onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'Input Graphic Code'})}}
                     value={this.state.codeImg} 
                     placeholder={this.state.codeImgPlaceholder}
@@ -234,7 +225,7 @@ class Forget extends BaseComponent {
                 <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                   <TextInput ref={(ref) => this._lcode = ref}
                     autoFocus={false}
-                    onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
+                    onFocus={()=>{this.setState({codeSize:30,codePlaceholder:''})}}
                     onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Input Verification Code'}) }}
                     value={this.state.code}
                     returnKeyType="next"
@@ -258,7 +249,7 @@ class Forget extends BaseComponent {
                   value={this.state.password}
                   returnKeyType="go"
                   autoFocus={false}
-                  onFocus={()=>{ this.setState({passwordSize:32,passwordPlaceholder:''})}}
+                  onFocus={()=>{ this.setState({passwordSize:30,passwordPlaceholder:''})}}
                   onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'Password'})}}
                   selectionColor={UColor.tintColor}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize)}]}
@@ -274,7 +265,7 @@ class Forget extends BaseComponent {
                   value={this.state.passwordConfirm}
                   returnKeyType="go"
                   autoFocus={false}
-                  onFocus={()=>{this.setState({passwordConfirmSize:32,passwordConfirmPlaceholder:''})}}
+                  onFocus={()=>{this.setState({passwordConfirmSize:30,passwordConfirmPlaceholder:''})}}
                   onBlur={()=>{this.state.passwordConfirm?"":this.setState({passwordConfirmSize:16,passwordConfirmPlaceholder:'Confirm Password'})}}
                   editable={true}
                   selectionColor={UColor.tintColor}

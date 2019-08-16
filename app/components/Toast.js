@@ -14,8 +14,8 @@ export class EasyToast {
     delete this.map["toast"];
   }
 
-  static show(text,duration, callback) {
-    this.map["toast"].show(text,duration, callback);
+  static show(text, duration, callback) {
+    this.map["toast"].show(text, duration, callback);
   }
 
   static dismis() {

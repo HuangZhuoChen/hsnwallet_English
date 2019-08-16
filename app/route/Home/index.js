@@ -19,7 +19,7 @@ import LinearGradient from 'react-native-linear-gradient'
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 
-@connect(({ Nodeapplication, market, loading }) => ({ ...Nodeapplication, ...market, marketRefreshing: loading.effects['market/getSeasonRank']}))
+@connect(({ login, Nodeapplication, market, loading }) => ({ ...login, ...Nodeapplication, ...market, marketRefreshing: loading.effects['market/getSeasonRank']}))
 class Home extends BaseComponent {
 
   constructor(props) {
@@ -34,7 +34,10 @@ class Home extends BaseComponent {
       currentSeason:0,
       triggerReset:1,
       countDownHome:[0,0,0],
-      counter:""
+      counter:"",
+
+      // 守护者等级
+      grade: this.props.loginUser.protectorMasterNode
     };
   }
 
@@ -50,27 +53,27 @@ class Home extends BaseComponent {
 
   async onRefresh () {
     //我的节点信息
-    await Utils.dispatchActiionData(this, {type:'Nodeapplication/getMyNode',payload:{} });
-    //个人挖矿产出
-    await Utils.dispatchActiionData(this, {type:'market/getMiningInfo',payload:{} });
+    // await Utils.dispatchActiionData(this, {type:'Nodeapplication/getMyNode',payload:{} });
+    // //个人挖矿产出
+    // await Utils.dispatchActiionData(this, {type:'market/getMiningInfo',payload:{} });
     //获取赛季
-    await this._onGetLatest();
+    // await this._onGetLatest();
 
     await this.setState({isPersonal: true, isTeam: false,});
     
     await this.onSeasonRefresh(this.state.currentSeason+1);
     //计算倒计时
-    const timeReg = new RegExp(/([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])/);
-    let nowTime = Constants.nowDate.match(timeReg)[0].split(":");
-    let nowTimeNum = parseInt(nowTime[0])*3600+parseInt(nowTime[1])*60+parseInt(nowTime[2]);
-    let remain;
-    if(nowTimeNum<43200){
-      remain = 43200 - nowTimeNum;
-    }else if(nowTimeNum<86400){
-      remain = 86400 - nowTimeNum + 43200;
-    }
-    clearInterval(this.state.counter);
-    remain>0?this.setCountDown(remain):this.setState({countDownHome:[0,0,0]});
+    // const timeReg = new RegExp(/([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])/);
+    // let nowTime = Constants.nowDate.match(timeReg)[0].split(":");
+    // let nowTimeNum = parseInt(nowTime[0])*3600+parseInt(nowTime[1])*60+parseInt(nowTime[2]);
+    // let remain;
+    // if(nowTimeNum<43200){
+    //   remain = 43200 - nowTimeNum;
+    // }else if(nowTimeNum<86400){
+    //   remain = 86400 - nowTimeNum + 43200;
+    // }
+    // clearInterval(this.state.counter);
+    // remain>0?this.setCountDown(remain):this.setState({countDownHome:[0,0,0]});
   }
 
   //倒计时函数
@@ -225,6 +228,7 @@ class Home extends BaseComponent {
   }
   // 顶部倒计时到排名账户积分标题栏（不包括列表）
   _renderHeader = () => {
+    console.log(this.state.grade)
     return(
       <View style={styles.itemheadout}>
         <View style={styles.headerout}>
@@ -236,34 +240,19 @@ class Home extends BaseComponent {
           <Carousel autoplay autoplayTimeout={5000} loop index={0} pageSize={ScreenWidth}
             pageIndicatorContainerStyle={{bottom: 0.18*ScreenWidth, zIndex: 999}}
             pageIndicatorStyle={{backgroundColor: 'rgba(255, 255, 255, 0.8)', }}
-            activePageIndicatorStyle={{backgroundColor:'#FFFFFF', }}>
+            activePageIndicatorStyle={{backgroundColor:'#FFFFFF'}}>
             {!this.props.homeBanner ? 
               this.state.homeBanner.map((image, index) => this.renderPage(image, index))
               : 
               this.props.homeBanner.map((image, index) => this.renderPage(image, index))
             }
           </Carousel>
-          {/* 节点黄色区域 */}
-          {/* <TouchableOpacity onPress={()=>this.onNodeDetailed()} style={styles.headlinearout} activeOpacity={0.8}>
-            <LinearGradient colors={["#FAF961","#FFD600"]} style={styles.headlinear} >
-              {this.props.nodeDate && this.props.nodeDate.map((item, index) => {
-                return (<View key={index} style={{flex: 1, flexDirection: 'row'}}>
-                  {item.nodeId != 1 && <View style={styles.dividingline}/>}
-                  <View style={styles.headrowout}>
-                    <Text style={styles.headrowtitle}>{item.node_name}</Text>
-                    <Text style={styles.headrowtext}>{item.count}</Text>
-                  </View>
-                </View>
-                )
-              })}
-            </LinearGradient>
-          </TouchableOpacity> */}
           {/* 段位图 */}
           <View style={ styles.duan }>
-            <Image style={ styles.duanImg } source={ UImage.bronze } />
-            <Image style={ styles.duanImg } source={ UImage.silver } />
-            <Image style={ styles.duanImg } source={ UImage.gold_light } />
-            <Image style={ styles.duanImg } source={ UImage.diamond } />
+            <Image style={styles.duanImg} source={this.state.grade === 'bronze' ? UImage.bronze_light : UImage.bronze} />
+            <Image style={styles.duanImg} source={this.state.grade === 'silver' ? UImage.silver_light : UImage.silver} />
+            <Image style={styles.duanImg} source={this.state.grade === 'gold' ? UImage.gold_light : UImage.gold} />
+            <Image style={styles.duanImg} source={this.state.grade === 'diamond' ? UImage.diamond_light : UImage.diamond} />
           </View>
         </View>
         {/* 产出蓝色区域 */}
@@ -319,15 +308,15 @@ class Home extends BaseComponent {
             {
               this.state.isPersonal ?
                 <View style={styles.itemheadtitleout}>
-                  <Text style={[styles.itemheadtitle,{ width: ScreenUtil.autowidth(59) }]}>Ranking</Text>
-                  <Text style={[styles.itemheadtitle,{ width: ScreenUtil.autowidth(113), textAlign: 'center' }]}>Account</Text>
-                  <Text style={[styles.itemheadtitle,{ width: ScreenUtil.autowidth(45), textAlign: 'center' }]}>Deposit</Text>
-                  <Text style={[styles.itemheadtitle,{ width: ScreenUtil.autowidth(100), textAlign: 'right' }]}>HSN Rewards</Text>
+                  <Text style={[styles.itemheadtitle, {flex: 49, textAlign: 'center'}]}>Ranking</Text>
+                  <Text style={[styles.itemheadtitle, {flex: 123, textAlign: 'center'}]}>Account</Text>
+                  <Text style={[styles.itemheadtitle, {flex: 67}]}>Deposit</Text>
+                  <Text style={[styles.itemheadtitle, {flex: 78, textAlign: 'right'}]}>HSN Rewards</Text>
                 </View>
                 :
                 <View style={styles.itemheadtitleout}>
-                  <Text style={[styles.itemheadtitle,{ flex: 1, textAlign: 'center' }]}>Ranking</Text>
-                  <Text style={[styles.itemheadtitle,{ flex: 2, textAlign: 'center' }]}>Account</Text>
+                  <Text style={[styles.itemheadtitle, {flex: 1, textAlign: 'center'}]}>Ranking</Text>
+                  <Text style={[styles.itemheadtitle, {flex: 2, textAlign: 'center'}]}>Account</Text>
                 </View>
             }
           </LinearGradient>
@@ -349,14 +338,14 @@ class Home extends BaseComponent {
             <View style={styles.itemleft}/>
           }
           <View style={styles.itemright}>
-            <Text style={(item.rankNo==1||item.rankNo==2||item.rankNo==3)?styles.itemrankinga:styles.itemrankingb}>{item.rankNo}</Text>
-            <View style={[styles.itemaccountout, {paddingLeft: ScreenUtil.autowidth(5)}]}>
+            <Text style={(item.rankNo==1||item.rankNo==2||item.rankNo==3)?[styles.itemrankinga, {flex: 49, textAlign: 'center'}]:[styles.itemrankingb, {flex: 49, textAlign: 'center'}]}>{item.rankNo}</Text>
+            <View style={[styles.itemaccountout, {flex: 123}]}>
               <Image source={!item.partner_level ? UImage.integral_bg : Constants.levelimg[item.partner_level]} style={[styles.itemaccountimg, {marginHorizontal: ScreenUtil.autowidth(6)}]}/>
-              {item.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.nick_name}</Text>}
-              {item.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.team_name}</Text>}
+              {item.nick_name && <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1} ellipsizeMode="tail">{item.nick_name}</Text>}
+              {item.team_name && <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1} ellipsizeMode="tail">{item.team_name}</Text>}
             </View>
-            <Text style={[styles.itemintegral, {textAlign: 'left', paddingLeft: ScreenUtil.autowidth(5)}]} numberOfLines={1}>{item.points}</Text>
-            <Text style={[styles.itemintegral, {textAlign: 'center'}]} numberOfLines={1}>{item.points}</Text>
+            <Text style={[styles.itemintegral, {flex: 67, textAlign: 'left', paddingLeft: ScreenUtil.autowidth(10)}]} numberOfLines={1}>{item.points}</Text>
+            <Text style={[styles.itemintegral, {flex: 78, textAlign: 'right'}]} numberOfLines={1}>{item.points}</Text>
           </View>
         </LinearGradient>
       )
@@ -395,14 +384,14 @@ class Home extends BaseComponent {
                 <Text style={styles.itemlefttext}>me</Text>
               </View>
               <View style={styles.itemright}>
-                <Text style={styles.itemrankingb}>{self.rankNo}</Text>
-                <View style={[styles.itemaccountout, {paddingLeft: ScreenUtil.autowidth(5)}]}>
+                <Text style={[styles.itemrankingb, {flex: 49}]}>{self.rankNo}</Text>
+                <View style={[styles.itemaccountout, {flex: 123}]}>
                   <Image source={!self.partner_level ? UImage.integral_bg : Constants.levelimg[self.partner_level]} style={[styles.itemaccountimg, {marginHorizontal: ScreenUtil.autowidth(6)}]}/> 
-                  {self.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{self.nick_name}</Text>}
-                  {self.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{self.team_name}</Text>}
+                  {self.nick_name && <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1}>{self.nick_name}</Text>}
+                  {self.team_name && <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1}>{self.team_name}</Text>}
                 </View>
-                <Text style={[styles.itemintegral, {textAlign: 'left', paddingLeft: ScreenUtil.autowidth(5)}]} numberOfLines={1}>{self.points}</Text>
-                <Text style={[styles.itemintegral, {textAlign: 'center'}]} numberOfLines={1}>{self.points}</Text>
+                <Text style={[styles.itemintegral, {flex: 67, textAlign: 'left'}]} numberOfLines={1}>{self.points}</Text>
+                <Text style={[styles.itemintegral, {flex: 78, textAlign: 'right'}]} numberOfLines={1}>{self.points}</Text>
               </View>
             </LinearGradient>}
             <View style={styles.itemfooter}></View>

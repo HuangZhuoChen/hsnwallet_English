@@ -53,7 +53,7 @@ class ModifyNicknames extends BaseComponent {
       EasyToast.show('The maximum number of nickname words is 14 characters');
       return;
     }
-    EasyShowLD.loadingShow('Modification in progress');
+    EasyShowLD.loadingShow('Modificating');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/getsetnickname',payload:{ nickName: this.state.nickname } });
     if(resp){
       EasyShowLD.loadingClose();

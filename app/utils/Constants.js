@@ -5,8 +5,8 @@ Constants = {
   token:null,
   uid:null,
   rootaddr:'',
-  defaultrootaddr:'https://api.wallet.hsn.link/api',
-  //defaultrootaddr:'http://192.168.1.32:8888/api',
+  // defaultrootaddr:'https://api.wallet.hsn.link/api',
+  defaultrootaddr:'http://172.38.2.221:8888/api',
   Code_Moide: 8, //邀请码最大长度
   PWD_MIN_LENGTH:6,  //密码最小长度
   PWD_MAX_LENGTH:12, //密码最大长度

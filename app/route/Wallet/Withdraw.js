@@ -36,26 +36,26 @@ class Withdraw extends BaseComponent {
 
       address: '',
       addressSize: 16,
-      addressPlaceholder: "提币地址",
+      addressPlaceholder: "Address",
 
       amount: '',
       amountSize: 16,
-      amountPlaceholder: "请输入数量",
+      amountPlaceholder: "Amount",
 
       password: '',
       passwordSize: 16,
-      passwordPlaceholder: "请输入密码",
+      passwordPlaceholder: "Password",
 
       codeImg: "",
       codeImgSize: 16,
-      codeImgPlaceholder:"请输入图形验证码",
+      codeImgPlaceholder:"Graphic Code",
 
       code:"",
       codeSize:16,
-      codePlaceholder:"请输入验证码",
+      codePlaceholder:"verification code",
 
       uuid: '',
-      capture:'获取验证码',
+      capture:'verification code',
       captureState: false,
 
       factAmount: 0, //扣手续费后实际到账数量
@@ -78,7 +78,7 @@ class Withdraw extends BaseComponent {
   async onSetTradePW () {
     const { navigate } = this.props.navigation;
     if(!this.props.SetTradePW){
-      let isPay =  await AlertModal.showSync("温馨提示","未设置交易密码，请立即设置","去设置","取消",);
+      let isPay =  await AlertModal.showSync("Tips","No transaction password is set, please set it immediately","Set","Cancel",);
       if(isPay){
         navigate('SetTransactionPw', {});
       }
@@ -115,31 +115,31 @@ class Withdraw extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.address==""){
-      EasyToast.show('请输入提币地址');
+      EasyToast.show('Please enter the withdrawal address');
       return;
     }
     if(this.state.amount==""){
-      EasyToast.show('请输入数量');
+      EasyToast.show('Please enter amount');
       return;
     }
     if(this.state.coinitem.coinName == "USDT" && this.state.amount < this.state.min_usdt_withdrawable){
-      EasyToast.show('最小提币数量为10');
+      EasyToast.show('Minimum withdrawal amount is 10');
       return;
     }
     if(this.state.coinitem.coinName == "HSN" && this.state.amount < this.state.min_hsn_withdrawable){
-      EasyToast.show('最小提币数量为30');
+      EasyToast.show('Minimum withdrawal amount is 30');
       return;
     }
     if(this.state.password==""){
-      EasyToast.show('请输入密码');
+      EasyToast.show('Please input a password');
       return;
     }
     if(this.state.password.length < Constants.PWD_MIN_LENGTH){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     if(this.state.codeImg==""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.captureState){
@@ -152,7 +152,7 @@ class Withdraw extends BaseComponent {
       } 
     });
     if(resp){
-      EasyToast.show("验证码已发送，请注意查收");
+      EasyToast.show("Verification code has been sent. Please check it carefully.");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -167,49 +167,49 @@ class Withdraw extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"获取验证码", captureState: false});
+        th.setState({capture:"verification code", captureState: false});
       }
     },1000);
   }
 
   regSubmit = () =>{
     if(this.state.address==""){
-      EasyToast.show('请输入提币地址');
+      EasyToast.show('Please enter the withdrawal address');
       return;
     }
     if(this.state.amount==""){
-      EasyToast.show('请输入数量');
+      EasyToast.show('Please enter amount');
       return;
     }
     if(this.state.coinitem.coinName == "USDT" && this.state.amount < this.state.min_usdt_withdrawable){
-      EasyToast.show('最小提币数量为10');
+      EasyToast.show('Minimum withdrawal amount is 10');
       return;
     }
     if(this.state.coinitem.coinName == "HSN" && this.state.amount < this.state.min_hsn_withdrawable){
-      EasyToast.show('最小提币数量为30');
+      EasyToast.show('Minimum withdrawal amount is 30');
       return;
     }
     if(this.state.password==""){
-      EasyToast.show('请输入密码');
+      EasyToast.show('Please input a password');
       return;
     }
     if(this.state.password.length < Constants.PWD_MIN_LENGTH){
-      EasyToast.show('密码长度至少6位,请重输');
+      EasyToast.show('Password length at least 6 bits, please retry');
       return;
     }
     if(this.state.codeImg==""){
-      EasyToast.show('请输入图形验证码');
+      EasyToast.show('Please enter the Graphic Verification Code');
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('请输入验证码');
+      EasyToast.show('Please enter the verification code.');
       return;
     }
     this.onchangePwd();
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('提币中...');
+    EasyShowLD.loadingShow('withdrawing...');
     let resp = await Utils.dispatchActiionData(this, {type:'assets/getAssetsWithdraw',
       payload:{
         coinName: this.state.coinitem.coinName,
@@ -225,7 +225,7 @@ class Withdraw extends BaseComponent {
       this.refreshImage();
       EasyShowLD.loadingClose();
       if(resp.code==0){
-        EasyToast.show("已提交，待主网确认");
+        EasyToast.show("Submitted pending confirmation by the main network");
         await Utils.dispatchActiionData(this, {type:'assets/getInouTorder',payload:{coinName: this.state.coinitem.coinName, pageNo: 1, pageSize: 10 } });
         this.props.navigation.goBack();
       }else{
@@ -302,7 +302,7 @@ class Withdraw extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('未能获取图形验证码，请检查网络！');
+    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -323,12 +323,12 @@ class Withdraw extends BaseComponent {
               <LinearGradient colors={["#4A4C5D","#1E202C"]}  style={styles.linearout}>
                 <View style={styles.outsource}>
                   <View style={styles.headout}>
-                    <Text style={styles.headtext}>提币</Text>
+                    <Text style={styles.headtext}>Withdraw</Text>
                   </View>
                   <View style={{flex: 1, justifyContent: 'space-around',}}>
                     <View style={styles.itemout}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                        <Text style={styles.texttitle}>提币地址</Text>
+                        <Text style={styles.texttitle}>Withdraw</Text>
                         {this.state.coinitem.coinName=='USDT'&&
                         <View style={styles.businestab}>  
                           {this.businesButton(styles.taboneStyle, this.state.isOmni, 'isOmni', 'OMNI')}  
@@ -343,7 +343,7 @@ class Withdraw extends BaseComponent {
                           selectionColor={UColor.tintColor}
                           placeholderTextColor={UColor.lightgray}
                           onFocus={()=>{this.setState({addressSize:32,addressPlaceholder:''})}}
-                          onBlur={()=>{this.state.password?"":this.setState({addressSize:16,addressPlaceholder:'请输入提币地址'})}}
+                          onBlur={()=>{this.state.password?"":this.setState({addressSize:16,addressPlaceholder:'Address'})}}
                           style={[styles.textinpt,{flex: 1,fontSize: ScreenUtil.setSpText(this.state.addressSize),}]}
                           placeholder={this.state.addressPlaceholder}
                           underlineColorAndroid="transparent"
@@ -357,22 +357,22 @@ class Withdraw extends BaseComponent {
                           borderRadius:ScreenUtil.autoheight(10),
                         }}>
                           <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.goToAddress()})}} >
-                            <Text style={{color:'#222330',textAlign: 'center',fontSize:ScreenUtil.setSpText(12),lineHeight:ScreenUtil.autoheight(20)}}>选择</Text>
+                            <Text style={{color:'#222330',textAlign: 'center',fontSize:ScreenUtil.setSpText(12),lineHeight:ScreenUtil.autoheight(20)}}>select</Text>
                           </TouchableOpacity>
                         </LinearGradient>
                       </View>
-                      <Text style={{color:this.state.addressError?'#ED2D2E':'#FFFFFF'}}>*地址错误</Text>
+                      <Text style={{color:this.state.addressError?'#ED2D2E':'#FFFFFF'}}>*Address error</Text>
 
                     </View>
                     <View style={styles.itemout}>
-                      <Text style={styles.texttitle}>提币数量</Text>
+                      <Text style={styles.texttitle}>Withdraw Amount</Text>
                       <TextInput  ref={ (ref) => this._ramount = ref} 
                         autoFocus={false} 
                         value={this.state.amount} 
                         selectionColor={UColor.tintColor}
                         placeholderTextColor={UColor.lightgray}  
                         onFocus={()=>{this.setState({amountSize:32,amountPlaceholder:''})}}
-                        onBlur={()=>{this.state.password?"":this.setState({amountSize:16,amountPlaceholder:'请输入数量'})}}
+                        onBlur={()=>{this.state.password?"":this.setState({amountSize:16,amountPlaceholder:'Amount'})}}
                         style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.amountSize),}]}
                         placeholder={this.state.amountPlaceholder}
                         underlineColorAndroid="transparent" 
@@ -383,14 +383,14 @@ class Withdraw extends BaseComponent {
                       />
                     </View>
                     <View style={styles.itemout}>
-                      <Text style={styles.texttitle}>交易密码</Text>
+                      <Text style={styles.texttitle}>Trading Password</Text>
                       <TextInput ref={(ref) => this._rpass = ref} 
                         autoFocus={false} 
                         value={this.state.password} 
                         selectionColor={UColor.tintColor}
                         placeholderTextColor={UColor.lightgray} 
                         onFocus={()=>{this.setState({passwordSize:32,passwordPlaceholder:''})}}
-                        onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'请输入交易密码'})}}
+                        onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'Password'})}}
                         style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize),}]}
                         placeholder={this.state.passwordPlaceholder}
                         underlineColorAndroid="transparent" 
@@ -403,7 +403,7 @@ class Withdraw extends BaseComponent {
                     </View>
 
                     <View style={styles.itemout}>
-                      <Text style={styles.texttitle}>图形验证码</Text>
+                      <Text style={styles.texttitle}>Graphic Code</Text>
                       <View style={{flexDirection: 'row', alignItems: 'center', }} >
                         <TextInput ref={(ref) => this._lcodeImg = ref} 
                           autoFocus={false}
@@ -411,7 +411,7 @@ class Withdraw extends BaseComponent {
                           placeholderTextColor={UColor.lightgray}    
                           selectionColor={UColor.tintColor} 
                           onFocus={()=>{this.setState({codeImgSize:32,codeImgPlaceholder:''})}}
-                          onBlur={()=>{this.state.code?"":this.setState({codeImgSize:16,codeImgPlaceholder:'请输入图形验证码'})}}
+                          onBlur={()=>{this.state.code?"":this.setState({codeImgSize:16,codeImgPlaceholder:'Graphic Code'})}}
                           style={[styles.textinpt,{flex: 1,fontSize: ScreenUtil.setSpText(this.state.codeImgSize),}]}
                           placeholder={this.state.codeImgPlaceholder}
                           underlineColorAndroid="transparent" 
@@ -428,7 +428,7 @@ class Withdraw extends BaseComponent {
                     </View>
 
                     <View style={styles.itemout}>
-                      <Text style={styles.texttitle}>验证码</Text>
+                      <Text style={styles.texttitle}>Verification Code</Text>
                       <View style={{flexDirection: 'row', alignItems: 'center', }} >
                         <TextInput ref={(ref) => this._rcode = ref} 
                           autoFocus={false}
@@ -436,7 +436,7 @@ class Withdraw extends BaseComponent {
                           placeholderTextColor={UColor.lightgray}    
                           selectionColor={UColor.tintColor} 
                           onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
-                          onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'请输入验证码'})}}
+                          onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Verification Code'})}}
                           style={[styles.textinpt,{flex: 1,fontSize: ScreenUtil.setSpText(this.state.codeSize),}]}
                           placeholder={this.state.codePlaceholder}
                           underlineColorAndroid="transparent" 
@@ -454,18 +454,18 @@ class Withdraw extends BaseComponent {
                       </View>
                     </View>
 
-                    <Text style={styles.actualtext}>{"实际到账数量：" + this.state.factAmount}</Text>
+                    <Text style={styles.actualtext}>{"Actual Amount Received：" + this.state.factAmount}</Text>
                   </View>
                   <View style={styles.footerout}>
-                    <Text style={styles.footertext}>{"1 最小提币数量为：" + this.state.coinitem.limitAmount + " " + this.state.coinitem.coinName}</Text>
-                    <Text style={styles.footertext}>{"2 提币手续费：每笔收取 " + this.state.coinitem.commissionAmount + " " + this.state.coinitem.coinName }</Text>
-                    <Text style={styles.footertext}>3 请务必确认设备安全，防止信息被篡改或泄漏</Text>
+                    <Text style={styles.footertext}>{"1 Minimum Withdraw：" + this.state.coinitem.limitAmount + " " + this.state.coinitem.coinName}</Text>
+                    <Text style={styles.footertext}>2 To keep your assets safe, we will manually audit your token withdrawal when you change your password. Please wait for the phone call from our official customer service patiently.</Text>
+                    <Text style={styles.footertext}>3 Please make sure that your logging device is safe, in case of information disclosure or being tampered.</Text>
                   </View>
                 </View>
                 <Image source={UImage.set_logoB} style={styles.footpoho}/>
               </LinearGradient>
               <View style={styles.referout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} shadow={true} textColor='#FFFFFF' text={"确认提币"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} shadow={true} textColor='#FFFFFF' text={"Confirm"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
               </View>
             </TouchableOpacity>
           </ScrollView>
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#0DA3DF',
-    width: ScreenUtil.autowidth(90),
+    width: ScreenUtil.autowidth(110),
     height: ScreenUtil.autoheight(25),
     borderRadius: ScreenUtil.autowidth(23),
   },

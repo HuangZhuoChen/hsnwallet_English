@@ -25,6 +25,18 @@ export default {
   xin_qr: require('../img/public/xin_qr.png'),
 
   atmosphere: require('../img/public/atmosphere.png'),
+  onAgree: require('../img/public/on.png'),
+  offAgree: require('../img/public/off.png'),
+
+  rulesbg: require('../img/public/rulesbg.png'),
+  rulesintroduction: require('../img/public/rulesintroduction.png'),
+  rules1: require('../img/public/rules1.png'),
+  rules2: require('../img/public/rules2.png'),
+  rules3: require('../img/public/rules3.png'),
+  rules4: require('../img/public/rules4.png'),
+  rules51: require('../img/public/rules51.png'),
+  rules52: require('../img/public/rules52.png'),
+  rules6: require('../img/public/rules6.png'),
 
   //tab图标
   tab_1: require('../img/public/tab_1.png'),
@@ -66,10 +78,14 @@ export default {
   icon_hsn: require('../img/set/icon_hsn.png'),
   icon_usdt: require('../img/set/icon_usdt.png'),
   rule_whole: require('../img/set/rule_whole.png'),
+  icon_add: require('../img/nodesq/add.png'),
+  icon_reduce: require('../img/nodesq/reduce.png'),
+  hsn_bluelog: require('../img/set/hsn_bluelog.png'),
 
   blue_logo: require('../img/set/blue_logo.png'),
   blue_logoa: require('../img/set/blue_logoa.png'),
   icon_scret: require('../img/set/icon_scret.png'),
+  icon_profile: require('../img/set/profile.png'),
 
 //  登录图标
   login_bg_blue: require('../img/login/logo_blue.png'),

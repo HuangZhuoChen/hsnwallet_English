@@ -19,17 +19,38 @@ import {AlertModal,AlertModalView} from '../../components/modals/AlertModal'
 import TextButton from '../../components/TextButton'
 const ScreenWidth = Dimensions.get('window').width;
 
+export class Gamble { // 此方法用于其他组件能够间接调用Nodeapplication里的方法
+
+  static bind(Gamble) {
+    this.map["Gamble"] = Gamble;
+  }
+
+  static unBind() {
+    this.map["Gamble"] = null;
+    delete this.map["Gamble"];
+  }
+
+  static goGamble() {
+    console.log(123)
+    this.map["Gamble"].goGamblingAgree()
+  }
+}
+
+Gamble.map = {};
+
 @connect(({login, Nodeapplication, personal, loading }) => ({...login, ...Nodeapplication, ...personal,
   jdRefreshing: loading.effects['Nodeapplication/nodeRefresh']
 }))
-class Nodeapplication extends BaseComponent {
+export class Nodeapplication extends BaseComponent {
   constructor(props) {
     super(props);
+    Gamble.bind(this)
     this.state = {
       jdBanner:[
         {image:UImage.homeBannerBg,url:""},
       ],
       nodeLists:[ ],
+      arr: [1, 1, 1, 1],
       countDown:['-','-','-'],
       counter:"",
       season:"-",
@@ -38,12 +59,20 @@ class Nodeapplication extends BaseComponent {
       tradePassword:"",
       code: "",
       uuid: "",
+
+      // lurui
+      progress: 0,
+      buyAmount: '1000',
+      tradePassword: '',
+      code: ''
     };
   }
 
   //组件加载完成
   async componentDidMount() {
-    this.jdRefresh();
+    console.log(this.props.loginUser)
+    this.getProgress()
+    // this.jdRefresh();
     //是否设置了交易密码
     await Utils.dispatchActiionData(this, {type:'personal/isSetTradePassword',payload:{ } });
   }
@@ -52,6 +81,13 @@ class Nodeapplication extends BaseComponent {
     this.setState = (state, callback) => {
       return;
     };
+  }
+  // 购买进度
+  async getProgress() {
+    let progress = await Utils.dispatchActiionData(this, {type: 'Nodeapplication/getProgress', payload: {}})
+    this.setState({
+      progress: progress.RateOfOgress
+    })
   }
 
   async jdRefresh(){
@@ -131,48 +167,128 @@ class Nodeapplication extends BaseComponent {
 
   //弹窗
   //confirm order
-  async confirmOrder (item) {
+  async confirmOrder (item, index) {
     try {
       this.refreshImage();
-      const { navigate } = this.props.navigation;
+      // const { navigate } = this.props.navigation;
       //未设置交易密码
-      if(!this.props.SetTradePW){
-        let isPay =  await AlertModal.showSync("温馨提示","未设置交易密码，请立即设置","去设置","取消",);
-        if(isPay){
-          navigate('SetTransactionPw', {});
-        }
-        return;
-      }
+      // if(!this.props.SetTradePW){
+      //   let isPay =  await AlertModal.showSync("温馨提示","未设置交易密码，请立即设置","去设置","取消",);
+      //   if(isPay){
+      //     navigate('SetTransactionPw', {});
+      //   }
+      //   return;
+      // }
 
       // 提示抢购时间未开始
-      let judge = await Utils.dispatchActiionData(this, {type:'Nodeapplication/decisionJudge', payload: {issueId : item.issueId}});
-      if(judge && judge.msg != "success" && judge.code != 0){
-        EasyToast.show(JSON.stringify(judge.msg));
-        return;
-      }
+      // let judge = await Utils.dispatchActiionData(this, {type:'Nodeapplication/decisionJudge', payload: {issueId : item.issueId}});
+      // if(judge && judge.msg != "success" && judge.code != 0){
+      //   EasyToast.show(JSON.stringify(judge.msg));
+      //   return;
+      // }
 
       // 购买节点界面
-      let con = <View>
-        <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120),height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528,}} source={UImage.confirm_bg}>
-          <View style={{flex:1,flexDirection:'row',paddingTop: ScreenUtil.autoheight(30),}}>
-            <View style={{flex:1,paddingLeft:ScreenUtil.autowidth(15),flexDirection:'column',}}>
-              <Text style={{color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),paddingBottom:ScreenUtil.autoheight(20),}}>购买类型</Text>
-              <Text style={{color:"#FFF",fontSize:ScreenUtil.setSpText(16),fontWeight:'bold'}}>{item.name}</Text>
+      let title, range
+      switch(index) {
+        case 0:
+          title = 'Bronze'
+          range = '1000-2999'
+          this.state.buyAmount = '1000'
+          break
+        case 1:
+          title = 'Silver'
+          range = '3000-4999'
+          this.state.buyAmount = '3000'
+          break
+        case 2:
+          title = 'Gold'
+          range = '5000-9999'
+          this.state.buyAmount = '5000'
+          break
+        case 3:
+          title = 'Diamond'
+          range = '10000-Infinite'
+          this.state.buyAmount = '10000'
+          break
+        default:
+          return
+      }
+      let con = 
+        <View>
+          <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120),height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528,}} source={UImage.confirm_bg}>
+            <View style={{flex: 1, paddingTop: ScreenUtil.autoheight(6)}}>
+              <Text style={{fontSize: ScreenUtil.setSpText(20), color: '#fff', textAlign: 'center'}}>HSN</Text>
+              <View style={{height: ScreenUtil.autoheight(50), marginBottom: ScreenUtil.autoheight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: ScreenUtil.autowidth(30)}}>
+                <TouchableOpacity onPress={() => {this.reduceHSN()}} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20), justifyContent: 'center'}}>
+                  <Image source={UImage.icon_reduce} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(2)}} />
+                </TouchableOpacity>
+                <TextInput autoFocus={false} defaultValue={this.state.buyAmount} placeholderTextColor="#999" keyboardType='numeric' onChangeText={buyAmount => this.setState({buyAmount})} returnKeyType="go" style={{flex: 1, textAlign: 'center', fontSize: ScreenUtil.setSpText(30), color: '#fff', padding: 0}} />
+                <TouchableOpacity onPress={() => {this.addHSN()}}>
+                  <Image source={UImage.icon_add} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20)}} />
+                </TouchableOpacity>
+              </View>
+              <Text style={{fontSize: ScreenUtil.setSpText(10), color: '#fff', textAlign: 'center'}}>*Purchase {range} HSN to become the {title}</Text>
             </View>
-            <View style={{flex:2,paddingLeft:ScreenUtil.autowidth(10),flexDirection:'column',}}>
-              <Text style={{color:"#FFE794",fontSize:ScreenUtil.setSpText(12),paddingBottom:ScreenUtil.autoheight(10),}}>支付USDT</Text>
-              <Text style={{color:"#FFE794",fontSize:ScreenUtil.setSpText(28),fontWeight:'bold'}}>{item.discountPriceUsdt}</Text>
-            </View>
-          </View>
-       </ImageBackground>
-      </View>;
-      let isAuth =  await AlertModal.showSync("确认订单",con,"确认支付","取消",true );
+          </ImageBackground>
+        </View>;
+      // 最后一个true显示对赌协议
+      let isAuth = await AlertModal.showSync(title, con, "Confirm" ,"Cancel" , true, false, true);
       if(isAuth){
         this.tradePassword(item);
       }
     } catch (error) {
 
     }
+  }
+  addHSN() {
+    this.setState({
+      buyAmount: (+this.state.buyAmount + 1).toString()
+    }, () => {
+      AlertModal.isUpdate(
+        <View>
+          <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120),height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528,}} source={UImage.confirm_bg}>
+            <View style={{flex: 1, paddingTop: ScreenUtil.autoheight(6)}}>
+              <Text style={{fontSize: ScreenUtil.setSpText(20), color: '#fff', textAlign: 'center'}}>HSN</Text>
+              <View style={{height: ScreenUtil.autoheight(50), marginBottom: ScreenUtil.autoheight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: ScreenUtil.autowidth(30)}}>
+                <TouchableOpacity onPress={() => {this.reduceHSN()}} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20), justifyContent: 'center'}}>
+                  <Image source={UImage.icon_reduce} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(2)}} />
+                </TouchableOpacity>
+                <TextInput autoFocus={false} defaultValue={this.state.buyAmount} placeholderTextColor="#999" keyboardType='numeric' onChangeText={buyAmount => this.setState({buyAmount})} returnKeyType="go" style={{flex: 1, textAlign: 'center', fontSize: ScreenUtil.setSpText(30), color: '#fff', padding: 0}} />
+                <TouchableOpacity onPress={() => {this.addHSN()}}>
+                  <Image source={UImage.icon_add} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20)}} />
+                </TouchableOpacity>
+              </View>
+              <Text style={{fontSize: ScreenUtil.setSpText(10), color: '#fff', textAlign: 'center'}}>*Purchase 1000-2999 HSN to become the Bronze.</Text>
+            </View>
+          </ImageBackground>
+        </View>
+      )
+    })
+  }
+  reduceHSN() {
+    this.setState({
+      buyAmount: (+this.state.buyAmount - 1).toString()
+    }, () => {
+      AlertModal.isUpdate(
+        <View>
+          <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120),height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528,}} source={UImage.confirm_bg}>
+            <View style={{flex: 1, paddingTop: ScreenUtil.autoheight(6)}}>
+              <Text style={{fontSize: ScreenUtil.setSpText(20), color: '#fff', textAlign: 'center'}}>HSN</Text>
+              <View style={{height: ScreenUtil.autoheight(50), marginBottom: ScreenUtil.autoheight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: ScreenUtil.autowidth(30)}}>
+                <TouchableOpacity onPress={() => {this.reduceHSN()}} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20), justifyContent: 'center'}}>
+                  <Image source={UImage.icon_reduce} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(2)}} />
+                </TouchableOpacity>
+                <TextInput autoFocus={false} defaultValue={this.state.buyAmount} placeholderTextColor="#999" keyboardType='numeric' onChangeText={buyAmount => this.setState({buyAmount})} returnKeyType="go" style={{flex: 1, textAlign: 'center', fontSize: ScreenUtil.setSpText(30), color: '#fff', padding: 0}} />
+                <TouchableOpacity onPress={() => {this.addHSN()}}>
+                  <Image source={UImage.icon_add} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20)}} />
+                </TouchableOpacity>
+              </View>
+              <Text style={{fontSize: ScreenUtil.setSpText(10), color: '#fff', textAlign: 'center'}}>*Purchase 1000-2999 HSN to become the Bronze.</Text>
+            </View>
+          </ImageBackground>
+        </View>
+      )
+    })
   }
 
   loaderror = () =>{
@@ -200,12 +316,12 @@ class Nodeapplication extends BaseComponent {
           <Image style={styles.tradepwimg} source={UImage.icon_lock} />
         </View>
         <View style={{flexDirection:"column",paddingHorizontal: ScreenUtil.autowidth(10),}}>
-          <TextInput autoFocus={true} placeholder={"请输入交易密码"} placeholderTextColor="#999"
+          <TextInput autoFocus={true} placeholder={"transaction password"} placeholderTextColor="#999"
             secureTextEntry={true} defaultValue={this.state.tradePassword} maxLength={Constants.PWD_MAX_LENGTH} style={styles.textinpt}
             onChangeText={(tradePassword) => this.setState({tradePassword})} selectionColor={"#6DA0F8"} 
             underlineColorAndroid="transparent" returnKeyType="next"
           />
-          <TextInput autoFocus={false} placeholder={"请输入图形验证码"} placeholderTextColor="#999"  
+          <TextInput autoFocus={false} placeholder={"Graphic Verification Code"} placeholderTextColor="#999"  
             secureTextEntry={true}  defaultValue={this.state.code} maxLength={5} style={styles.textinpt} 
             onChangeText={(code) => this.setState({code})} selectionColor={"#6DA0F8"} 
             underlineColorAndroid="transparent" returnKeyType="go"    
@@ -214,18 +330,18 @@ class Nodeapplication extends BaseComponent {
             <Image onError={(e)=>{this.loaderror()}} style={{width:(ScreenWidth-ScreenUtil.autowidth(120))/2, height:ScreenUtil.autowidth(40), marginRight:ScreenUtil.autowidth(10),}} 
               source={{uri: Constants.defaultrootaddr + kapimg + "?uuid=" + this.state.uuid}} />
             <TouchableOpacity onPress={()=>{this.refreshImage()}} style={{flexDirection:"row", alignItems: 'center', justifyContent:"center",}}>
-              <Text style={{color: '#888888', fontSize: ScreenUtil.setSpText(10),}}>看不清？</Text>
-              <Text style={{color: '#0DA3DF', fontSize: ScreenUtil.setSpText(10),}}>点击刷新</Text>
+              <Text style={{color: '#888888', fontSize: ScreenUtil.setSpText(10),}}>Invisibility?</Text>
+              <Text style={{color: '#0DA3DF', fontSize: ScreenUtil.setSpText(10),}}>Refresh</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>;
-      let isAuth =  await AlertModal.showSync(null,con,"确认支付","取消" ,false,()=>{
+      let isAuth =  await AlertModal.showSync(null,con,"Confirm","Cancel" ,false,()=>{
         if(th.state.tradePassword == "" ){
-          EasyToast.show("请输入交易密码");
+          EasyToast.show("Please enter the transaction password");
           return false;
         }else if(this.state.code == ""){
-          EasyToast.show("请输入图形验证码");
+          EasyToast.show("Please enter the Graphic Verification Code");
           return false;
         }else {
           return true;
@@ -270,10 +386,10 @@ class Nodeapplication extends BaseComponent {
         <View style={styles.tradepout}>
           <Image style={styles.nodeimg} source={UImage.fireworks} />
         </View>
-        <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(16),color: 'rgba(0, 0, 0, 0.5)'}}>温馨提示</Text>
-        <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(21),color: 'rgba(0, 0, 0, 1)',paddingVertical:ScreenUtil.autoheight(16)}}>恭喜您已成功申请节点</Text>
+        <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(16),color: 'rgba(0, 0, 0, 0.5)'}}>Tips</Text>
+        <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(21),color: 'rgba(0, 0, 0, 1)',paddingVertical:ScreenUtil.autoheight(16)}}>Congrats you become the Diamond Protector.</Text>
       </View>;
-      let isAuth =  await AlertModal.showSync(null,con,"我知道了",null );
+      let isAuth =  await AlertModal.showSync(null,con,"Got It",null );
       if(isAuth){
         this.jdRefresh();
       }
@@ -315,6 +431,15 @@ class Nodeapplication extends BaseComponent {
       
     }
   }
+  // 对赌协议
+  goGamblingAgree() {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('GamblingAgreement', {wholeinvitation: 'whole'});
+    } catch (error) {
+      
+    }
+  }
 
   renderPage(image, index) {
     return (
@@ -345,8 +470,8 @@ class Nodeapplication extends BaseComponent {
         <View style={ styles.guard }>
           <Text style={ styles.guardTitle }>Purchase Progress</Text>
           <View style={ styles.guardProgress }>
-            <LinearGradient colors={['#FAF961','#FFD600']} start={{x:0,y:0}} end={{x:0,y:1}} style={ [styles.guardCors, { width: ScreenUtil.autowidth(339) * 0.5 }] }>
-              <Text style={{ fontSize: ScreenUtil.setSpText(13), color: '#191B2AFF', paddingRight: ScreenUtil.autowidth(10) }}>50%</Text>
+            <LinearGradient colors={['#FAF961','#FFD600']} start={{x:0,y:0}} end={{x:0,y:1}} style={[styles.guardCors, { width: ScreenUtil.autowidth(339) * +this.state.progress }]}>
+              <Text style={{ fontSize: ScreenUtil.setSpText(13), color: '#191B2AFF', paddingRight: ScreenUtil.autowidth(10) }}>{parseFloat((+this.state.progress * 100).toFixed(1))}%</Text>
             </LinearGradient>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -354,37 +479,6 @@ class Nodeapplication extends BaseComponent {
             <Text style={{ color: '#fff' }}>10 million</Text>
           </View>
         </View>
-        {/* 下一轮开抢时间黄色区域 */}
-        {/* <LinearGradient colors={['#FAF961','#FFD600']} start={{x:0,y:0}} end={{x:0,y:1}} style={[styles.sqHorizontal,styles.timeBox,{top: 0.4*ScreenWidth+Constants.FitPhone,justifyContent:"center"}]}>
-          <Image source={UImage.icon_clock} style={{width:ScreenUtil.autowidth(20),height:ScreenUtil.autowidth(20)}} />
-          <Text style={{color:"#04025C",marginLeft: ScreenUtil.autowidth(8),marginRight: ScreenUtil.autowidth(16),}}>
-            下一轮开抢时间
-          </Text>
-          <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:0,y:1}} style={styles.timeBlock}>
-            <Text style={styles.timeText}>{this.state.countDown[0]<10?'0'+String(this.state.countDown[0]):this.state.countDown[0]}</Text>
-          </LinearGradient>
-          <Text style={{color:'#000',fontWeight:'bold',paddingHorizontal:ScreenUtil.autowidth(5),fontSize:ScreenUtil.setSpText(18)}}>:</Text>
-          <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:0,y:1}} style={styles.timeBlock}>
-            <Text style={styles.timeText}>{this.state.countDown[1]<10?'0'+String(this.state.countDown[1]):this.state.countDown[1]}</Text>
-          </LinearGradient>
-          <Text style={{color:'#000',fontWeight:'bold',paddingHorizontal:ScreenUtil.autowidth(5),fontSize:ScreenUtil.setSpText(18)}}>:</Text>
-          <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:0,y:1}} style={styles.timeBlock}>
-            <Text style={styles.timeText}>{this.state.countDown[2]<10?'0'+String(this.state.countDown[2]):this.state.countDown[2]}</Text>
-          </LinearGradient>
-        </LinearGradient> */}
-        {/* 总XXX期文字 */}
-        {/* <View style={{paddingVertical: ScreenUtil.autoheight(20),}}>
-          <View style={{flexDirection: 'row', alignItems: 'flex-end',marginBottom: ScreenUtil.autoheight(17)}}>
-            <View style={{flex: 1,}}/>
-            <Text style={{flex: 1,textAlign:'center',color:"#ffff",fontSize:ScreenUtil.setSpText(21),fontWeight:'bold',}}>{"总" + (this.props.loginUser&&this.props.loginUser.totalIssueNumber?this.props.loginUser.totalIssueNumber:200) + "期"}</Text>
-            <Text style={{flex: 1,color:'#FFDB11',fontSize:ScreenUtil.setSpText(14),}}>{this.props.discount==0?"":"(本期"+this.props.discount + "折)"}</Text>
-          </View>
-          第XX赛季、第XX期文字
-          <View style={[styles.sqHorizontal,{flex: 1,paddingHorizontal:ScreenUtil.autowidth(8)}]}>
-            <Text style={{flex:1,color:"#ffff",fontSize:ScreenUtil.setSpText(16),textAlign:'center'}}>{this.state.season}</Text>
-            <Text style={{flex:1,color:"#ffff",fontSize:ScreenUtil.setSpText(16),textAlign:'center'}}>{this.state.stage}</Text>
-          </View>
-        </View> */}
       </View>
     )
   }
@@ -418,57 +512,10 @@ class Nodeapplication extends BaseComponent {
                 <Text style={{ fontSize: ScreenUtil.setSpText(15), color: '#fff' }}>HSN</Text>
               </View>
               <LinearGradient colors={['#0066E9FF','#00D0FFFF']} start={{x:0,y:0}} end={{x:1,y:0}} style={ styles.guardPurchase }>
-                <TextButton bgColor="transparent" text="Purchase" textColor="#fff" fontSize={ ScreenUtil.setSpText(15) } />
+                <TextButton onPress={() => this.confirmOrder(item, index)} bgColor="transparent" text="Purchase" textColor="#fff" fontSize={ ScreenUtil.setSpText(15) } />
               </LinearGradient>
             </View>
           </View>
-          {/* 节点类型+剩余  文字 */}
-          {/* <View style={[styles.sqHorizontal,styles.sqCardHeader,{}]}>
-            <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(16),fontWeight: 'bold'}}>{item.name}</Text>
-            <Text style={{color:'#00D0FF',fontSize:ScreenUtil.setSpText(12)}}>剩余 {item.nodeLast}/{item.nodeTotal}</Text>
-          </View> */}
-          {/* 卡片内容 */}
-          {/* <View style={[styles.sqCardBody,{}]}>
-            <View style={[styles.sqHorizontal,]}>
-              <Text style={[styles.sqCardBodyText,{textAlign:'left'}]}>{item.totalReturnUsdt}U</Text>
-              <Text style={[styles.sqCardBodyText]}>{item.returnDay}天</Text>
-              <Text style={[styles.sqCardBodyText]}>{item.dailyReturnUsdt}U</Text>
-              <Text style={[styles.sqCardBodyText,{textAlign:'right'}]}>{item.totalReturnRadio*100}%</Text>
-            </View>
-
-            <View style={[styles.sqHorizontal,{marginTop: ScreenUtil.autoheight(12)}]}>
-              <Text style={[styles.sqCardBodyTitle,{textAlign:'left'}]}>总返还</Text>
-              <Text style={[styles.sqCardBodyTitle]}>返还天数</Text>
-              <Text style={[styles.sqCardBodyTitle]}>每日返还</Text>
-              <Text style={[styles.sqCardBodyTitle,{textAlign:'right'}]}>总回报率</Text>
-            </View>
-            购买按钮那一行
-            <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center',paddingTop: ScreenUtil.autoheight(20),}}>
-              {this.props.discount == 0 ?
-                <View style={[styles.sqHorizontal,{paddingRight: ScreenUtil.autowidth(10)}]}>
-                  <LinearGradient style={styles.uIcon} colors={['#FAD961','#E2AF00']} start={{x:0,y:0}} end={{x:0,y:1}}>
-                    <Text style={{color:"#843500",textAlign: 'center',fontSize:ScreenUtil.setSpText(8)}}>U</Text>
-                  </LinearGradient>
-                  <Text style={{paddingRight: ScreenUtil.autowidth(10),color:'#FFDB11',paddingLeft: ScreenUtil.autowidth(5),fontSize:ScreenUtil.setSpText(12)}}>{item.discountPriceUsdt}U</Text>
-                </View>
-                :
-                <View style={[styles.sqHorizontal,{paddingRight: ScreenUtil.autowidth(10)}]}>
-                  <LinearGradient style={styles.uIcon} colors={['#FAD961','#E2AF00']} start={{x:0,y:0}} end={{x:0,y:1}}>
-                    <Text style={{color:"#843500",textAlign: 'center',fontSize:ScreenUtil.setSpText(8)}}>U</Text>
-                  </LinearGradient>
-                  <Text style={{textDecorationLine:'line-through',color:'#FFDB11',paddingLeft: ScreenUtil.autowidth(5),fontSize:ScreenUtil.setSpText(12)}}>原价：{item.standarPriceUsdt}U</Text>
-                  <Text style={{paddingRight: ScreenUtil.autowidth(10),color:'#FFDB11',paddingLeft: ScreenUtil.autowidth(5),fontSize:ScreenUtil.setSpText(12)}}>折后：{item.discountPriceUsdt}U</Text>
-                </View>
-              }
-              <View style={[styles.sqHorizontal,{}]}>
-                <TouchableOpacity onPress={()=>this.confirmOrder(item)}>
-                  <LinearGradient style={styles.uBtn} colors={['#0066E9','#00D0FF']} start={{x:0,y:0}} end={{x:1,y:0}}>
-                    <Text style={{color:"#fff",textAlign: 'center',lineHeight:ScreenUtil.autoheight(25),fontSize:ScreenUtil.setSpText(14)}}>{item.nodeLast==0?'售罄':'购买'}</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View> */}
         </LinearGradient>
         {item.nodeLast==0?<View style={styles.cardMask}></View>:<View/>}
       </View>
@@ -477,13 +524,13 @@ class Nodeapplication extends BaseComponent {
 
   render() {
     return (
-      <View style={[styles.container,{backgroundColor: '#191b2a',}]}>
+      <View style={[styles.container,{backgroundColor: '#191b2a'}]}>
         <ImageBackground source={UImage.jd_bg} style={{width:'100%',height:"100%"}}>
-          <FlatList data={this.state.nodeLists}
+          <FlatList data={this.state.arr}
             ListHeaderComponent={this.renderNodeHeader()}
             renderItem={({item, index})=>this.renderCard(item, index)}
             showsVerticalScrollIndicator={false}
-            keyExtractor={(item ,index) => "index"+index+item}
+            keyExtractor={(item ,index) => "index" + index + item}
             refreshControl={
               <RefreshControl refreshing={this.props.jdRefreshing}
                 colors={[UColor.tintColor]}
@@ -531,7 +578,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(25, 27, 42, 0.8)',
     borderColor: '#FCE731FF',
     borderWidth: ScreenUtil.autowidth(1),
-    padding: ScreenUtil.autowidth(2),
+    padding: ScreenUtil.autowidth(1.5),
     borderRadius: ScreenUtil.autoheight(16),
     marginBottom: ScreenUtil.autoheight(5)
   },
@@ -696,4 +743,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Nodeapplication;
+// export default Nodeapplication;

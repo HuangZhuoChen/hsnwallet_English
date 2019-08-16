@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil'
-import {nodeList, usernode, nodeIssue, detailnode, tradePass, decisionjudge } from '../utils/Api'
+import {nodeList, usernode, nodeIssue, detailnode, tradePass, decisionjudge, purchaseProgress } from '../utils/Api'
 
 
 export default {
@@ -9,6 +9,20 @@ export default {
     nodeDetailList: [],
   },
   effects:{
+    //购买进度查询
+    *getProgress({ payload, callback }, { call, put }) {
+      try {
+        const res = yield call(Request.request, purchaseProgress, 'post', payload)
+        if (res && res.msg === 'success') {
+          yield put({type: 'update', payload: {progress: res.RateOfOgress}})
+        }
+        callback ? callback(res) : ''
+      } catch (e) {
+        console.log("+++++app/models/Nodeapplication.js++++getProgress-error:", JSON.stringify(error));
+        callback ? callback({code:500, msg:""}) : "";
+      }
+    },
+    
     //个人节点个数
     *getMyNode({ payload, callback }, { call, put }) {
       try {

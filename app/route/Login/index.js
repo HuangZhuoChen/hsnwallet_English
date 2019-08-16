@@ -33,20 +33,20 @@ class Login extends BaseComponent {
     super(props);
     this.state = {
       uuid: '',
-      capture: 'Receive Code',
+      capture: 'Verification Code',
       captureState: false,
 
       loginPhone: "",
       phoneSize:16,
-      phonePlaceholder:"Input Email Code",
+      phonePlaceholder:"Email Code",
 
       codeImg: "",
       codeImgSize: 16,
-      codeImgPlaceholder:"Input Graphic Code",
+      codeImgPlaceholder:"Pic Code",
 
-      checkCode:"", //邮箱验证码
+      checkCode:"", //手机验证码
       codeSize:16,
-      codePlaceholder:"Input Verification Code",
+      codePlaceholder:"Verification Code",
 
       loginPwd: "",
       passwordSize:16,
@@ -66,11 +66,7 @@ class Login extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.loginPhone==""){
-      EasyToast.show('Please enter your mail number');
-      return;
-    }
-    if(this.state.loginPhone.length!=11){
-      EasyToast.show('请输入11位手机号');
+      EasyToast.show('Please enter your cell phone number.');
       return;
     }
     if(this.state.codeImg == ""){
@@ -82,7 +78,7 @@ class Login extends BaseComponent {
     }
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mobile: Utils.encryptedMsg(this.state.loginPhone), 
+        mail: Utils.encryptedMsg(this.state.loginPhone), 
         type: 'login', 
       } 
     });
@@ -98,7 +94,7 @@ class Login extends BaseComponent {
     setTimeout(function () {
       if (tick == 0) {
         tick = 60;
-        th.setState({ capture: "Receive Code", captureState: false });
+        th.setState({ capture: "Verification Code", captureState: false });
       } else {
         tick--;
         th.setState({ capture: tick + "s", captureState: true })
@@ -109,11 +105,7 @@ class Login extends BaseComponent {
 
   loginKcaptrue = () => {
     if (this.state.loginPhone == "") {
-      EasyToast.show('Please enter your email number');
-      return;
-    }
-    if(this.state.loginPhone.length!=11){
-      EasyToast.show('请输入11位手机号');
+      EasyToast.show('Please enter your cell phone number.');
       return;
     }
     if(this.state.codeImg == ""){
@@ -135,7 +127,7 @@ class Login extends BaseComponent {
     EasyShowLD.loadingShow('Login in...');
     let resp = await Utils.dispatchActiionData(this, {type:'login/login',
       payload:{
-        mobile: Utils.encryptedMsg(this.state.loginPhone), 
+        mail: Utils.encryptedMsg(this.state.loginPhone), 
         code: this.state.checkCode,
         password: Utils.encryptedMsg(this.state.loginPwd), 
         uuid: this.state.uuid,
@@ -152,6 +144,8 @@ class Login extends BaseComponent {
       }else{
         EasyToast.show(resp.msg);
       }
+    } else {
+      EasyToast.show('No response')
     }
   }
 
@@ -191,36 +185,20 @@ class Login extends BaseComponent {
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)} style={{flex: 1,}}>
               <View style={[styles.outsource,{backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
                 <LinearGradient colors={["rgba(79, 81, 98, 0.9)","rgba(30, 32, 44, 0.9)"]} style={styles.linearout}>
-                  <Text style={styles.cardHeaderTitle}>Log In</Text>
+                  <Text style={styles.cardHeaderTitle}>Log in</Text>
                   <Text style={styles.inptitle}>Email</Text>
-                  {/* <TextInput ref={(ref) => this._lphone = ref} 
-                    returnKeyType="next"
-                    autoFocus={false}
-                    onFocus={()=>{ this.setState({phoneSize:32,phonePlaceholder:''})}} 
-                    onBlur={()=>{ this.state.loginPhone?"":this.setState({phoneSize:16,phonePlaceholder:'输入手机号码'}) }}
-                    value={this.state.loginPhone} 
-                    placeholder={this.state.phonePlaceholder} 
-                    style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.phoneSize),}]}
-                    selectionColor={UColor.tintColor} 
-                    placeholderTextColor={UColor.lightgray}  
-                    underlineColorAndroid="transparent" 
-                    keyboardType="phone-pad" 
-                    maxLength={11}
-                    onChangeText={(loginPhone) => this.setState({ loginPhone })}
-                  /> */}
                   <TextInput ref={(ref) => this._lphone = ref} 
                     returnKeyType="next"
                     autoFocus={false}
-                    onFocus={()=>{ this.setState({phoneSize:32,phonePlaceholder:''})}} 
-                    onBlur={()=>{ this.state.loginPhone?"":this.setState({phoneSize:16,phonePlaceholder:'Input Email Code'}) }}
+                    onFocus={()=>{ this.setState({phoneSize:30,phonePlaceholder:''})}} 
+                    onBlur={()=>{ this.state.loginPhone?"":this.setState({phoneSize:16,phonePlaceholder:'Email Code'}) }}
                     value={this.state.loginPhone} 
                     placeholder={this.state.phonePlaceholder} 
                     style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.phoneSize),}]}
                     selectionColor={UColor.tintColor} 
                     placeholderTextColor={UColor.lightgray}  
                     underlineColorAndroid="transparent" 
-                    keyboardType="phone-pad" 
-                    maxLength={11}
+                    keyboardType="phone-pad"
                     onChangeText={(loginPhone) => this.setState({ loginPhone })}
                   />
 
@@ -228,8 +206,8 @@ class Login extends BaseComponent {
                     <TextInput ref={(ref) => this._lcodeImg = ref} 
                       returnKeyType="next"
                       autoFocus={false}
-                      onFocus={()=>{ this.setState({codeImgSize:32,codeImgPlaceholder:''})}} 
-                      onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'Input Graphic Code'})}}
+                      onFocus={()=>{ this.setState({codeImgSize:30,codeImgPlaceholder:''})}} 
+                      onBlur={()=>{ this.state.codeImg?"":this.setState({codeImgSize:16,codeImgPlaceholder:'Pic Code'})}}
                       value={this.state.codeImg} 
                       placeholder={this.state.codeImgPlaceholder}
                       selectionColor={UColor.tintColor} 
@@ -249,9 +227,9 @@ class Login extends BaseComponent {
                     <TextInput ref={(ref) => this._lcode = ref} 
                       returnKeyType="next"
                       autoFocus={false}
-                      onFocus={()=>{ this.setState({codeSize:32,codePlaceholder:''})}} 
-                      onBlur={()=>{ this.state.checkCode?"":this.setState({codeSize:16,codePlaceholder:'Input Verification Code'})}}
-                      value={this.state.checkCode} 
+                      onFocus={()=>{ this.setState({codeSize:30,codePlaceholder:''})}} 
+                      onBlur={()=>{ this.state.checkCode?"":this.setState({codeSize:16,codePlaceholder:'Verification Code'})}}
+                      value={this.state.checkCode}
                       placeholder={this.state.codePlaceholder}
                       selectionColor={UColor.tintColor} 
                       placeholderTextColor={UColor.lightgray}
@@ -271,8 +249,8 @@ class Login extends BaseComponent {
                   <TextInput ref={(ref) => this._lpass = ref} 
                     returnKeyType="go"     
                     autoFocus={false}
-                    onFocus={()=>{this.setState({passwordSize:32,passwordPlaceholder:''})}} 
-                    onBlur={()=>{this.state.loginPwd?"":this.setState({passwordSize:16,passwordPlaceholder:'Enter the login password'})}}
+                    onFocus={()=>{this.setState({passwordSize:30,passwordPlaceholder:''})}} 
+                    onBlur={()=>{this.state.loginPwd?"":this.setState({passwordSize:16,passwordPlaceholder:'Password'})}}
                     style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize)}]}
                     value={this.state.loginPwd}   
                     placeholder={this.state.passwordPlaceholder}
@@ -280,21 +258,21 @@ class Login extends BaseComponent {
                     placeholderTextColor={UColor.lightgray}
                     underlineColorAndroid="transparent" 
                     secureTextEntry={true} 
-                    onSubmitEditing={() => this.loginKcaptrue()}  
+                    onSubmitEditing={() => this.loginKcaptrue()}
                     maxLength={Constants.PWD_MAX_LENGTH}
                     onChangeText={(loginPwd) => this.setState({ loginPwd })}
                   />
                 </LinearGradient>
               </View>
               <TouchableOpacity style={styles.forgetpass} onPress={()=>{this.noDoublePress(()=>{this.forget()})}}>
-                <Image source={UImage.forgetIcon} style={{width:ScreenUtil.setSpText(14),height:ScreenUtil.setSpText(14)}} />
-                <Text style={[styles.forgettext,{color: '#B9BBC1'}]} >{" Forgot Password"}</Text>
+                <Image source={UImage.forgetIcon} style={{width:ScreenUtil.setSpText(14),height:ScreenUtil.setSpText(14),marginRight: ScreenUtil.autowidth(4)}} />
+                <Text style={[styles.forgettext,{color: '#B9BBC1'}]} >{"Forget Password"}</Text>
               </TouchableOpacity>
               <View style={styles.readout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.loginKcaptrue()})}} textColor="#FFFFFF" text={"Log In"}  shadow={true} style={styles.readbtn} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.loginKcaptrue()})}} textColor="#FFFFFF" text={"Log in"}  shadow={true} style={styles.readbtn} />
               </View>
               <View style={styles.submitout}>
-                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor='#3B80F4' text={"Register"}  style={styles.readbtn} />
+                <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor='#3B80F4' text={"Regist"}  style={styles.readbtn} />
               </View>
             </TouchableOpacity>
           </ScrollView>
@@ -330,6 +308,7 @@ const styles = StyleSheet.create({
   cardHeaderTitle:{
     color:'#FFFFFF',
     fontSize:ScreenUtil.setSpText(36),
+    fontWeight: 'bold',
     marginTop: ScreenUtil.autoheight(35),
     marginBottom: ScreenUtil.autoheight(16)
   },
@@ -377,7 +356,7 @@ const styles = StyleSheet.create({
     paddingBottom:  ScreenUtil.autoheight(3),
   },
   btnout: {
-    width: ScreenUtil.autowidth(90),
+    width: ScreenUtil.autowidth(110),
     height: ScreenUtil.autoheight(25),
     borderRadius: ScreenUtil.autowidth(23),
     alignItems: 'center',

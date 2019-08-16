@@ -35,7 +35,7 @@ class Myinvitation extends BaseComponent{
       friendsNum: 5,
       inviteCode: "2110453",
       friendsHeader:["Friends' Grade",'Name','Date','Invitation Awards'], 
-      levelName:['UNACTIVATED PARTNERS','JUNIOR PARTNERS','INTERMEDIATE PARTNERS','SENIOR PARTNERS','SUPER PARTNERS'],
+      levelName:['Unactivated Partners','Junior Partners','Intermediate Partners','Senior Partners','Super Partners'],
       friendsList:[],
       friDate:moment().format('YYYY/MM/DD'),
       todayTotal:0,
@@ -276,9 +276,9 @@ class Myinvitation extends BaseComponent{
   _renderFooter = () => {
     return(
       <View style={[styles.invHorizontal,{justifyContent:'flex-end',marginVertical: ScreenUtil.autoheight(5)}]}>
-        <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowRadius,{width:ScreenUtil.autowidth(173),flexDirection:'row',justifyContent:'center',alignItems:"center"}]}>
-          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(12)}}>Today’s Accumulation：</Text>
-          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(20),fontWeight:'bold'}}>{this.state.todayTotal+"U"}</Text>
+        <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowRadius,{width:ScreenUtil.autowidth(200),flexDirection:'row',justifyContent:'center',alignItems:"center"}]}>
+          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(12)}}>Today's Accumulation：</Text>
+          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(20),fontWeight:'bold'}}>{this.state.todayTotal ? this.state.todayTotal : 0}U</Text>
         </LinearGradient>
       </View>
     )

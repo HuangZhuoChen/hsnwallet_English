@@ -53,23 +53,23 @@ class InviteCode extends BaseComponent {
   render() {
     return (
       <View style={[styles.container,{backgroundColor: UColor.bgColor, }]}>
-        <Header {...this.props} onPressLeft={true} title={"分享海报"} backgroundColors={"rgba(0, 0, 0, 0.0)"} onPressRight={this.savePictures.bind(this)} subName="保存图片"/>
-        <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false} style={{padding: ScreenUtil.autowidth(15), }}>
+        <Header {...this.props} onPressLeft={true} title={"Share"} backgroundColors={"rgba(0, 0, 0, 0.0)"} onPressRight={this.savePictures.bind(this)} subName="Save"/>
+        <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false} style={{padding: ScreenUtil.autowidth(15)}}>
           <ViewShot ref="viewShot" style={{flex: 1, backgroundColor: UColor.bgColor,}}> 
             <ImageBackground style={styles.headimgout} source={UImage.share_bg} resizeMode="cover">
-              <View style={{flexDirection: 'column', alignItems: 'center', paddingRight: ScreenUtil.autowidth(3)}}>
-                <QRCode size={ScreenUtil.autowidth(90)} logo={UImage.min_logo} logoBorderRadius={2}
+              <View style={{flexDirection: 'column', alignItems: 'center', paddingRight: ScreenUtil.autowidth(0)}}>
+                <QRCode size={ScreenUtil.autowidth(66)} logo={UImage.min_logo} logoBorderRadius={2}
                 value={"https://invite.wallet.hsn.link/?ref=" + (!this.props.loginUser ? "" : this.props.loginUser.inviteCode)}/>
               </View>
             </ImageBackground>
           </ViewShot>
-          <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingBottom: ScreenUtil.autoheight(16)}}>
             <View style={styles.referout}>
-              <Text style={{color: '#FFFFFF',fontSize: ScreenUtil.setSpText(12)}}>我的邀请链接：</Text>
+              <Text style={{color: '#FFFFFF',fontSize: ScreenUtil.setSpText(12)}}>My Invitation Link：</Text>
               <Text style={{flex: 1,color: '#FFFFFF',fontSize: ScreenUtil.setSpText(12),}}>{"https://invite.wallet.hsn.link/?ref=" + (!this.props.loginUser ? "" : this.props.loginUser.inviteCode)}</Text>
             </View>
             <TextButton onPress={()=>{this.noDoublePress(()=>{this.onPressCopy("https://invite.wallet.hsn.link/?ref=" + (!this.props.loginUser ? "" : this.props.loginUser.inviteCode))})}} shadow={true} textColor='#FFFFFF' 
-              text={"复制链接"} fontSize={ScreenUtil.setSpText(14)} style={styles.btntransfer} />
+              text={"Copy"} fontSize={ScreenUtil.setSpText(14)} style={styles.btntransfer} />
           </View>
         </ScrollView>
       </View>
@@ -83,15 +83,15 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'center',
     flexDirection: 'column',
-    paddingBottom: ScreenUtil.isIphoneX() ?ScreenUtil.autoheight(24):ScreenUtil.autoheight(0),
+    paddingBottom: ScreenUtil.isIphoneX() ?ScreenUtil.autoheight(24):ScreenUtil.autoheight(20),
   },
 
   headimgout: {
     width: ScreenWidth-ScreenUtil.autowidth(30), 
-    height: (ScreenWidth-ScreenUtil.autowidth(30))*1.5488, 
+    height: (ScreenWidth-ScreenUtil.autowidth(30)) * 1200 / 680, 
     alignItems: 'center', 
     justifyContent: "flex-end", 
-    paddingBottom: (ScreenWidth-ScreenUtil.autowidth(30))*0.15,
+    paddingBottom: (ScreenWidth-ScreenUtil.autowidth(30))*0.092,
   },
   headtext: {
     color: '#FFFFFF',

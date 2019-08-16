@@ -69,32 +69,63 @@ export default class Item extends Component {
  
     return (
       <View style={[styles.listItem,{height: itemHeight?itemHeight: ScreenUtil.autoheight(55),backgroundColor: UColor.transport,marginTop: topfirst?topfirst:0},{paddingHorizontal: paddingHorizontal? paddingHorizontal: 0}]}>
-        {icon?(<Icon name={icon} size={iconSize||ScreenUtil.setSpText(20)} style={{width: ScreenUtil.autowidth(22), marginRight:ScreenUtil.autowidth(5), textAlign:"center"}} color={color || UColor.blueDeep} />):null}
-        {spot?(<View style={{width: ScreenUtil.autowidth(6),height: ScreenUtil.autowidth(6), marginRight: ScreenUtil.autowidth(8), borderRadius: ScreenUtil.autowidth(3), backgroundColor: '#D0D0D4'}} />):null}    
+        { 
+          icon ? (
+            <Icon name={icon} size={iconSize||ScreenUtil.setSpText(20)} style={{width: ScreenUtil.autowidth(22), marginRight:ScreenUtil.autowidth(5), textAlign:"center"}} color={color || UColor.blueDeep} />
+          ) : null
+        }
+        { 
+          spot ? (
+            <View style={{width: ScreenUtil.autowidth(6),height: ScreenUtil.autowidth(6), marginRight: ScreenUtil.autowidth(8), borderRadius: ScreenUtil.autowidth(3), backgroundColor: '#D0D0D4'}} />
+          ) : null
+        }
         <View style={[styles.listInfo, first && {borderBottomColor: UColor.bgColor,borderBottomWidth: first},{height: itemHeight?itemHeight: ScreenUtil.autoheight(55),}]}>
-          {avatar?(<Image source={avatar} style={{width: ScreenUtil.autowidth(19), height: ScreenUtil.autowidth(17), resizeMode: "contain", overflow:"hidden",marginRight:ScreenUtil.autowidth(13),}}/>):null}
-          <View style={{flex: 1, flexDirection: 'row',}}>
+          { 
+            avatar ? (
+              <Image source={avatar} style={{width: ScreenUtil.autowidth(19), height: ScreenUtil.autowidth(17), resizeMode: "contain", overflow:"hidden",marginRight:ScreenUtil.autowidth(13),}}/>
+            ) : null
+          }
+          <View style={{flex: 1, flexDirection: 'row'}}>
             <Text style={{color:nameColor? nameColor : '#555555', fontSize:ScreenUtil.setSpText(16), paddingRight: ScreenUtil.autowidth(10),}}>{name}</Text>
-            {shadow &&
-            <LinearGradient colors={shadowname == "未认证" ?['#FF0A2F','#FFD083']:["#FFFFFF","#FFFFFF"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{height: ScreenUtil.autoheight(18), borderRadius: ScreenUtil.autoheight(9), justifyContent: 'center',}}>
-              <Text style={{color: '#2C2E3C',fontSize:ScreenUtil.setSpText(10), paddingHorizontal: ScreenUtil.autowidth(8),}}>{shadowname}</Text>
-            </LinearGradient>}
+            {
+              shadow &&
+              <LinearGradient colors={shadowname == "未认证" ?['#FF0A2F','#FFD083']:["#FFFFFF","#FFFFFF"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={{height: ScreenUtil.autoheight(18), borderRadius: ScreenUtil.autoheight(9), justifyContent: 'center',}}>
+                <Text style={{color: '#2C2E3C',fontSize:ScreenUtil.setSpText(10), paddingHorizontal: ScreenUtil.autowidth(8),}}>{shadowname}</Text>
+              </LinearGradient>
+            }
           </View>
           <View style={styles.listInfoRight}>
-            {subName?(<Text style={{color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14), letterSpacing: subletterSpacing ? subletterSpacing : ScreenUtil.autowidth(0),}}>{subName}</Text>):null} 
-            {redDot?(<View style={{width: ScreenUtil.autowidth(7), height: ScreenUtil.autowidth(7), borderRadius: 5, backgroundColor: '#FF3D3D'}} />):null} 
-            {photo?(<View style={{backgroundColor: '#FFFFFF', padding: ScreenUtil.autowidth(1), borderRadius: ScreenUtil.autowidth(18),}}>
-              <Image source={photo} style={{width: ScreenUtil.autowidth(35), height: ScreenUtil.autowidth(35), resizeMode: "contain", overflow:"hidden", borderRadius:ScreenUtil.autowidth(17.5),}}/>
-            </View>):null}          
-            {disable?null:(<Font.Ionicons name="ios-arrow-forward" size={ScreenUtil.autowidth(20)} color='#B5B5B5' style={{paddingLeft: ScreenUtil.autowidth(20),}} />)}
-            {!swt?null:( 
-            <Switch 
-              tintColor={UColor.bgColor}
-              onTintColor={UColor.tintColor}
-              thumbTintColor={UColor.fontrice}
-              value={this.state.value} onValueChange={(value)=>{
-              this.setState({value:value})}}
-            />)
+            {
+              subName ? (
+                <Text style={{color: '#FFFFFF', fontSize: ScreenUtil.setSpText(14), letterSpacing: subletterSpacing ? subletterSpacing : ScreenUtil.autowidth(0),}}>{subName}</Text>
+              ) : null
+            } 
+            {
+              redDot ? (
+                <View style={{width: ScreenUtil.autowidth(7), height: ScreenUtil.autowidth(7), borderRadius: 5, backgroundColor: '#FF3D3D'}} />
+              ) : null
+            } 
+            {
+              photo ? (
+                <View style={{backgroundColor: '#FFFFFF', padding: ScreenUtil.autowidth(1), borderRadius: ScreenUtil.autowidth(18),}}>
+                  <Image source={photo} style={{width: ScreenUtil.autowidth(35), height: ScreenUtil.autowidth(35), resizeMode: "contain", overflow:"hidden", borderRadius:ScreenUtil.autowidth(17.5),}}/>
+                </View>
+              ) : null
+            }          
+            {
+              disable ? null : (
+                <Font.Ionicons name="ios-arrow-forward" size={ScreenUtil.autowidth(20)} color='#B5B5B5' style={{paddingLeft: ScreenUtil.autowidth(20),}} />
+              )
+            }
+            {!swt ? null : ( 
+                <Switch 
+                tintColor={UColor.bgColor}
+                onTintColor={UColor.tintColor}
+                thumbTintColor={UColor.fontrice}
+                value={this.state.value} onValueChange={(value)=>{
+                this.setState({value:value})}}
+              />
+              )
             }
           </View>
         </View>
@@ -105,9 +136,11 @@ export default class Item extends Component {
   render(){
     let { onPress, first, disable } = this.props
     onPress = onPress || (() => {})
-    return (<View>
-      <Button onPress={() => {NoDoublePress.onPress(onPress)}}>{this._render()}</Button> 
-    </View>)
+    return (
+      <View>
+        <Button onPress={() => {NoDoublePress.onPress(onPress)}}>{this._render()}</Button> 
+      </View>
+    )
 
     // return onPress ?
     // this._render():

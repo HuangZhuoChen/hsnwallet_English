@@ -30,9 +30,9 @@ class Register extends BaseComponent {
   };
 
   state = {
-    phone:"", // 邮箱验证码
-    phoneSize:16,
-    phonePlaceholder:"Input Email Code",
+    email:"", // 邮箱验证码
+    emailSize:16,
+    emailPlaceholder:"Input Email Code",
 
     code:"",
     codeSize:16,
@@ -64,12 +64,8 @@ class Register extends BaseComponent {
   }
 
   async kcaptrue () {
-    if(this.state.phone==""){
+    if(this.state.email==""){
       EasyToast.show('Please enter your email number');
-      return;
-    }
-    if(this.state.phone.length!=11){
-      EasyToast.show('请输入11位手机号');
       return;
     }
     if(this.state.captureState){
@@ -77,7 +73,7 @@ class Register extends BaseComponent {
     }
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mobile: Utils.encryptedMsg(this.state.phone), 
+        mail: Utils.encryptedMsg(this.state.email),
         type: 'register', 
       } 
     });
@@ -103,12 +99,8 @@ class Register extends BaseComponent {
   }
 
   regSubmit = () =>{
-    if(this.state.phone==""){
+    if(this.state.email==""){
       EasyToast.show('Please enter your email number');
-      return;
-    }
-    if(this.state.phone.length!=11){
-      EasyToast.show('请输入11位手机号');
       return;
     }
     if(this.state.code==""){
@@ -139,7 +131,7 @@ class Register extends BaseComponent {
     EasyShowLD.loadingShow('Registering...');
     let resp = await Utils.dispatchActiionData(this, {type:'login/register',
       payload:{
-        mobile: Utils.encryptedMsg(this.state.phone), 
+        mail: Utils.encryptedMsg(this.state.email), 
         code: this.state.code, 
         password: Utils.encryptedMsg(this.state.password), 
         confirmPassword: Utils.encryptedMsg(this.state.passwordConfirm), 
@@ -181,23 +173,23 @@ class Register extends BaseComponent {
                 <Text style={styles.texttitle}>Email</Text>
                 <TextInput ref={(ref) => this._rphone = ref}
                   autoFocus={false}
-                  value={this.state.phone}
+                  value={this.state.email}
                   returnKeyType="next"
                   keyboardType="phone-pad"
-                  onFocus={()=>{this.setState({phoneSize:32,phonePlaceholder:''})}}
-                  onBlur={()=>{this.state.phone?"":this.setState({phoneSize:16,phonePlaceholder:'Input Email Code'})}}
-                  style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.phoneSize),}]}
-                  maxLength={11}
-                  placeholder={this.state.phonePlaceholder}
+                  onFocus={()=>{this.setState({emailSize:30,emailPlaceholder:''})}}
+                  onBlur={()=>{this.state.email?"":this.setState({emailSize:16,emailPlaceholder:'Input Email Code'})}}
+                  style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.emailSize),}]}
+                  // maxLength={11}
+                  placeholder={this.state.emailPlaceholder}
                   underlineColorAndroid="transparent"
                   selectionColor={UColor.tintColor}
-                  onChangeText={(phone) => this.setState({phone})}
+                  onChangeText={(email) => this.setState({email})}
                   placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
                 />
                 <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                   <TextInput ref={(ref) => this._rcode = ref}
                     autoFocus={false}
-                    onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
+                    onFocus={()=>{this.setState({codeSize:30,codePlaceholder:''})}}
                     onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Input Verification Code'}) }}
                     value={this.state.code}
                     returnKeyType="next"
@@ -221,7 +213,7 @@ class Register extends BaseComponent {
                   value={this.state.password}
                   returnKeyType="go"
                   autoFocus={false}
-                  onFocus={()=>{ this.setState({passwordSize:32,passwordPlaceholder:''})}}
+                  onFocus={()=>{ this.setState({passwordSize:30,passwordPlaceholder:''})}}
                   onBlur={()=>{this.state.password?"":this.setState({passwordSize:16,passwordPlaceholder:'Password'})}}
                   selectionColor={UColor.tintColor}
                   style={[styles.textinpt,{fontSize: ScreenUtil.setSpText(this.state.passwordSize)}]}
@@ -237,7 +229,7 @@ class Register extends BaseComponent {
                   value={this.state.passwordConfirm}
                   returnKeyType="next"
                   autoFocus={false}
-                  onFocus={()=>{this.setState({passwordConfirmSize:32,passwordConfirmPlaceholder:''})}}
+                  onFocus={()=>{this.setState({passwordConfirmSize:30,passwordConfirmPlaceholder:''})}}
                   onBlur={()=>{this.state.passwordConfirm?"":this.setState({passwordConfirmSize:16,passwordConfirmPlaceholder:'Confirm Password'})}}
                   editable={true}
                   selectionColor={UColor.tintColor}
@@ -254,7 +246,7 @@ class Register extends BaseComponent {
                 <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                   <TextInput ref={(ref) => this._rinvitecode = ref}
                     autoFocus={false}
-                    onFocus={()=>{this.setState({invitecodeSize:32,invitecodeConfirmPlaceholder:''})}}
+                    onFocus={()=>{this.setState({invitecodeSize:30,invitecodeConfirmPlaceholder:''})}}
                     onBlur={()=>{this.state.invitecode?"":this.setState({invitecodeSize:16,invitecodeConfirmPlaceholder:"Input Invitation Code",}) }}
                     value={this.state.invitecode}
                     returnKeyType="go"
@@ -275,7 +267,7 @@ class Register extends BaseComponent {
               <TextButton onPress={()=>{this.noDoublePress(()=>{this.regSubmit()})}} textColor="#FFFFFF" text="Register"  shadow={true} style={styles.referbtn} />
             </View>
             <View style={styles.readout}>
-              <Text style={[styles.readtext,{color: '#808080'}]}>I've read & agree with the《Terms of Service》</Text>
+              <Text style={[styles.readtext,{color: '#808080'}]}>Registration means you agree with the PMN Rules</Text>
             </View>
           </TouchableOpacity>
         </ScrollView>

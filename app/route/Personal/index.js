@@ -33,17 +33,23 @@ class Personal extends React.Component {
       
     };
     this.config = [
-      {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), disable: true, spot: true, nameColor: '#FFFFFF', 
+      {itemHeight: ScreenUtil.autoheight(66), paddingHorizontal: ScreenUtil.autowidth(5), disable: true, spot: true, nameColor: '#FFFFFF', 
       name: "Profile Picture", photo: this.props.loginUser.partnerLevel?Constants.levelimg[this.props.loginUser.partnerLevel]:UImage.integral_bg },
 
-      {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, nameColor: '#FFFFFF', name: "Nick Name",  
+      {itemHeight: ScreenUtil.autoheight(66), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, nameColor: '#FFFFFF', name: "Nick Name",  
       disable: true, subName: this.props.loginUser.nickName, onPress: this.goNicknam.bind(this) },
 
-      {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, nameColor: '#FFFFFF', name: "Team Name",  
+      {itemHeight: ScreenUtil.autoheight(66), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, nameColor: '#FFFFFF', name: "Team Name",  
       disable: true, subName: this.props.loginUser.teamName?this.props.loginUser.teamName:'set', onPress: this.goTeamname.bind(this) },
       
-      {itemHeight: ScreenUtil.autoheight(80), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: true, nameColor: '#FFFFFF', name: "Invitation Code", subName: this.props.loginUser.inviteCode, },
+      {itemHeight: ScreenUtil.autoheight(66), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
+      disable: true, nameColor: '#FFFFFF', name: "Invitation Code", subName: this.props.loginUser.inviteCode },
+
+      {itemHeight: ScreenUtil.autoheight(66), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
+      disable: true, nameColor: '#FFFFFF', name: "My Identification", subName: 'Diamond' },
+
+      {itemHeight: ScreenUtil.autoheight(66), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
+        disable: true, nameColor: '#FFFFFF', name: "《VAM》", subName: this.props.loginUser.gamblingStatus === 'True' ? 'Agreed' : 'Cancel', onPress: this.props.loginUser.gamblingStatus === 'True' ? this.goVam.bind(this) : null }
     ];
   }
 
@@ -85,6 +91,15 @@ class Personal extends React.Component {
       
     }
   }
+
+  goVam() {
+    try {
+      const { navigate } = this.props.navigation;
+      navigate('Vam', {});
+    } catch (error) {
+      
+    }
+  }
  
   _renderListItem() {
     return this.config.map((item, i) => {
@@ -94,19 +109,21 @@ class Personal extends React.Component {
 
   render() {
     return (
-      <View style={[styles.container,{backgroundColor: UColor.bgColor, }]}>
+      <View style={[styles.container, {backgroundColor: UColor.bgColor}]}>
         <Header {...this.props} onPressLeft={true} title={""} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
-        <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
-          <View style={styles.outsource}>
-            <View style={styles.headout}>
-              <Text style={styles.headtext}>Information</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.linearout}>
+            <View style={styles.outsource}>
+              <View style={styles.headout}>
+                <Text style={styles.headtext}>Information</Text>
+              </View>
+              <View style={{flex: 1, justifyContent: 'center',}}>
+                {this._renderListItem()}
+              </View>
             </View>
-            <View style={{flex: 1, justifyContent: 'center',}}>
-              {this._renderListItem()}
-            </View>
-          </View>
-          <Image source={UImage.set_logo} style={styles.footpoho}/>
-        </LinearGradient>
+            <Image source={UImage.set_logo} style={styles.footpoho}/>
+          </LinearGradient>
+        </ScrollView>
       </View>
     )
   }
@@ -120,7 +137,7 @@ const styles = StyleSheet.create({
   },
   linearout: {
     width: ScreenWidth - ScreenUtil.autowidth(30),  
-    height: ScreenHeight*0.7266, 
+    height: ScreenHeight*0.8266, 
     marginTop: ScreenUtil.autoheight(10), 
     borderRadius: ScreenUtil.autowidth(10), 
     elevation: 10, 
@@ -141,8 +158,7 @@ const styles = StyleSheet.create({
   },
   headtext: {
     color: '#FFFFFF', 
-    fontWeight:'bold',
-    fontSize: ScreenUtil.setSpText(36),
+    fontSize: ScreenUtil.setSpText(20),
   },
   footpoho: {
     position: 'absolute',
