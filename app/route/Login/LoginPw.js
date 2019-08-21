@@ -85,10 +85,6 @@ class LoginPw extends BaseComponent {
     if(this.state.captureState){
       return;
     }
-    console.log({
-      mail: Utils.encryptedMsg(this.props.mail), 
-      type: 'reset', 
-    })
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
         mail: Utils.encryptedMsg(this.props.mail), 
@@ -150,7 +146,7 @@ class LoginPw extends BaseComponent {
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('Modification in progress');
+    EasyShowLD.loadingShow('Modificating');
     let resp = await Utils.dispatchActiionData(this, {type:'login/changePwd',
       payload:{
         oldPassword: Utils.encryptedMsg(this.state.usedpassword), 
@@ -181,7 +177,7 @@ class LoginPw extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
+    EasyToast.show('Failed to obtain graphics code, please check the network！');
   }
 
   clearFoucs = () =>{

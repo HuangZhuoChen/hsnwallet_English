@@ -1,5 +1,6 @@
 import Request from '../utils/RequestUtil'
 import { friendList } from '../utils/Api'
+import { EasyToast } from '../components/Toast';
 
 
 export default {
@@ -13,6 +14,8 @@ export default {
         const res = yield call(Request.request, friendList, 'post', payload);
         if(res && res.code == 0){
           yield put({ type: 'update', payload: { friendList: res.data } });
+        } else {
+          EasyToast.show(res.msg)
         }
         if (callback) callback(res);
       } catch (error) {

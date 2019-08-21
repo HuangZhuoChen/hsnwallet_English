@@ -78,7 +78,7 @@ class Login extends BaseComponent {
     }
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mail: Utils.encryptedMsg(this.state.loginPhone), 
+        mail: Utils.encryptedMsg(this.state.loginPhone),
         type: 'login', 
       } 
     });
@@ -127,7 +127,7 @@ class Login extends BaseComponent {
     EasyShowLD.loadingShow('Login in...');
     let resp = await Utils.dispatchActiionData(this, {type:'login/login',
       payload:{
-        mail: Utils.encryptedMsg(this.state.loginPhone), 
+        mail: Utils.encryptedMsg(this.state.loginPhone),
         code: this.state.checkCode,
         password: Utils.encryptedMsg(this.state.loginPwd), 
         uuid: this.state.uuid,
@@ -166,7 +166,7 @@ class Login extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
+    EasyToast.show('Failed to obtain graphics code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -308,7 +308,6 @@ const styles = StyleSheet.create({
   cardHeaderTitle:{
     color:'#FFFFFF',
     fontSize:ScreenUtil.setSpText(36),
-    fontWeight: 'bold',
     marginTop: ScreenUtil.autoheight(35),
     marginBottom: ScreenUtil.autoheight(16)
   },

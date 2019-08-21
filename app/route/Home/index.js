@@ -20,7 +20,7 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 
 @connect(({ login, Nodeapplication, market, loading }) => ({ ...login, ...Nodeapplication, ...market, marketRefreshing: loading.effects['market/getSeasonRank']}))
-class Home extends BaseComponent {
+export class Home extends BaseComponent {
 
   constructor(props) {
     super(props);
@@ -37,12 +37,20 @@ class Home extends BaseComponent {
       counter:"",
 
       // 守护者等级
-      grade: this.props.loginUser.protectorMasterNode
+      grade: this.props.loginUser.protectorMasterNode,
+      ifUpdate: true
     };
   }
 
   componentDidMount() {
-    this.onRefresh();
+    // 第二次进入不会渲染，加个监听
+    this.props.navigation.addListener("didFocus", () => {
+      this.onRefresh()
+      this.setState({
+        grade: this.props.loginUser.protectorMasterNode
+      })
+    })
+    this.onRefresh()
   }
 
   componentWillUnmount(){
@@ -54,114 +62,27 @@ class Home extends BaseComponent {
   async onRefresh () {
     //我的节点信息
     // await Utils.dispatchActiionData(this, {type:'Nodeapplication/getMyNode',payload:{} });
-    // //个人挖矿产出
-    // await Utils.dispatchActiionData(this, {type:'market/getMiningInfo',payload:{} });
-    //获取赛季
-    // await this._onGetLatest();
-
     await this.setState({isPersonal: true, isTeam: false,});
-    
-    await this.onSeasonRefresh(this.state.currentSeason+1);
-    //计算倒计时
-    // const timeReg = new RegExp(/([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])/);
-    // let nowTime = Constants.nowDate.match(timeReg)[0].split(":");
-    // let nowTimeNum = parseInt(nowTime[0])*3600+parseInt(nowTime[1])*60+parseInt(nowTime[2]);
-    // let remain;
-    // if(nowTimeNum<43200){
-    //   remain = 43200 - nowTimeNum;
-    // }else if(nowTimeNum<86400){
-    //   remain = 86400 - nowTimeNum + 43200;
-    // }
-    // clearInterval(this.state.counter);
-    // remain>0?this.setCountDown(remain):this.setState({countDownHome:[0,0,0]});
+    await this.onSeasonRefresh();
+    // 个人产出
+    await Utils.dispatchActiionData(this, {type:'market/getMiningInfo', payload: {}})
   }
-
-  //倒计时函数
-  setCountDown(st){
-    this.setState({ counter:setInterval(()=>{
-      if (st>0) {
-        st--;
-        this.setState({countDownHome:[parseInt(st/3600),parseInt((st%3600)/60),st%60]});
-      } else {
-        this.onRefresh();
-        clearInterval(this.state.counter);
-        this.setState({countDownHome:[0,0,0]})
-      }
-    },1000) })
-  }
-
    
   //个人积分排名
-  async onSeasonRefresh (stageNumnber) {
+  async onSeasonRefresh () {
     if(this.props.marketRefreshing){
       return
     }
-    await Utils.dispatchActiionData(this, {type:'market/getSeasonRank',payload:{number: stageNumnber, pageNo: 1, pageSize: 10 } })
+    await Utils.dispatchActiionData(this, {type:'market/getSeasonRank',payload:{pageNo: 1, pageSize: 10}})
   }
 
-  //团队积分排名 
+  //团队积分排名
   async onTeamRefresh () {
-    await Utils.dispatchActiionData(this, {type:'market/getTeamRank',payload:{pageNo: 1, pageSize: 30 } })
+    await Utils.dispatchActiionData(this, {type:'market/getTeamRank',payload:{pageNo: 1, pageSize: 30}})
   }
-
-  //获取赛季期数
-  async _onGetLatest () {
-    try {
-      let resp = await Utils.dispatchActiionData(this, {type:'market/getLatestNumber',payload:{} })
-      let currentSeason = this.state.currentSeason;
-      if(resp && resp.code == 0){
-        let IssueNumnber = []
-        for(let i = 0; i < resp.data.maxSeasonNumnber; i++){
-          IssueNumnber.push({stage:i+1});
-        }
-        if(currentSeason === 0){
-          currentSeason = IssueNumnber.length-1
-        }
-        this.setState({ IssueNumnber: IssueNumnber,currentSeason })
-      }
-    } catch (error) {
-      
-    }
-  }
-  //切换赛季
-  _changeSeason(sts){
-    let currentSeason = this.state.currentSeason;
-    if(sts==='add' && this.state.currentSeason < this.state.IssueNumnber.length-1){
-      currentSeason++;
-    }else if(sts==='neg' && this.state.currentSeason>0){
-      currentSeason--;
-    }
-    this.setState({currentSeason});
-    this.onSeasonRefresh(currentSeason+1);
-
-  }
-
-  //获取倒计时
-  transferTimeZone(){
-    const timeReg = new RegExp(/([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])/);
-    let nowTime = Constants.nowDate.match(timeReg)[0].split(":");
-    let nowTimeNum = parseInt(nowTime[0]);
-    if(nowTimeNum>=12){
-      let timezone = moment(Constants.nowDate).add(+24,'hours').format('YYYY-MM-DD 12:00:00');
-      return  timezone;
-    }else{
-      let timeover = moment(Constants.nowDate).format("YYYY-MM-DD 12:00:00")
-      return  timeover;
-    }
-  }
-
   
   bannerClick() {
 
-  }
-
-  onNodeDetailed () {
-    try {
-      const { navigate } = this.props.navigation;
-      navigate('NodeDetailed', {});
-    } catch (error) {
-      
-    }
   }
   
   //Banner图
@@ -180,7 +101,7 @@ class Home extends BaseComponent {
     let BTN_SELECTED_STATE_ARRAY = ['isPersonal', 'isTeam'];  
     return(  
       <TouchableOpacity style={[style]}  onPress={ () => {this._updateBtnState(stateType, BTN_SELECTED_STATE_ARRAY)}}>  
-        <Text style={[styles.tabText, selectedSate ? {color: 'rgba(255, 255, 255, 1)'} : {color: 'rgba(255, 255, 255, 0.5)'}]}>{buttonTitle}</Text>  
+        <Text style={[styles.tabText, selectedSate ? {color: 'rgba(255, 255, 255, 1)'} : {color: 'rgba(255, 255, 255, 0.5)'}]}>{buttonTitle}</Text>
       </TouchableOpacity>  
     );  
   } 
@@ -228,7 +149,6 @@ class Home extends BaseComponent {
   }
   // 顶部倒计时到排名账户积分标题栏（不包括列表）
   _renderHeader = () => {
-    console.log(this.state.grade)
     return(
       <View style={styles.itemheadout}>
         <View style={styles.headerout}>
@@ -260,21 +180,21 @@ class Home extends BaseComponent {
           <LinearGradient colors={["#00D0FF","#0066E9"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.produceLinear}>
             <Text style={styles.producetoptitle}>Today's Refund</Text>
             <View style={styles.producebtm}>
-              <Text style={styles.producebtmtext}>{this.props.MiningDate.todayOutPut ? parseFloat(this.props.MiningDate.todayOutPut).toFixed() : 0}</Text>
+              <Text style={styles.producebtmtext}>{this.props.MiningDate.todayOutPut ? Math.floor(this.props.MiningDate.todayOutPut) : 0}</Text>
               <Text style={styles.producebtmtitle}>U</Text>
             </View>
           </LinearGradient>
           <LinearGradient colors={["#00D0FF","#0066E9"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.produceLinear}>
             <Text style={styles.producetoptitle}>Refunded</Text>
             <View style={styles.producebtm}>
-              <Text style={styles.producebtmtext}>{this.props.MiningDate.historyOutPut ? parseFloat(this.props.MiningDate.historyOutPut).toFixed() : 0}</Text>
+              <Text style={styles.producebtmtext}>{this.props.MiningDate.historyOutPut ? Math.floor(this.props.MiningDate.historyOutPut) : 0}</Text>
               <Text style={styles.producebtmtitle}>U</Text>
             </View>
           </LinearGradient>
           <LinearGradient colors={["#00D0FF","#0066E9"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.produceLinear}>
             <Text style={styles.producetoptitle}>Tatol Refund</Text>
             <View style={styles.producebtm}>
-              <Text style={styles.producebtmtext}>{this.props.MiningDate.totalWaitOutPut ? parseFloat(this.props.MiningDate.totalWaitOutPut).toFixed() : 0}</Text>
+              <Text style={styles.producebtmtext}>{this.props.MiningDate.totalWaitOutPut ? Math.floor(this.props.MiningDate.totalWaitOutPut) : 0}</Text>
               <Text style={styles.producebtmtitle}>U</Text>
             </View>
           </LinearGradient>
@@ -287,31 +207,13 @@ class Home extends BaseComponent {
               {this.businesButton(styles.tabStyle, this.state.isTeam, 'isTeam', 'Team Ranking')}  
             </View>
             <View style={ styles.titleLine }></View>
-
-            {/* {this.state.isPersonal ?
-              <View style={styles.swiperout}>
-                <LinearGradient colors={["rgba(45, 47, 62, 1)",UColor.bgColor,"rgba(45, 47, 62, 1)"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={[styles.teamout,{flexDirection:'row', justifyContent:'space-between'}]}>
-                  <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this._changeSeason('neg')})}}>
-                    <Ionicons style={{color:'#fff',paddingHorizontal:ScreenUtil.autowidth(20)}} name="ios-arrow-back" size={ScreenUtil.setSpText(25)}/>
-                  </TouchableOpacity>
-                  <Text style={styles.teamtext}>{"第" + this.state.IssueNumnber[this.state.currentSeason].stage + "赛季"}</Text>
-                  <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this._changeSeason('add')})}}>
-                    <Ionicons style={{color:'#fff',paddingHorizontal:ScreenUtil.autowidth(20)}} name="ios-arrow-forward" size={ScreenUtil.setSpText(25)}/>
-                  </TouchableOpacity>
-                </LinearGradient>
-            </View>
-            :
-            <LinearGradient colors={["rgba(45, 47, 62, 1)",UColor.bgColor,"rgba(45, 47, 62, 1)"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.teamout}>
-              <Text style={styles.teamtext}>总积分排名</Text>
-            </LinearGradient>
-            } */}
             {
               this.state.isPersonal ?
                 <View style={styles.itemheadtitleout}>
                   <Text style={[styles.itemheadtitle, {flex: 49, textAlign: 'center'}]}>Ranking</Text>
                   <Text style={[styles.itemheadtitle, {flex: 123, textAlign: 'center'}]}>Account</Text>
-                  <Text style={[styles.itemheadtitle, {flex: 67}]}>Deposit</Text>
-                  <Text style={[styles.itemheadtitle, {flex: 78, textAlign: 'right'}]}>HSN Rewards</Text>
+                  <Text style={[styles.itemheadtitle, {flex: 60}]}>Deposit</Text>
+                  <Text style={[styles.itemheadtitle, {flex: 85, textAlign: 'right'}]}>HSN Rewards</Text>
                 </View>
                 :
                 <View style={styles.itemheadtitleout}>
@@ -341,18 +243,25 @@ class Home extends BaseComponent {
             <Text style={(item.rankNo==1||item.rankNo==2||item.rankNo==3)?[styles.itemrankinga, {flex: 49, textAlign: 'center'}]:[styles.itemrankingb, {flex: 49, textAlign: 'center'}]}>{item.rankNo}</Text>
             <View style={[styles.itemaccountout, {flex: 123}]}>
               <Image source={!item.partner_level ? UImage.integral_bg : Constants.levelimg[item.partner_level]} style={[styles.itemaccountimg, {marginHorizontal: ScreenUtil.autowidth(6)}]}/>
-              {item.nick_name && <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1} ellipsizeMode="tail">{item.nick_name}</Text>}
-              {item.team_name && <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1} ellipsizeMode="tail">{item.team_name}</Text>}
+              {
+                item.nick_name ? (
+                  <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1} ellipsizeMode="tail">{item.nick_name ? item.nick_name : ''}</Text>
+                ) : <Text></Text>
+              }
+              {
+                item.team_name ? (
+                  <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1} ellipsizeMode="tail">{item.team_name ? item.team_name : ''}</Text>
+                ) : <Text></Text>
+              }
             </View>
-            <Text style={[styles.itemintegral, {flex: 67, textAlign: 'left', paddingLeft: ScreenUtil.autowidth(10)}]} numberOfLines={1}>{item.points}</Text>
-            <Text style={[styles.itemintegral, {flex: 78, textAlign: 'right'}]} numberOfLines={1}>{item.points}</Text>
+            <Text style={[styles.itemintegral, {flex: 60, textAlign: 'left', paddingLeft: ScreenUtil.autowidth(10)}]} numberOfLines={1}>{item.points}</Text>
+            <Text style={[styles.itemintegral, {flex: 85, textAlign: 'right'}]} numberOfLines={1}>{item.rewards ? item.rewards : 0}</Text>
           </View>
         </LinearGradient>
       )
     } else { // 团队
       return (
-        <LinearGradient colors={(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)? ["#0066E9","#00D0FF"] : ["#4F5162","#1E202C"]} 
-          start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.itemout}>
+        <LinearGradient colors={(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)? ["#0066E9","#00D0FF"] : ["#4F5162","#1E202C"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.itemout}>
           {(this.props.scoreRankSelf && this.props.scoreRankSelf.uid == item.uid)?
             <View style={styles.itemleftout}>
               <Text style={styles.itemlefttext}>me</Text>
@@ -364,8 +273,8 @@ class Home extends BaseComponent {
             <Text style={(item.rankNo==1||item.rankNo==2||item.rankNo==3)?[styles.itemrankinga, { flex: 1 }]:[styles.itemrankingb, {flex: 1}]}>{item.rankNo}</Text>
             <View style={styles.itemaccountout}>
               <Image source={!item.partner_level ? UImage.integral_bg : Constants.levelimg[item.partner_level]} style={styles.itemaccountimg}/>
-              {item.nick_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.nick_name}</Text>}
-              {item.team_name && <Text style={styles.itemaccounttext} numberOfLines={1}>{item.team_name}</Text>}
+              <Text style={styles.itemaccounttext} numberOfLines={1}>{item.nick_name ? item.nick_name : ''}</Text>
+              <Text style={styles.itemaccounttext} numberOfLines={1}>{item.team_name ? item.team_name : ''}</Text>
             </View>
           </View>
         </LinearGradient>
@@ -390,8 +299,8 @@ class Home extends BaseComponent {
                   {self.nick_name && <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1}>{self.nick_name}</Text>}
                   {self.team_name && <Text style={[styles.itemaccounttext, {flex: 1}]} numberOfLines={1}>{self.team_name}</Text>}
                 </View>
-                <Text style={[styles.itemintegral, {flex: 67, textAlign: 'left'}]} numberOfLines={1}>{self.points}</Text>
-                <Text style={[styles.itemintegral, {flex: 78, textAlign: 'right'}]} numberOfLines={1}>{self.points}</Text>
+                <Text style={[styles.itemintegral, {flex: 60, textAlign: 'left', paddingLeft: ScreenUtil.autowidth(10)}]} numberOfLines={1}>{self.points}</Text>
+                <Text style={[styles.itemintegral, {flex: 85, textAlign: 'right'}]} numberOfLines={1}>{self.rewards ? self.rewards : 0}</Text>
               </View>
             </LinearGradient>}
             <View style={styles.itemfooter}></View>
@@ -546,7 +455,8 @@ const styles = StyleSheet.create({
     width: (ScreenWidth-ScreenUtil.autowidth(54))/3, 
     height: (ScreenWidth-ScreenUtil.autowidth(54))/4, 
     borderRadius: ScreenUtil.autowidth(10), 
-    padding: ScreenUtil.autowidth(10), 
+    paddingHorizontal: ScreenUtil.autowidth(2),
+    paddingTop: ScreenUtil.autowidth(10),
     paddingBottom: ScreenUtil.autowidth(19), 
     alignItems: 'center', 
     justifyContent: 'space-between',
@@ -705,7 +615,7 @@ const styles = StyleSheet.create({
   itemlefttext: {
     color: '#006CEB', 
     fontWeight: 'bold',
-    fontSize: ScreenUtil.setSpText(10), 
+    fontSize: ScreenUtil.setSpText(8), 
   },
   itemleft: {
     width: ScreenUtil.autowidth(20), 
@@ -779,5 +689,3 @@ const styles = StyleSheet.create({
     lineHeight: ScreenUtil.autoheight(18), 
   },
 });
-
-export default Home;

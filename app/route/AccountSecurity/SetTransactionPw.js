@@ -60,7 +60,7 @@ class SetTransactionPw extends BaseComponent {
     }
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mobile: Utils.encryptedMsg(this.props.mobile), 
+        mail: Utils.encryptedMsg(this.props.mail), 
         type: 'trade', 
       } 
     });
@@ -125,7 +125,7 @@ class SetTransactionPw extends BaseComponent {
     EasyShowLD.loadingShow('Setting...');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/setPayPassword',
       payload:{ 
-        mobile: this.props.mobile,
+        mail: this.props.mail,
         code: this.state.code,
         tradePassword: Utils.encryptedMsg(this.state.password),
         confirmTradePassword: Utils.encryptedMsg(this.state.againpassword),
@@ -161,7 +161,7 @@ class SetTransactionPw extends BaseComponent {
                     <Text style={styles.headtext}>Set Trading Password</Text>
                   </TouchableOpacity>
                   <View style={styles.inptout}>
-                    <Text style={styles.texttitle}>{this.props.mobile}</Text>
+                    <Text style={styles.texttitle}>{this.props.mail}</Text>
 
                     <View style={{flexDirection: 'row', alignItems: 'center', }} >
                       <TextInput ref={(ref) => this._rcode = ref} 
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   texttitle:{
     fontWeight:'bold',
     color: '#FFFFFF',
-    fontSize: ScreenUtil.setSpText(32),
+    fontSize: ScreenUtil.setSpText(30),
   },
   textinpt: {
     color: '#FFFFFF',

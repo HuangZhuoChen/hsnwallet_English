@@ -46,17 +46,17 @@ class Personal extends React.Component {
       disable: true, nameColor: '#FFFFFF', name: "Invitation Code", subName: this.props.loginUser.inviteCode },
 
       {itemHeight: ScreenUtil.autoheight(66), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-      disable: true, nameColor: '#FFFFFF', name: "My Identification", subName: 'Diamond' },
+      disable: true, nameColor: '#FFFFFF', name: "My Identification", subName: this.props.loginUser.protectorMasterNode ?  this.props.loginUser.protectorMasterNode: 'None'},
 
       {itemHeight: ScreenUtil.autoheight(66), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
-        disable: true, nameColor: '#FFFFFF', name: "《VAM》", subName: this.props.loginUser.gamblingStatus === 'True' ? 'Agreed' : 'Cancel', onPress: this.props.loginUser.gamblingStatus === 'True' ? this.goVam.bind(this) : null }
+        disable: true, nameColor: '#FFFFFF', name: "《VAM》", subName: this.props.loginUser.gamblingStatus === 'true' ? 'Agreed' : 'Cancel', onPress: this.props.loginUser.gamblingStatus === 'true' ? this.goVam.bind(this) : null }
     ];
   }
 
   //组件加载完成
   async componentDidMount() {
     //获用户信息
-    await Utils.dispatchActiionData(this, {type:'login/findUserInfo',payload:{ } });
+    await Utils.dispatchActiionData(this, {type:'login/findUserInfo', payload:{}});
   }
 
   //修改昵称
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   headtext: {
     color: '#FFFFFF', 
-    fontSize: ScreenUtil.setSpText(20),
+    fontSize: ScreenUtil.setSpText(28),
   },
   footpoho: {
     position: 'absolute',

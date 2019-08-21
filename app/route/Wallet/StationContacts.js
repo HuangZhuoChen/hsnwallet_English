@@ -55,7 +55,7 @@ class StationContacts extends BaseComponent {
   goAddAddress(){
     try {
       if(this.props.addlinkList.length>=10){
-        EasyToast.show('您最多可添加10个地址!');
+        EasyToast.show('You can add up to 10 addresses!');
         return;
       }
       const { navigate } = this.props.navigation;
@@ -72,11 +72,11 @@ class StationContacts extends BaseComponent {
         <View style={styles.frameout}>
           <Image style={styles.frameimg} source={UImage.sad_face} />
         </View>
-        <Text style={styles.frametext}>确认删除？</Text>
+        <Text style={styles.frametext}>Do you confirm deletion?</Text>
       </View>);
-      let isAuth =  await AlertModal.showSync(null,con,"删除","取消" );
+      let isAuth =  await AlertModal.showSync(null,con,"Confirm","Cancel" );
       if(isAuth){
-        EasyToast.show('删除成功!');
+        EasyToast.show('Successful deletion');
         Utils.dispatchActiionData(this,{type:'assets/addlinkDel',payload: {id: item.id}})
       }
     } catch (error) {
@@ -111,7 +111,7 @@ class StationContacts extends BaseComponent {
   render() {
     return (
       <View style={[styles.container,{backgroundColor: UColor.bgColor, }]}>
-        <Header {...this.props} onPressLeft={true} title={"站内联系人"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
+        <Header {...this.props} onPressLeft={true} title={"Contacts"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
 
         <FlatList style={{flex: 1, marginBottom:ScreenUtil.autoheight(65)}}
           data={this.props.addlinkList?this.props.addlinkList:[]}
@@ -131,7 +131,7 @@ class StationContacts extends BaseComponent {
 
         <View style={styles.referout}>
           <TextButton onPress={()=>{this.noDoublePress(()=>{this.goAddAddress()})}} shadow={true} textColor='#FFFFFF' 
-          text={"添加站内联系人"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+          text={"Add Contacts"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
         </View>
       </View>
     )
@@ -143,16 +143,16 @@ class StationContacts extends BaseComponent {
         <LinearGradient style={styles.adCard} colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}}>
           <Text style={styles.adCardtitle}>{moment(item.createDate).format('YYYY/MM/DD HH:mm')}</Text>
           <View style={styles.adCardRow}>
-            <Text style={[styles.adCardRowTitle,{flex:1.5,textAlign: 'left'}]}>HSN账号</Text>
-            <Text style={[styles.adCardRowTitle,{flex:1.5,textAlign: 'center'}]}>备注</Text>
-            <Text style={[styles.adCardRowTitle,{flex:1,textAlign: 'center'}]}>操作</Text>
+            <Text style={[styles.adCardRowTitle,{flex:1.5,textAlign: 'left'}]}>HSN Acount</Text>
+            <Text style={[styles.adCardRowTitle,{flex:1.5,textAlign: 'center'}]}>Notes</Text>
+            <Text style={[styles.adCardRowTitle,{flex:1,textAlign: 'center'}]}>Operation</Text>
           </View>
           <View style={[styles.adCardRow,{marginVertical:ScreenUtil.autoheight(5)}]}>
-            <Text style={[styles.adCardRowTitle,{flex:1.5,textAlign: 'left'}]}>{item.mobile}</Text>
+            <Text style={[styles.adCardRowTitle,{flex:1.5,textAlign: 'left'}]}>{item.mail}</Text>
             <Text style={[styles.adCardRowTitle,{flex:1.5,textAlign: 'center'}]}>{item.memo}</Text>
             <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.addressDel(item)})}} style={[styles.adCardRowTitle,styles.delbtnout]}>
               <LinearGradient style={styles.delLinearout} colors={['#FF0A2F','#FFD083']} start={{x:0,y:0}} end={{x:1,y:0}}>
-                <Text style={styles.deltext}>删除</Text>
+                <Text style={styles.deltext}>Delete</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -165,7 +165,7 @@ class StationContacts extends BaseComponent {
     return(
       <LinearGradient colors={["#4F5162","#1E202C"]} style={styles.notimeout}>
         <Image source={UImage.noRecord} style={styles.defectbgimg}/>
-        <Text style={styles.notimetext}>{"您还没有站内联系人哦"}</Text>
+        <Text style={styles.notimetext}>{"You don't have an in-station contact yet."}</Text>
       </LinearGradient>
     )
   }

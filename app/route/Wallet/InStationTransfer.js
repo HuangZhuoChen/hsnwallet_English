@@ -39,15 +39,33 @@ class InStationTransfer extends BaseComponent {
       code: '',
 
       uuid: '',
-      capture: 'phone code',
+      capture: 'mail code',
       captureState: false,
 
       factAmount: 0, //扣手续费后实际到账数量
+
+      // lurui
+      coinName: this.props.navigation.state.params.coinName,
+      available: 0,
+      fee: 0
     };
   }
 
   //组件加载完成
   componentDidMount() {
+    if (this.props.coinlist.length > 0) {
+      let available, fee
+      this.props.coinlist.forEach((val) => {
+        if (val.coinName === this.state.coinName) {
+          available = val.available
+          fee = val.transferAmmount
+        }
+      })
+      this.setState({
+        available,
+        fee
+      })
+    }
     this.refreshImage();
   }
 
@@ -59,7 +77,7 @@ class InStationTransfer extends BaseComponent {
 
   async kcaptrue () {
     if(this.state.address==""){
-      EasyToast.show('Please enter your cell phone number');
+      EasyToast.show('Please enter your mail number');
       return;
     }
     if(this.state.amount==""){
@@ -79,7 +97,7 @@ class InStationTransfer extends BaseComponent {
     }
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mobile: Utils.encryptedMsg(this.props.mobile), 
+        mail: Utils.encryptedMsg(this.props.mail), 
         type: 'insideTransfer', 
       } 
     });
@@ -99,14 +117,14 @@ class InStationTransfer extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"phone code", captureState: false});
+        th.setState({capture:"mail code", captureState: false});
       }
     },1000);
   }
 
   regSubmit = () =>{
     if(this.state.address==""){
-      EasyToast.show('Please enter your cell phone number');
+      EasyToast.show('Please enter your email number');
       return;
     }
     if(this.state.amount==""){
@@ -122,7 +140,7 @@ class InStationTransfer extends BaseComponent {
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('Please enter the verification code.');
+      EasyToast.show('Please enter the verification code');
       return;
     }
     this.onchangePwd();
@@ -132,8 +150,8 @@ class InStationTransfer extends BaseComponent {
     EasyShowLD.loadingShow('Transfer...');
     let resp = await Utils.dispatchActiionData(this, {type:'assets/getInsideTransfer',
       payload:{
-        mobile: this.state.address,
-        coinName: this.state.coinitem.coinName,
+        mail: this.state.address,
+        coinName: this.state.coinName,
         amount: this.state.amount,
         tradePassword: this.state.password,
         code: this.state.code,
@@ -146,7 +164,8 @@ class InStationTransfer extends BaseComponent {
       EasyShowLD.loadingClose();
       if(resp.code==0){
         EasyToast.show("Submitted pending confirmation by the main network");
-        await Utils.dispatchActiionData(this, {type:'assets/getInouTorder',payload:{coinName: this.state.coinitem.coinName, pageNo: 1, pageSize: 10 } });
+        await Utils.dispatchActiionData(this, {type:'assets/getInouTorder',payload:{coinName: this.state.coinName, pageNo: 1, pageSize: 10 } });
+        await Utils.dispatchActiionData(this, {type:'login/findUserInfo', payload:{}})
         this.props.navigation.goBack();
       }else{
         EasyToast.show(resp.msg);
@@ -157,10 +176,10 @@ class InStationTransfer extends BaseComponent {
   goToAddress(){
     Utils.dispatchActiionData(this,{type:'assets/addlinkList',payload: {pageNo: 1, pageSize: 10}});
     const { navigate } = this.props.navigation;
-    navigate('StationContacts', {coinName:this.state.coinitem.coinName,
+    navigate('StationContacts', {coinName:this.state.coinName,
       callback:(res)=>{
-        if(res && res.mobile){
-          this.setState({address: res.mobile})
+        if(res && res.mail){
+          this.setState({address: res.mail})
         }
       }
     });
@@ -173,13 +192,13 @@ class InStationTransfer extends BaseComponent {
         this.setState({ amount: '',factAmount:0});
         return ;
       }
-      if(strAmount>this.state.coinitem.available){
+      if(strAmount>this.state.available){
         this.setState({ amount: '',factAmount:0});
         EasyToast.show('The amount of transferable funds is insufficient. Please re-enter it.');
         return ;
       }
-      let factAmount = strAmount - this.state.coinitem.transferAmmount;
-      this.setState({ amount: strAmount, factAmount: factAmount});
+      let factAmount = strAmount - this.state.fee;
+      this.setState({amount: strAmount, factAmount: factAmount});
     } catch (error) {
       console.log("++++inputAmount-error:",error.message);
     }
@@ -192,7 +211,7 @@ class InStationTransfer extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
+    EasyToast.show('Failed to obtain graphics code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -220,7 +239,7 @@ class InStationTransfer extends BaseComponent {
                       selectionColor={UColor.tintColor}
                       placeholderTextColor={UColor.lightgray}
                       style={styles.textinpt}
-                      placeholder={"phone number"}
+                      placeholder={"email number"}
                       underlineColorAndroid="transparent"
                       returnKeyType="next"
                       keyboardType="phone-pad"
@@ -249,20 +268,20 @@ class InStationTransfer extends BaseComponent {
                       onChangeText={(amount) => this.inputAmount(amount)}  
                     />
                     <View style={styles.inptbtnout}>
-                      <Text style={{color: '#FFFFFF',fontSize: ScreenUtil.setSpText(8),}}>{this.state.coinitem.coinName}</Text>
+                      <Text style={{color: '#FFFFFF',fontSize: ScreenUtil.setSpText(8),}}>{this.state.coinName}</Text>
                     </View>
                   </View>
                 </View>
 
                 <View style={styles.footerout}>
-                  <Text style={{color: '#FFFFFF',fontSize: ScreenUtil.setSpText(11),lineHeight: ScreenUtil.autoheight(26),}}>{"Actual amount received：" + this.state.factAmount + " " + this.state.coinitem.coinName}</Text>
+                  <Text style={{color: '#FFFFFF',fontSize: ScreenUtil.setSpText(11),lineHeight: ScreenUtil.autoheight(26),}}>{"Actual amount received：" + this.state.factAmount + " " + this.state.coinName}</Text>
                   <View style={styles.footpoho}>
                     <Text style={styles.footertext}>
                       Available amount to transfer：
-                      <Text style={styles.actualtext}>{Utils.formatCNY(this.props.balanceAvailable)}</Text>
-                      {" " + this.state.coinitem.coinName}
+                      <Text style={styles.actualtext}>{Utils.formatCNY(this.state.available)}</Text>
+                      {" " + this.state.coinName}
                     </Text>
-                    <Text style={styles.footertext}>{"Withdrawal fee：" + this.state.coinitem.transferAmmount + " " + this.state.coinitem.coinName}</Text>
+                    <Text style={styles.footertext}>{"Withdrawal fee：" + this.state.fee + " " + this.state.coinName}</Text>
                   </View>
                 </View>
 
@@ -412,9 +431,8 @@ const styles = StyleSheet.create({
     lineHeight: ScreenUtil.autoheight(16),
   },
   footpoho: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent:'space-between'
+    // alignItems: 'center', 
+    // justifyContent:'space-between'
   },
   actualtext: {
     color: '#00BBFA',

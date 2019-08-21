@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
         marginBottom: 1,
     },
     Leftout: {
-        flex: 1.5,
+        // flex: 1.5,
+        width: ScreenUtil.autowidth(50),
         paddingLeft:ScreenUtil.autowidth(10),
         alignItems:"flex-start",
         flexDirection:"row",
@@ -99,7 +100,8 @@ const styles = StyleSheet.create({
         fontSize: ScreenUtil.setSpText(18),
     },
     Rightout: {
-        flex: 1.5,
+        // flex: 1.5,
+        width: ScreenUtil.autowidth(50),
         paddingRight: ScreenUtil.autowidth(10),
         alignItems:"flex-end",
         flexDirection:"row",

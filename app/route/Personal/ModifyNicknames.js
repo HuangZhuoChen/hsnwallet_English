@@ -136,8 +136,7 @@ const styles = StyleSheet.create({
   },
   cardHeaderTitle:{
     color:'#FFFFFF',
-    fontSize:ScreenUtil.setSpText(36),
-    fontWeight: 'bold',
+    fontSize:ScreenUtil.setSpText(24),
     marginTop: ScreenUtil.autoheight(35),
     marginBottom: ScreenUtil.autoheight(122)
   },

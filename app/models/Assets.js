@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil'
-import {wallet, inoutorder, cancel_order, dailypayback, assets_withdraw, nodeList, usernode, detailnode,addressList, addressAdd, addressDel, insidetransfer, linkList, insertAdd, linkDel } from '../utils/Api'
+import {wallet, inoutorder, cancel_order, dailypayback, assets_withdraw, nodeList, usernode, detailnode,addressList, addressAdd, addressDel, insidetransfer, linkList, insertAdd, linkDel, exchangeRate, usdtToHsn, rechargeLog } from '../utils/Api'
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import Constants from '../utils/Constants'
@@ -24,6 +24,52 @@ export default {
         if (resp && resp.code == 0) {
           yield put({ type: 'upwalletdate', payload: { resp, ...payload } });
         }else {
+          EasyToast.show(resp.msg);
+        }
+        if (callback) callback(resp);
+      } catch (error) {
+        console.log("+++++app/models/assets.js++++getwallet-error:",JSON.stringify(error));
+        if (callback) callback({ code: 500, msg: "" });
+      }
+    },
+
+    // usdt兑换hsn记录
+    *getRechargeLog({ payload, callback }, { call, put }) {
+      try {
+        const res = yield call(Request.request, rechargeLog, 'post', payload);
+        if (res && res.code == 0) {
+        } else {
+          EasyToast.show(res.msg)
+        }
+        if (callback) callback(res)
+      } catch (error) {
+        console.log("+++++app/models/assets.js++++getwallet-error:",JSON.stringify(error));
+        if (callback) callback({ code: 500, msg: "" });
+      }
+    },
+
+    // usdt=>hsn汇率
+    *getExchangeRate({ payload, callback }, { call, put }) {
+      try {
+        const resp = yield call(Request.request, exchangeRate, 'get');
+        if (resp && resp.code == 0) {
+        } else {
+          EasyToast.show(resp.msg);
+        }
+        if (callback) callback(resp);
+      } catch (error) {
+        console.log("+++++app/models/assets.js++++getwallet-error:",JSON.stringify(error));
+        if (callback) callback({ code: 500, msg: "" });
+      }
+    },
+
+    // usdt节点换成hsn
+    *usdtToHsn({ payload, callback }, { call, put }) {
+      try {
+        const resp = yield call(Request.request, usdtToHsn, 'post', payload);
+        if (resp && resp.code == 0) {
+          EasyToast.show('Conversion Success')
+        } else {
           EasyToast.show(resp.msg);
         }
         if (callback) callback(resp);
@@ -130,7 +176,6 @@ export default {
       try {
         const res = yield call(Request.request, nodeList,'get');
         if(res && res.msg==="success") {
-          console.log(res)
           yield put({type: "update",payload:{nodeList:res.nodeList}})
         }
         callback?callback(res):"";
@@ -207,6 +252,7 @@ export default {
     *addlinkList({payload, callback},{call,put}){
       try {
         const res = yield call(Request.request, linkList,'post',payload);
+        console.log(res)
         if(res && res.msg==="success"){
           yield put({ type: 'uplinkdate', payload: { data: res.data, ...payload } });
         }

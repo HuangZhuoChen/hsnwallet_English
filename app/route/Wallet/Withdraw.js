@@ -32,7 +32,7 @@ class Withdraw extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      coinitem: this.props.navigation.state.params.coinitem?this.props.navigation.state.params.coinitem : {},
+      // coinitem: this.props.navigation.state.params.coinitem?this.props.navigation.state.params.coinitem : {},
 
       address: '',
       addressSize: 16,
@@ -52,10 +52,10 @@ class Withdraw extends BaseComponent {
 
       code:"",
       codeSize:16,
-      codePlaceholder:"verification code",
+      codePlaceholder:"email code",
 
       uuid: '',
-      capture:'verification code',
+      capture:'email code',
       captureState: false,
 
       factAmount: 0, //扣手续费后实际到账数量
@@ -65,11 +65,25 @@ class Withdraw extends BaseComponent {
       isOmni: true,
       isErc20: false,
       addressError: false,
+
+      // lurui
+      coinName: this.props.navigation.state.params.coinName,
+      limitAmount: 0,
+      commissionAmount: 0
     };
   }
 
   //组件加载完成
   componentDidMount() {
+    this.props.coinlist.forEach((val) => {
+      if (val.coinName === this.state.coinName) {
+        this.setState({
+          limitAmount: val.limitAmount,
+          commissionAmount: val.commissionAmount
+        })
+      }
+      
+    })
     this.refreshImage();
     this.onSetTradePW();
   }
@@ -122,11 +136,11 @@ class Withdraw extends BaseComponent {
       EasyToast.show('Please enter amount');
       return;
     }
-    if(this.state.coinitem.coinName == "USDT" && this.state.amount < this.state.min_usdt_withdrawable){
+    if(this.state.coinName == "USDT" && this.state.amount < this.state.min_usdt_withdrawable){
       EasyToast.show('Minimum withdrawal amount is 10');
       return;
     }
-    if(this.state.coinitem.coinName == "HSN" && this.state.amount < this.state.min_hsn_withdrawable){
+    if(this.state.coinName == "HSN" && this.state.amount < this.state.min_hsn_withdrawable){
       EasyToast.show('Minimum withdrawal amount is 30');
       return;
     }
@@ -147,12 +161,12 @@ class Withdraw extends BaseComponent {
     }
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mobile: Utils.encryptedMsg(this.props.mobile), 
+        mail: Utils.encryptedMsg(this.props.mail), 
         type: 'withdraw', 
       } 
     });
     if(resp){
-      EasyToast.show("Verification code has been sent. Please check it carefully.");
+      EasyToast.show("Email code has been sent. Please check it carefully.");
       this.setState({ capture: "60s", captureState: true });
       this.doTick();
     }
@@ -167,7 +181,7 @@ class Withdraw extends BaseComponent {
         th.setState({capture:ct+"s", captureState: true});
       }else {
         clearInterval(thInter);
-        th.setState({capture:"verification code", captureState: false});
+        th.setState({capture:"email code", captureState: false});
       }
     },1000);
   }
@@ -181,11 +195,11 @@ class Withdraw extends BaseComponent {
       EasyToast.show('Please enter amount');
       return;
     }
-    if(this.state.coinitem.coinName == "USDT" && this.state.amount < this.state.min_usdt_withdrawable){
+    if(this.state.coinName == "USDT" && this.state.amount < this.state.min_usdt_withdrawable){
       EasyToast.show('Minimum withdrawal amount is 10');
       return;
     }
-    if(this.state.coinitem.coinName == "HSN" && this.state.amount < this.state.min_hsn_withdrawable){
+    if(this.state.coinName == "HSN" && this.state.amount < this.state.min_hsn_withdrawable){
       EasyToast.show('Minimum withdrawal amount is 30');
       return;
     }
@@ -202,23 +216,24 @@ class Withdraw extends BaseComponent {
       return;
     }
     if(this.state.code==""){
-      EasyToast.show('Please enter the verification code.');
+      EasyToast.show('Please enter the email code');
       return;
     }
     this.onchangePwd();
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('withdrawing...');
+    EasyShowLD.loadingShow('withdraw...');
     let resp = await Utils.dispatchActiionData(this, {type:'assets/getAssetsWithdraw',
       payload:{
-        coinName: this.state.coinitem.coinName,
+        coinName: this.state.coinName,
         amount: this.state.amount,
         tradePassword: this.state.password,
         withdrawAddress: this.state.address,
         code: this.state.code,
         uuid: this.state.uuid,
-        imgcode: this.state.codeImg
+        imgcode: this.state.codeImg,
+        addressType: this.state.isOmni ? 'omni' : 'erc20'
       } 
     });
     if(resp){
@@ -226,7 +241,8 @@ class Withdraw extends BaseComponent {
       EasyShowLD.loadingClose();
       if(resp.code==0){
         EasyToast.show("Submitted pending confirmation by the main network");
-        await Utils.dispatchActiionData(this, {type:'assets/getInouTorder',payload:{coinName: this.state.coinitem.coinName, pageNo: 1, pageSize: 10 } });
+        await Utils.dispatchActiionData(this, {type:'assets/getInouTorder',payload:{coinName: this.state.coinName, pageNo: 1, pageSize: 10 } });
+        await Utils.dispatchActiionData(this, {type:'login/findUserInfo', payload:{}})
         this.props.navigation.goBack();
       }else{
         EasyToast.show(resp.msg);
@@ -235,9 +251,9 @@ class Withdraw extends BaseComponent {
   }
   
   goToAddress(){
-    Utils.dispatchActiionData(this,{type:'assets/addressList',payload: {coinName:this.state.coinitem.coinName}});
+    Utils.dispatchActiionData(this,{type:'assets/addressList',payload: {coinName:this.state.coinName}});
     const { navigate } = this.props.navigation;
-    navigate('address', {coinName:this.state.coinitem.coinName,
+    navigate('address', {coinName:this.state.coinName,
       callback:(res)=>{
         if(res && res.coinAddress){
           this.setState({address: res.coinAddress})
@@ -249,7 +265,7 @@ class Withdraw extends BaseComponent {
   async inputAddress (address) {
     try {
       this.setState({ address: address});
-      if(this.state.coinitem.coinName == "USDT"){
+      if(this.state.coinName == "USDT"){
         if(this.state.isOmni&&address!=""){
           await this.setState({addressError: true});
         }else{
@@ -280,15 +296,15 @@ class Withdraw extends BaseComponent {
         this.setState({ amount: '',factAmount:0});
         return ;
       }
-      if(this.state.coinitem.coinName == "USDT" && strAmount < this.state.min_usdt_withdrawable){
+      if(this.state.coinName == "USDT" && strAmount < this.state.min_usdt_withdrawable){
         this.setState({ amount: strAmount,});
         return ;
       }
-      if(this.state.coinitem.coinName == "HSN" && strAmount < this.state.min_hsn_withdrawable){
+      if(this.state.coinName == "HSN" && strAmount < this.state.min_hsn_withdrawable){
         this.setState({ amount: strAmount,});
         return ;
       }
-      let factAmount = strAmount - this.state.coinitem.commissionAmount;
+      let factAmount = strAmount - this.state.commissionAmount;
       this.setState({ amount: strAmount, factAmount: factAmount});
     } catch (error) {
       console.log("++++inputAmount-error:",error.message);
@@ -302,7 +318,7 @@ class Withdraw extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
+    EasyToast.show('Failed to obtain graphics code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -316,20 +332,20 @@ class Withdraw extends BaseComponent {
   render() {
     return (
       <View style={[styles.container,{backgroundColor: UColor.bgColor, }]}>
-        <Header {...this.props} onPressLeft={true} title={this.state.coinitem.coinName} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
+        <Header {...this.props} onPressLeft={true} title={'Withdraw'} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
         <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "padding" : null} style={{flex: 1}}>
           <ScrollView  keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
             <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)} style={{flex: 1,}}>
               <LinearGradient colors={["#4A4C5D","#1E202C"]}  style={styles.linearout}>
                 <View style={styles.outsource}>
-                  <View style={styles.headout}>
+                  {/* <View style={styles.headout}>
                     <Text style={styles.headtext}>Withdraw</Text>
-                  </View>
+                  </View> */}
                   <View style={{flex: 1, justifyContent: 'space-around',}}>
                     <View style={styles.itemout}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                         <Text style={styles.texttitle}>Withdraw</Text>
-                        {this.state.coinitem.coinName=='USDT'&&
+                        {this.state.coinName=='USDT'&&
                         <View style={styles.businestab}>  
                           {this.businesButton(styles.taboneStyle, this.state.isOmni, 'isOmni', 'OMNI')}  
                           {this.businesButton(styles.tabtwoStyle, this.state.isErc20, 'isErc20', 'ERC20')}  
@@ -428,7 +444,7 @@ class Withdraw extends BaseComponent {
                     </View>
 
                     <View style={styles.itemout}>
-                      <Text style={styles.texttitle}>Verification Code</Text>
+                      <Text style={styles.texttitle}>Email Code</Text>
                       <View style={{flexDirection: 'row', alignItems: 'center', }} >
                         <TextInput ref={(ref) => this._rcode = ref} 
                           autoFocus={false}
@@ -436,7 +452,7 @@ class Withdraw extends BaseComponent {
                           placeholderTextColor={UColor.lightgray}    
                           selectionColor={UColor.tintColor} 
                           onFocus={()=>{this.setState({codeSize:32,codePlaceholder:''})}}
-                          onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'Verification Code'})}}
+                          onBlur={()=>{this.state.code?"":this.setState({codeSize:16,codePlaceholder:'email Code'})}}
                           style={[styles.textinpt,{flex: 1,fontSize: ScreenUtil.setSpText(this.state.codeSize),}]}
                           placeholder={this.state.codePlaceholder}
                           underlineColorAndroid="transparent" 
@@ -457,7 +473,7 @@ class Withdraw extends BaseComponent {
                     <Text style={styles.actualtext}>{"Actual Amount Received：" + this.state.factAmount}</Text>
                   </View>
                   <View style={styles.footerout}>
-                    <Text style={styles.footertext}>{"1 Minimum Withdraw：" + this.state.coinitem.limitAmount + " " + this.state.coinitem.coinName}</Text>
+                    <Text style={styles.footertext}>{"1 Minimum Withdraw：" + this.state.limitAmount + " " + this.state.coinName}</Text>
                     <Text style={styles.footertext}>2 To keep your assets safe, we will manually audit your token withdrawal when you change your password. Please wait for the phone call from our official customer service patiently.</Text>
                     <Text style={styles.footertext}>3 Please make sure that your logging device is safe, in case of information disclosure or being tampered.</Text>
                   </View>

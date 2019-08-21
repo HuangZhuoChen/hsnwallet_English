@@ -16,35 +16,16 @@ import Carousel from "react-native-banner-carousel";
 import {kapimg} from '../../utils/Api';
 import BaseComponent from "../../components/BaseComponent";
 import {AlertModal,AlertModalView} from '../../components/modals/AlertModal'
+import {Update} from '../Home/index'
 import TextButton from '../../components/TextButton'
 const ScreenWidth = Dimensions.get('window').width;
-
-export class Gamble { // 此方法用于其他组件能够间接调用Nodeapplication里的方法
-
-  static bind(Gamble) {
-    this.map["Gamble"] = Gamble;
-  }
-
-  static unBind() {
-    this.map["Gamble"] = null;
-    delete this.map["Gamble"];
-  }
-
-  static goGamble() {
-    console.log(123)
-    this.map["Gamble"].goGamblingAgree()
-  }
-}
-
-Gamble.map = {};
 
 @connect(({login, Nodeapplication, personal, loading }) => ({...login, ...Nodeapplication, ...personal,
   jdRefreshing: loading.effects['Nodeapplication/nodeRefresh']
 }))
-export class Nodeapplication extends BaseComponent {
+export default class Nodeapplication extends BaseComponent {
   constructor(props) {
     super(props);
-    Gamble.bind(this)
     this.state = {
       jdBanner:[
         {image:UImage.homeBannerBg,url:""},
@@ -64,14 +45,19 @@ export class Nodeapplication extends BaseComponent {
       progress: 0,
       buyAmount: '1000',
       tradePassword: '',
-      code: ''
+      code: '',
+      checked: true,
+
+      // 购买弹框
+      title: '',
+      range: ''
     };
   }
 
   //组件加载完成
   async componentDidMount() {
-    console.log(this.props.loginUser)
     this.getProgress()
+    // this.dataInit()
     // this.jdRefresh();
     //是否设置了交易密码
     await Utils.dispatchActiionData(this, {type:'personal/isSetTradePassword',payload:{ } });
@@ -82,67 +68,71 @@ export class Nodeapplication extends BaseComponent {
       return;
     };
   }
+  async dataInit() {
+    let res = await Utils.dispatchActiionData(this, {type: 'Nodeapplication/nodeRefresh', payload: ''})
+  }
+  
   // 购买进度
   async getProgress() {
-    let progress = await Utils.dispatchActiionData(this, {type: 'Nodeapplication/getProgress', payload: {}})
+    let res = await Utils.dispatchActiionData(this, {type: 'Nodeapplication/getProgress', payload: {}})
     this.setState({
-      progress: progress.RateOfOgress
+      progress: res.RateOfOgress
     })
   }
 
-  async jdRefresh(){
-    try {
-      // 获取各节点基本信息
-      let res = await Utils.dispatchActiionData(this, {type:'Nodeapplication/nodeRefresh', payload: ""});
-      // 获取节点抢购时剩余节点数量
-      // Nodeapplication/nodeGetInfo为models/Nodeapplication.js下*nodeGetInf的函数方法
-      let nodebk = await Utils.dispatchActiionData(this, {type:'Nodeapplication/nodeGetInfo', payload: ""});
-      if(nodebk.msg !== "success"){
-        EasyToast.show(nodebk.msg);
-        return;
-      }
-      let nodeTemp = [];
-      this.props.nodeList.map((item)=>{
-        let row = Object.assign({},item);
-        let fitData = this.props.nodeInfo.filter((info)=>info.nodeId == row.id);
-        if(fitData.length>0){
-          row.issueId = fitData[0].id;
-          row.nodeTotal = fitData[0].nodeCount;
-          row.nodeLast = fitData[0].nodeRemainCount;
-        }else {
-          row.nodeTotal = 0;
-          row.nodeLast = 0;
-        }
-        nodeTemp.push(row);
-      });
+  // async jdRefresh(){
+  //   try {
+  //     // 获取各节点基本信息
+  //     let res = await Utils.dispatchActiionData(this, {type:'Nodeapplication/nodeRefresh', payload: ""});
+  //     // 获取节点抢购时剩余节点数量
+  //     // Nodeapplication/nodeGetInfo为models/Nodeapplication.js下*nodeGetInf的函数方法
+  //     let nodebk = await Utils.dispatchActiionData(this, {type:'Nodeapplication/nodeGetInfo', payload: ""});
+  //     if(nodebk.msg !== "success"){
+  //       EasyToast.show(nodebk.msg);
+  //       return;
+  //     }
+  //     let nodeTemp = [];
+  //     this.props.nodeList.map((item)=>{
+  //       let row = Object.assign({},item);
+  //       let fitData = this.props.nodeInfo.filter((info)=>info.nodeId == row.id);
+  //       if(fitData.length>0){
+  //         row.issueId = fitData[0].id;
+  //         row.nodeTotal = fitData[0].nodeCount;
+  //         row.nodeLast = fitData[0].nodeRemainCount;
+  //       }else {
+  //         row.nodeTotal = 0;
+  //         row.nodeLast = 0;
+  //       }
+  //       nodeTemp.push(row);
+  //     });
 
-      let stageNums = this.props.nodeInfo[0].number;
-      let sStr ="第"+ Math.ceil(stageNums/5) + "赛季";
-      let qStr ="第"+ stageNums + "期";
+  //     let stageNums = this.props.nodeInfo[0].number;
+  //     let sStr ="第"+ Math.ceil(stageNums/5) + "赛季";
+  //     let qStr ="第"+ stageNums + "期";
 
-      this.setState({season:sStr, stage:qStr});
+  //     this.setState({season:sStr, stage:qStr});
 
-      //计算倒计时
-      const firTime = this.toTimeNumber((res.countDowm && res.countDowm.firstCountDowm)? res.countDowm.firstCountDowm : "10:00:00");
-      const secTime = this.toTimeNumber((res.countDowm && res.countDowm.secondCountDowm)? res.countDowm.secondCountDowm : "22:00:00");
-      const timeReg = new RegExp(/([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])/);
-      let nowTime = Constants.nowDate.match(timeReg)[0].split(":");
-      let nowTimeNum = parseInt(nowTime[0])*3600+parseInt(nowTime[1])*60+parseInt(nowTime[2]);
-      let remain;
-      if(nowTimeNum< firTime){
-        remain = firTime - nowTimeNum;
-      }else if(nowTimeNum<secTime){
-        remain = secTime - nowTimeNum;
-      }else if(nowTimeNum<86400){
-        remain = 86400 - nowTimeNum + firTime;
-      }
-      clearInterval(this.state.counter);
-      remain>0?this.setCountDown(remain):"";
-      this.setState({nodeLists:nodeTemp})
-    }catch (e) {
+  //     //计算倒计时
+  //     const firTime = this.toTimeNumber((res.countDowm && res.countDowm.firstCountDowm)? res.countDowm.firstCountDowm : "10:00:00");
+  //     const secTime = this.toTimeNumber((res.countDowm && res.countDowm.secondCountDowm)? res.countDowm.secondCountDowm : "22:00:00");
+  //     const timeReg = new RegExp(/([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])/);
+  //     let nowTime = Constants.nowDate.match(timeReg)[0].split(":");
+  //     let nowTimeNum = parseInt(nowTime[0])*3600+parseInt(nowTime[1])*60+parseInt(nowTime[2]);
+  //     let remain;
+  //     if(nowTimeNum< firTime){
+  //       remain = firTime - nowTimeNum;
+  //     }else if(nowTimeNum<secTime){
+  //       remain = secTime - nowTimeNum;
+  //     }else if(nowTimeNum<86400){
+  //       remain = 86400 - nowTimeNum + firTime;
+  //     }
+  //     clearInterval(this.state.counter);
+  //     remain>0?this.setCountDown(remain):"";
+  //     this.setState({nodeLists:nodeTemp})
+  //   }catch (e) {
 
-    }
-  }
+  //   }
+  // }
 
   setCountDown(st){
     this.setState({counter:setInterval(()=>{
@@ -150,7 +140,7 @@ export class Nodeapplication extends BaseComponent {
         st--;
         this.setState({countDown:[parseInt(st/3600),parseInt((st%3600)/60),st%60]});
       }else {
-        this.jdRefresh();
+        // this.jdRefresh();
         clearInterval(this.state.counter);
         this.setState({countDown:[0,0,0]})
       }},1000)})
@@ -180,13 +170,6 @@ export class Nodeapplication extends BaseComponent {
       //   return;
       // }
 
-      // 提示抢购时间未开始
-      // let judge = await Utils.dispatchActiionData(this, {type:'Nodeapplication/decisionJudge', payload: {issueId : item.issueId}});
-      // if(judge && judge.msg != "success" && judge.code != 0){
-      //   EasyToast.show(JSON.stringify(judge.msg));
-      //   return;
-      // }
-
       // 购买节点界面
       let title, range
       switch(index) {
@@ -207,87 +190,107 @@ export class Nodeapplication extends BaseComponent {
           break
         case 3:
           title = 'Diamond'
-          range = '10000-Infinite'
+          range = '≥10000'
           this.state.buyAmount = '10000'
           break
         default:
           return
       }
-      let con = 
-        <View>
-          <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120),height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528,}} source={UImage.confirm_bg}>
-            <View style={{flex: 1, paddingTop: ScreenUtil.autoheight(6)}}>
-              <Text style={{fontSize: ScreenUtil.setSpText(20), color: '#fff', textAlign: 'center'}}>HSN</Text>
-              <View style={{height: ScreenUtil.autoheight(50), marginBottom: ScreenUtil.autoheight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: ScreenUtil.autowidth(30)}}>
-                <TouchableOpacity onPress={() => {this.reduceHSN()}} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20), justifyContent: 'center'}}>
-                  <Image source={UImage.icon_reduce} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(2)}} />
-                </TouchableOpacity>
-                <TextInput autoFocus={false} defaultValue={this.state.buyAmount} placeholderTextColor="#999" keyboardType='numeric' onChangeText={buyAmount => this.setState({buyAmount})} returnKeyType="go" style={{flex: 1, textAlign: 'center', fontSize: ScreenUtil.setSpText(30), color: '#fff', padding: 0}} />
-                <TouchableOpacity onPress={() => {this.addHSN()}}>
-                  <Image source={UImage.icon_add} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20)}} />
-                </TouchableOpacity>
-              </View>
-              <Text style={{fontSize: ScreenUtil.setSpText(10), color: '#fff', textAlign: 'center'}}>*Purchase {range} HSN to become the {title}</Text>
-            </View>
-          </ImageBackground>
-        </View>;
+      this.state.title = title
+      this.state.range = range
+      let con = this.purchaseContent(title, range)
       // 最后一个true显示对赌协议
-      let isAuth = await AlertModal.showSync(title, con, "Confirm" ,"Cancel" , true, false, true);
+      let isAuth = await AlertModal.showSync(title, con, "Confirm" ,"Cancel" , true, () => {
+        // 判断用户输入是否为区间数字
+        let reg = /^\d+$/
+        if (!reg.test(this.state.buyAmount)) {
+          EasyToast.show('Please enter a positive integer')
+          return false
+        }
+        switch(index) {
+          case 0:
+            if (Number(this.state.buyAmount) < 1000 || Number(this.state.buyAmount) >= 3000) {
+              EasyToast.show('The purchase range of this segment is 1000-3000')
+              return false
+            }
+            break
+          case 1:
+            if (Number(this.state.buyAmount) < 3000 || Number(this.state.buyAmount) >= 5000) {
+              EasyToast.show('The purchase range of this segment is 3000-5000')
+              return false
+            }
+            break
+          case 2:
+            if (Number(this.state.buyAmount) < 5000 || Number(this.state.buyAmount) >= 10000) {
+              EasyToast.show('The purchase range of this segment is 5000-10000')
+              return false
+            }
+            break
+          case 3:
+            if (Number(this.state.buyAmount) < 10000) {
+              EasyToast.show('The purchase range of this segment is >=10000')
+              return false
+            }
+        }
+        return true
+      }, true);
       if(isAuth){
-        this.tradePassword(item);
+        this.tradePassword();
       }
     } catch (error) {
 
     }
   }
-  addHSN() {
+  addHSN(title, range) {
     this.setState({
       buyAmount: (+this.state.buyAmount + 1).toString()
     }, () => {
-      AlertModal.isUpdate(
-        <View>
-          <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120),height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528,}} source={UImage.confirm_bg}>
-            <View style={{flex: 1, paddingTop: ScreenUtil.autoheight(6)}}>
-              <Text style={{fontSize: ScreenUtil.setSpText(20), color: '#fff', textAlign: 'center'}}>HSN</Text>
-              <View style={{height: ScreenUtil.autoheight(50), marginBottom: ScreenUtil.autoheight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: ScreenUtil.autowidth(30)}}>
-                <TouchableOpacity onPress={() => {this.reduceHSN()}} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20), justifyContent: 'center'}}>
-                  <Image source={UImage.icon_reduce} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(2)}} />
-                </TouchableOpacity>
-                <TextInput autoFocus={false} defaultValue={this.state.buyAmount} placeholderTextColor="#999" keyboardType='numeric' onChangeText={buyAmount => this.setState({buyAmount})} returnKeyType="go" style={{flex: 1, textAlign: 'center', fontSize: ScreenUtil.setSpText(30), color: '#fff', padding: 0}} />
-                <TouchableOpacity onPress={() => {this.addHSN()}}>
-                  <Image source={UImage.icon_add} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20)}} />
-                </TouchableOpacity>
-              </View>
-              <Text style={{fontSize: ScreenUtil.setSpText(10), color: '#fff', textAlign: 'center'}}>*Purchase 1000-2999 HSN to become the Bronze.</Text>
-            </View>
-          </ImageBackground>
-        </View>
-      )
+      AlertModal.isUpdate(this.purchaseContent(title, range))
     })
   }
-  reduceHSN() {
+  reduceHSN(title, range) {
     this.setState({
       buyAmount: (+this.state.buyAmount - 1).toString()
     }, () => {
-      AlertModal.isUpdate(
-        <View>
-          <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120),height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528,}} source={UImage.confirm_bg}>
-            <View style={{flex: 1, paddingTop: ScreenUtil.autoheight(6)}}>
-              <Text style={{fontSize: ScreenUtil.setSpText(20), color: '#fff', textAlign: 'center'}}>HSN</Text>
-              <View style={{height: ScreenUtil.autoheight(50), marginBottom: ScreenUtil.autoheight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: ScreenUtil.autowidth(30)}}>
-                <TouchableOpacity onPress={() => {this.reduceHSN()}} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20), justifyContent: 'center'}}>
-                  <Image source={UImage.icon_reduce} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(2)}} />
-                </TouchableOpacity>
-                <TextInput autoFocus={false} defaultValue={this.state.buyAmount} placeholderTextColor="#999" keyboardType='numeric' onChangeText={buyAmount => this.setState({buyAmount})} returnKeyType="go" style={{flex: 1, textAlign: 'center', fontSize: ScreenUtil.setSpText(30), color: '#fff', padding: 0}} />
-                <TouchableOpacity onPress={() => {this.addHSN()}}>
-                  <Image source={UImage.icon_add} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20)}} />
-                </TouchableOpacity>
-              </View>
-              <Text style={{fontSize: ScreenUtil.setSpText(10), color: '#fff', textAlign: 'center'}}>*Purchase 1000-2999 HSN to become the Bronze.</Text>
+      AlertModal.isUpdate(this.purchaseContent(title, range))
+    })
+  }
+  purchaseContent(title, range) {
+    return (
+      <View style={{alignItems: 'center'}}>
+        <ImageBackground style={{width:ScreenWidth-ScreenUtil.autowidth(120),height:(ScreenWidth-ScreenUtil.autowidth(120))*0.528}} source={UImage.confirm_bg}>
+          <View style={{flex: 1, paddingTop: ScreenUtil.autoheight(6)}}>
+            <Text style={{fontSize: ScreenUtil.setSpText(20), color: '#fff', textAlign: 'center'}}>HSN</Text>
+            <View style={{height: ScreenUtil.autoheight(50), marginBottom: ScreenUtil.autoheight(10), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: ScreenUtil.autowidth(30)}}>
+              <TouchableOpacity onPress={() => {this.reduceHSN(this.state.title, this.state.range)}} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20), justifyContent: 'center'}}>
+                <Image source={UImage.icon_reduce} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(2)}} />
+              </TouchableOpacity>
+              <TextInput autoFocus={false} defaultValue={this.state.buyAmount} placeholderTextColor="#999" keyboardType='numeric' onChangeText={buyAmount => this.setState({buyAmount})} returnKeyType="go" style={{flex: 1, textAlign: 'center', fontSize: ScreenUtil.setSpText(30), color: '#fff', padding: 0}} />
+              <TouchableOpacity onPress={() => {this.addHSN(this.state.title, this.state.range)}}>
+                <Image source={UImage.icon_add} style={{width: ScreenUtil.autowidth(20), height: ScreenUtil.autowidth(20)}} />
+              </TouchableOpacity>
             </View>
-          </ImageBackground>
+            <Text style={{fontSize: ScreenUtil.setSpText(10), color: '#fff', textAlign: 'center'}}>*Purchase {range} HSN to become the {title}.</Text>
+          </View>
+        </ImageBackground>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <TouchableOpacity onPress={() => {this.agree(this.state.title, this.state.range)}} style={{marginRight: ScreenUtil.autowidth(8), paddingTop: ScreenUtil.autoheight(2)}}>
+            <Image source={this.state.checked ? UImage.onAgree : UImage.offAgree} style={{width: ScreenUtil.autowidth(10), height: ScreenUtil.autowidth(10)}} />
+          </TouchableOpacity>
+          <Text style={{color: '#181B29', fontSize: ScreenUtil.setSpText(10)}}>Participate In The</Text>
+          <TouchableOpacity onPress={() => {this.goGamblingAgree()}}>
+            <Text style={{color: '#2394F8', fontSize: ScreenUtil.setSpText(10)}}>《Valuation Adjustment Mechanism》</Text>
+          </TouchableOpacity>
         </View>
-      )
+      </View>
+    )
+  }
+
+  agree(title, range) {
+    this.setState({
+      checked: !this.state.checked
+    }, () => {
+      AlertModal.isUpdate(this.purchaseContent(title, range))
     })
   }
 
@@ -307,7 +310,7 @@ export class Nodeapplication extends BaseComponent {
   }
 
   //trade Pass
-  async tradePassword (item) {
+  async tradePassword () {
     try {
       let th = this;
       let con = 
@@ -324,7 +327,7 @@ export class Nodeapplication extends BaseComponent {
           <TextInput autoFocus={false} placeholder={"Graphic Verification Code"} placeholderTextColor="#999"  
             secureTextEntry={true}  defaultValue={this.state.code} maxLength={5} style={styles.textinpt} 
             onChangeText={(code) => this.setState({code})} selectionColor={"#6DA0F8"} 
-            underlineColorAndroid="transparent" returnKeyType="go"    
+            underlineColorAndroid="transparent" returnKeyType="go"
           />
           <View style={{flexDirection:"row",alignItems:"space-between", paddingTop: ScreenUtil.autoheight(10)}}>
             <Image onError={(e)=>{this.loaderror()}} style={{width:(ScreenWidth-ScreenUtil.autowidth(120))/2, height:ScreenUtil.autowidth(40), marginRight:ScreenUtil.autowidth(10),}} 
@@ -348,7 +351,7 @@ export class Nodeapplication extends BaseComponent {
         }
       });
       if(isAuth){
-        this.checkTradePassword(item);
+        this.checkTradePassword();
       }else{
         this.setState({tradePassword: "", code: ""})
       }
@@ -358,22 +361,20 @@ export class Nodeapplication extends BaseComponent {
   }
 
   // 提交到接口确认密码是否正确，若正确则购买节点成功或节点已卖完
-  async checkTradePassword(item){
-    let res = await Utils.dispatchActiionData(this,{type:'Nodeapplication/nodeTrade',
-      payload:{
-        "nodeId": item.id,//接点id
-        "issueId": item.issueId,//活动id
+  async checkTradePassword(){
+    let res = await Utils.dispatchActiionData(this, {type: 'Nodeapplication/nodeTrade',
+      payload: {
+        "amount": this.state.buyAmount,
         "tradePassword": this.state.tradePassword,
         "uuid": this.state.uuid,
-        "code": this.state.code
+        "code": this.state.code,
+        "vam": this.state.checked
       }
-    });
+    })
     this.setState({tradePassword: "", code: ""})
     if(res.msg === "success"){
       this.nodeSuccess();
-    }else if(res.msg === '对不起，节点已卖完'){
-      this.nodeEmpty();
-    }else {
+    } else {
       EasyToast.show(res.msg);
     }
   }
@@ -382,36 +383,21 @@ export class Nodeapplication extends BaseComponent {
   //node success
   async nodeSuccess () {
     try {
-      let con = <View>
-        <View style={styles.tradepout}>
-          <Image style={styles.nodeimg} source={UImage.fireworks} />
+      let con = (
+        <View>
+          <View style={styles.tradepout}>
+            <Image style={styles.nodeimg} source={UImage.fireworks} />
+          </View>
+          <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(16),color: 'rgba(0, 0, 0, 0.5)'}}>Tips</Text>
+          <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(21),color: 'rgba(0, 0, 0, 1)',paddingVertical:ScreenUtil.autoheight(16)}}>Congrats you become the {this.state.title} Protector.</Text>
         </View>
-        <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(16),color: 'rgba(0, 0, 0, 0.5)'}}>Tips</Text>
-        <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(21),color: 'rgba(0, 0, 0, 1)',paddingVertical:ScreenUtil.autoheight(16)}}>Congrats you become the Diamond Protector.</Text>
-      </View>;
-      let isAuth =  await AlertModal.showSync(null,con,"Got It",null );
-      if(isAuth){
-        this.jdRefresh();
-      }
-    } catch (error) {
-
-    }
-  }
-
-  //node empty
-  async nodeEmpty () {
-    try {
-      let con = <View>
-        <View style={styles.tradepout}>
-          <Image style={styles.nodeEmptyimg} source={UImage.sad_face} />
-        </View>
-        <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(16),color: 'rgba(0, 0, 0, 0.5)' }}>温馨提示</Text>
-        <Text style={{textAlign:"center",fontSize:ScreenUtil.setSpText(21),color: 'rgba(0, 0, 0, 1)',lineHeight:ScreenUtil.autoheight(32),paddingVertical:ScreenUtil.autoheight(12)}}>很遗憾，今日已售罄，{'\n'}明天继续抢购</Text>
-      </View>;
-      let isAuth =  await AlertModal.showSync(null,con,"我知道了",null );
-      if(isAuth){
-        this.jdRefresh();
-        EasyToast.show("Success!");
+      )
+      let isAuth =  await AlertModal.showSync(null, con, "Got It", null);
+      if (isAuth) {
+        // 购买成功后刷新购买进度
+        this.getProgress()
+        // 购买成功后刷新用户信息数据
+        let res = await Utils.dispatchActiionData(this, {type: 'login/findUserInfo', payload: {}})
       }
     } catch (error) {
 
@@ -434,6 +420,7 @@ export class Nodeapplication extends BaseComponent {
   // 对赌协议
   goGamblingAgree() {
     try {
+      AlertModal.close()
       const { navigate } = this.props.navigation;
       navigate('GamblingAgreement', {wholeinvitation: 'whole'});
     } catch (error) {

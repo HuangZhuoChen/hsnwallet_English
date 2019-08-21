@@ -29,14 +29,15 @@ export default {
   offAgree: require('../img/public/off.png'),
 
   rulesbg: require('../img/public/rulesbg.png'),
-  rulesintroduction: require('../img/public/rulesintroduction.png'),
-  rules1: require('../img/public/rules1.png'),
-  rules2: require('../img/public/rules2.png'),
-  rules3: require('../img/public/rules3.png'),
-  rules4: require('../img/public/rules4.png'),
-  rules51: require('../img/public/rules51.png'),
-  rules52: require('../img/public/rules52.png'),
-  rules6: require('../img/public/rules6.png'),
+  title_icon: require('../img/public/title_icon.png'),
+  // rulesintroduction: require('../img/public/rulesintroduction.png'),
+  // rules1: require('../img/public/rules1.png'),
+  // rules2: require('../img/public/rules2.png'),
+  // rules3: require('../img/public/rules3.png'),
+  // rules4: require('../img/public/rules4.png'),
+  // rules51: require('../img/public/rules51.png'),
+  // rules52: require('../img/public/rules52.png'),
+  // rules6: require('../img/public/rules6.png'),
 
   //tab图标
   tab_1: require('../img/public/tab_1.png'),

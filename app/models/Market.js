@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil'
-import {mininginfo, seasonrank, teamrank, latestnumber,  } from '../utils/Api'
+import {mininginfo, seasonrank, teamrank, latestnumber} from '../utils/Api'
 
 
 export default {
@@ -12,8 +12,7 @@ export default {
     scoreRankList: [],
     scoreRankSelf: {},
   },
-  effects:{
-    //个人挖矿产出
+  effects:{//个人挖矿产出
     *getMiningInfo({ payload, callback }, { call, put }) {
       try {
         const resp = yield call(Request.request, mininginfo, 'post', payload);
@@ -40,7 +39,7 @@ export default {
     //个人积分排名
     *getSeasonRank({ payload, callback }, { call, put }) {
       try {
-        const  resp = yield call(Request.request, seasonrank, 'post', payload);
+        const resp = yield call(Request.request, seasonrank, 'post', payload);
         if(resp && resp.code == 0){
           yield put({ type: 'upscorerankdate', payload: { data: resp.data, scoreRankSelf: resp.self,  ...payload } });
         }

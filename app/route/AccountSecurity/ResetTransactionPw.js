@@ -82,7 +82,7 @@ class ResetTransactionPw extends BaseComponent {
     }
     let resp = await Utils.dispatchActiionData(this, {type:'login/sendVerify', 
       payload:{
-        mobile: Utils.encryptedMsg(this.props.mobile), 
+        mail: Utils.encryptedMsg(this.props.mail), 
         type: 'resetTrade', 
       } 
     });
@@ -141,7 +141,7 @@ class ResetTransactionPw extends BaseComponent {
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('Modification in progress');
+    EasyShowLD.loadingShow('Modificating');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/resetPayPassword',
       payload:{
         oldTradePassword: Utils.encryptedMsg(this.state.usedpassword),
@@ -176,7 +176,7 @@ class ResetTransactionPw extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
+    EasyToast.show('Failed to obtain graphics code, please check the network！');
   }
 
   clearFoucs = () =>{
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   },
   headtext: {
     color: '#FFFFFF',
-    fontSize: ScreenUtil.setSpText(28),
+    fontSize: ScreenUtil.setSpText(20),
   },
   inptout: {
     flex: 4, 

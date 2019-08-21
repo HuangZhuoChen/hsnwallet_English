@@ -38,7 +38,7 @@ class Myinvitation extends BaseComponent{
       levelName:['Unactivated Partners','Junior Partners','Intermediate Partners','Senior Partners','Super Partners'],
       friendsList:[],
       friDate:moment().format('YYYY/MM/DD'),
-      todayTotal:0,
+      totalAmount:0,
     };
   }
 
@@ -81,7 +81,6 @@ class Myinvitation extends BaseComponent{
     } catch (error) {
       
     }
-    
   }
 
   async getFriList(){
@@ -89,35 +88,15 @@ class Myinvitation extends BaseComponent{
       await Utils.dispatchActiionData(this, {type:"login/findUserInfo", payload: {}});
       let res = await Utils.dispatchActiionData(this, {type:"Invitate/friendList",payload:{date:this.state.friDate.replace(/\//g,'-')}});
       if(res.msg === 'success'){
-        this.setState({friendsList:res.data,todayTotal:res.totalInviteRewardUsdt})
+        let total = 0
+        res.data.forEach(val => {
+          total += +val.amount
+        })
+        this.setState({friendsList: res.data, totalAmount: total})
       }
     }catch (e) {
 
     }
-
-  }
-
-  async switchDate(sts){
-    if(this.props.friLoading){
-      EasyToast.show('正在刷新')
-      return;
-    }
-    let friDate;
-    if(sts==='add'){
-      friDate = moment(this.state.friDate).add(1,'days');
-      let today =  moment();
-
-      if( moment.max(friDate,today) != today ){
-        EasyToast.show('不能超过今天');
-        return;
-      }else {
-        friDate = friDate.format('YYYY/MM/DD');
-      }
-    }else{
-      friDate = moment(this.state.friDate).subtract(1,'days').format('YYYY/MM/DD');
-    }
-    await this.setState({friDate});
-    this.getFriList();
 
   }
 
@@ -138,7 +117,7 @@ class Myinvitation extends BaseComponent{
     return (
       <View style={[styles.friendsRow,{opacity:0.3}]}>
         <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowStyle,styles.invHorizontal]}>
-          <Text style={[styles.rowTextStyle,{flex:1,}]}>{"No non-displayable items"}</Text>
+          <Text style={[styles.rowTextStyle,{flex:1,}]}>{"No  Data"}</Text>
         </LinearGradient>
       </View>
     )
@@ -151,17 +130,19 @@ class Myinvitation extends BaseComponent{
         <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowStyle,styles.invHorizontal]}>
           <View style={styles.itemleftout}>
             <ImageBackground source={!item.friendLevel? UImage.integral_bg : Constants.levelimg[item.friendLevel]} style={{width:ScreenUtil.autowidth(45),height:ScreenUtil.autowidth(45)}}>
-              <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
-                <Text style={[styles.rowTextStyle,{fontSize: ScreenUtil.setSpText(36)}]}>{item.friendLevel}</Text>
-              </View>
             </ImageBackground>
           </View>
-          <Text style={[styles.rowTextStyle,{flex:2,textAlign:'left'}]}>{item.nick_name}</Text>
-          <Text style={[styles.rowTextStyle,{flex:1,}]}>{item.daily_payback_usdt}U</Text>
-          <Text style={[styles.rowTextStyle,{flex:1,}]}>{item.inviteReward}U</Text>
+          <Text style={[styles.rowTextStyle,{flex:1,textAlign:'left'}]} numberOfLines={1} ellipsizeMode="tail">{item.nick_name}</Text>
+          <Text style={[styles.rowTextStyle,{flex:1,}]}>{moment(item.createDate).format('YYYY/MM/DD')}</Text>
+          <Text style={[styles.rowTextStyle,{flex:1,textAlign: 'right'}]}>{this.keepTwoDecimal(item.amount)}H</Text>
         </LinearGradient>
       </View>
     )
+  }
+  keepTwoDecimal(num) {
+    num = parseFloat(num)
+    let m = Math.pow(10, 2)
+    return Math.floor(num * m) / m
   }
 
   render() {
@@ -203,21 +184,21 @@ class Myinvitation extends BaseComponent{
                 backgroundColor:"#0071EC"
               }} />
               <View style={[styles.invInfoWrap,styles.invHorizontal]}>
-                <View style={{width:'59%'}}>
+                <View style={{width:'57%'}}>
                   <Text style={styles.invInfoTitle}>Accumulated Reward(H)</Text>
-                  <Text style={styles.invInfoContent}>{this.props.loginUser&&this.props.loginUser.inviteRewardUsdt}</Text>
+                  <Text style={styles.invInfoContent}>{this.props.loginUser && this.props.loginUser.inviteRewardHsn ? Math.floor(this.props.loginUser.inviteRewardHsn) : 0}</Text>
                 </View>
-                <View style={{width:'41%'}}>
+                <View style={{width:'43%'}}>
                   <Text style={styles.invInfoTitle}>Recommendations</Text>
                   <Text style={styles.invInfoContent}>
-                    {(this.props.loginUser&&this.props.loginUser.isActive=='no')?'未激活':(this.props.loginUser&&this.props.loginUser.teamPoints)}
+                    {(this.props.loginUser&&this.props.loginUser.isActive=='no') ? 'not active': (this.props.loginUser&&this.props.loginUser.teamPoints)}
                   </Text>
                 </View>
               </View>
               <View style={[styles.invInfoWrap,styles.invHorizontal]}>
                 <View style={{width:'59%'}}>
                   <Text style={styles.invInfoTitle}>Invite Friends</Text>
-                  <Text style={styles.invInfoContent}>{this.props.loginUser&&this.props.loginUser.myInviteNumber}</Text>
+                  <Text style={styles.invInfoContent}>{this.props.loginUser && this.props.loginUser.myInviteNumber}</Text>
                 </View>
                 {/* <View style={{width:'41%'}}>
                   <Text style={styles.invInfoTitle}>团队名称</Text>
@@ -227,25 +208,8 @@ class Myinvitation extends BaseComponent{
             </LinearGradient>
           </View>
           {/* 我的好友下面日期切换栏 */}
-          <View style={{marginTop:ScreenUtil.autoheight(30)}}>
+          <View style={{marginTop:ScreenUtil.autoheight(30), marginBottom: ScreenUtil.autoheight(20)}}>
             <Text style={{color:"#fff",fontSize:ScreenUtil.setSpText(21),textAlign: 'center'}}>My Recommendation</Text>
-            <View style={{
-              flexDirection:'row',
-              justifyContent:'center',
-              alignItems:'center',
-              marginVertical:ScreenUtil.autoheight(21)}}>
-              <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.switchDate('neg')})}}>
-                <Ionicons style={{color:'#fff'}} name="ios-arrow-back" size={ScreenUtil.setSpText(25)}/>
-              </TouchableOpacity>
-              <Text style={{
-                color:'#fff',
-                fontSize: ScreenUtil.setSpText(16),
-                marginHorizontal:ScreenUtil.autowidth(32)
-              }}>{this.state.friDate}</Text>
-              <TouchableOpacity onPress={()=>{this.noDoublePress(()=>{this.switchDate('add')})}}>
-                <Ionicons style={{color:'#fff'}} name="ios-arrow-forward" size={ScreenUtil.setSpText(25)}/>
-              </TouchableOpacity>
-            </View>
           </View>
           {/* 朋友列表 */}
           <FlatList style={styles.friendsTable}
@@ -255,7 +219,7 @@ class Myinvitation extends BaseComponent{
             renderItem={({item})=>this.friendRowRender(item)}
             ListFooterComponent={this._renderFooter()} 
             showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => String(item.id)}
+            keyExtractor={(item, index) => String(index)}
           />
         </ScrollView>
       </View>
@@ -266,9 +230,9 @@ class Myinvitation extends BaseComponent{
     return(
       <View style={[styles.friendsRow,styles.invHorizontal]}>
         <Text style={{color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'left'}}>Friends' Grade</Text>
-        <Text style={{flex:2,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>Name</Text>
+        <Text style={{flex:1,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>Name</Text>
         <Text style={{flex:1,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>Date</Text>
-        <Text style={{flex:1,color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>Invitation Awards</Text>
+        <Text style={{color:"rgba(255, 255, 255, 0.5)",fontSize:ScreenUtil.setSpText(12),textAlign: 'center',}}>Invitation Awards</Text>
       </View>
     )
   }
@@ -276,9 +240,9 @@ class Myinvitation extends BaseComponent{
   _renderFooter = () => {
     return(
       <View style={[styles.invHorizontal,{justifyContent:'flex-end',marginVertical: ScreenUtil.autoheight(5)}]}>
-        <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowRadius,{width:ScreenUtil.autowidth(200),flexDirection:'row',justifyContent:'center',alignItems:"center"}]}>
-          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(12)}}>Today's Accumulation：</Text>
-          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(20),fontWeight:'bold'}}>{this.state.todayTotal ? this.state.todayTotal : 0}U</Text>
+        <LinearGradient colors={['#4F5162','#1E202C']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.rowRadius,{flexDirection:'row',justifyContent:'center',alignItems:"center"}]}>
+          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(12)}}>Total Accumulation：</Text>
+          <Text style={{color:'#fff',fontSize:ScreenUtil.setSpText(20),fontWeight:'bold'}}>{this.state.totalAmount ? this.keepTwoDecimal(this.state.totalAmount) : 0}HSN</Text>
         </LinearGradient>
       </View>
     )
@@ -315,7 +279,7 @@ const styles = StyleSheet.create({
   },
   invInfoContent:{
     color:"#fff",
-    fontSize: ScreenUtil.setSpText(28),
+    fontSize: ScreenUtil.setSpText(24),
     fontWeight: 'bold',
     height:ScreenUtil.autoheight(56),
     lineHeight: ScreenUtil.autoheight(56),
@@ -333,9 +297,9 @@ const styles = StyleSheet.create({
     alignItems:'center'
   },
   itemleftout: {
-    flex:1,
     height:'100%',
-    borderRadius:ScreenUtil.autowidth(6)
+    borderRadius:ScreenUtil.autowidth(6),
+    marginRight: ScreenUtil.autowidth(10)
   },
   rowStyle:{
     width:'100%',
@@ -346,14 +310,13 @@ const styles = StyleSheet.create({
     marginVertical:ScreenUtil.autoheight(5)
   },
   rowRadius:{
-    width:'100%',
     height:ScreenUtil.autowidth(45),
-    borderRadius: ScreenUtil.autowidth(22.5)
+    borderRadius: ScreenUtil.autowidth(22.5),
+    paddingHorizontal: ScreenUtil.autowidth(10)
   },
   rowTextStyle:{
     color:'#fff',
     fontSize:ScreenUtil.setSpText(16),
-    fontWeight:'bold',
     textAlign:'center',
   }
 

@@ -28,7 +28,7 @@ import ForgetTransactionPw from './AccountSecurity/ForgetTransactionPw';
 import ResetTransactionPw from './AccountSecurity/ResetTransactionPw'; 
 import SetTransactionPw from './AccountSecurity/SetTransactionPw';
 
-import Home from './Home';
+import {Home} from './Home';
 
 import Login from './Login';
 import LoginPw from './Login/LoginPw';  
@@ -37,7 +37,7 @@ import Register from './Login/Register';
 
 import Myinvitation from './Myinvitation';
 
-import {Nodeapplication} from './Nodeapplication';
+import Nodeapplication from './Nodeapplication';
 import GamblingAgreement from './Nodeapplication/GamblingAgreement'
 
 import Personal from './Personal';
@@ -111,13 +111,13 @@ class Route extends React.Component {
                 this.props.dispatch({ type: 'common/getAppVersion', payload: {}, 
                   callback: (appVersion) => {
                     if(!appVersion || appVersion != data.data.version){
-                      // EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", "取消", () => { 
-                      //   Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) 
-                      // }, () => {
-                      //   console.log(Utils)
-                      //   Utils.cancelUpgrade() 
-                      // })
-                      // this.props.dispatch({ type: 'common/saveAppVersion', payload: {appVersion: data.data.version}}); //保存更新的版本号到本地，让更新框只弹一次
+                      EasyShowLD.dialogShow("版本更新", data.data.intr, "升级", "取消", () => { 
+                        Utils.doUpgrade(data.data.url,data.data.itmsservices, data.data.version) 
+                      }, () => {
+                        console.log(Utils)
+                        Utils.cancelUpgrade() 
+                      })
+                      this.props.dispatch({ type: 'common/saveAppVersion', payload: {appVersion: data.data.version}}); //保存更新的版本号到本地，让更新框只弹一次
                     }else{
                       Constants.promptUpgrade= true; 
                     }
@@ -250,17 +250,13 @@ class Route extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-
-})
-
 var TabContainer = TabNavigator(
   {
     Home: { 
        screen: Home ,
        navigationOptions : {
         tabBarLabel: 'Home',
-        tabBarIcon: ({ focused}) => (
+        tabBarIcon: ({focused}) => (
           <Image resizeMode='contain' source={focused ? UImage.tab_1_h : UImage.tab_1} style={{width: ScreenUtil.autowidth(18), height: ScreenUtil.autowidth(18)}}/>
         ),
         header: null,

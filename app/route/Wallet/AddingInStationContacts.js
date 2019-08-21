@@ -44,19 +44,19 @@ class AddingInStationContacts extends BaseComponent {
 
   async addAddress(){
     if(this.state.hsnAccount==""){
-      EasyToast.show('请输入手机号');
+      EasyToast.show('Please enter your mail number');
       return;
     }
     if(this.state.coinRemarks==""){
-        EasyToast.show('请输入备注');
+        EasyToast.show('Please enter notes');
         return;
     }
     let res = await Utils.dispatchActiionData(this,{type:'assets/insertAdd',payload: {
-      "mobile": this.state.hsnAccount,
+      "mail": this.state.hsnAccount,
       "memo": this.state.coinRemarks,
     }});
     if(res.msg==='success'){
-      EasyToast.show('新增成功');
+      EasyToast.show('Increasing Contact Success');
       this.props.navigation.goBack();
     }else{
       EasyToast.show(JSON.stringify(res.msg));
@@ -66,19 +66,19 @@ class AddingInStationContacts extends BaseComponent {
   render() {
     return (
       <View style={[styles.container,{backgroundColor: UColor.bgColor, }]}>
-        <Header {...this.props} onPressLeft={true} title={"新增站内联系人"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
+        <Header {...this.props} onPressLeft={true} title={"New Contacts"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
         <TouchableOpacity activeOpacity={1.0} onPress={this.dismissKeyboardClick.bind(this)} style={{flex: 1,}}>
           <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? "padding" : null} style={{flex: 1,}}>
             <View  style={styles.linearout}>
               <View style={styles.itemout}>
-                <Text style={styles.inptitle}>HSN账号</Text>
+                <Text style={styles.inptitle}>HSN Account</Text>
                 <View style={styles.outsource}>
                   <TextInput ref={(ref) => this._lphone = ref}
                     returnKeyType="next"
                     keyboardType="phone-pad"
                     autoFocus={false}
                     value={this.state.hsnAccount}
-                    placeholder={'请输入手机号'}
+                    placeholder={'email number'}
                     style={styles.inpt}
                     selectionColor={UColor.tintColor}
                     placeholderTextColor={UColor.lightgray}
@@ -88,13 +88,13 @@ class AddingInStationContacts extends BaseComponent {
                 </View>
               </View>
               <View style={styles.itemout}>
-                <Text style={styles.inptitle}>备注</Text>
+                <Text style={styles.inptitle}>Remarks</Text>
                 <View style={styles.outsource}>
                   <TextInput ref={(ref) => this._lphone = ref}
                     returnKeyType="go"
                     autoFocus={false}
                     value={this.state.coinRemarks}
-                    placeholder={"请输入备注(选填)"}
+                    placeholder={"Please input notes(optional)"}
                     style={styles.inpt}
                     selectionColor={UColor.tintColor}
                     placeholderTextColor={UColor.lightgray}
@@ -106,7 +106,7 @@ class AddingInStationContacts extends BaseComponent {
             </View>
           </KeyboardAvoidingView>
           <View style={styles.referout}>
-            <TextButton onPress={()=>{this.noDoublePress(()=>{this.addAddress()})}} shadow={true} textColor='#FFFFFF' text={"保存"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+            <TextButton onPress={()=>{this.noDoublePress(()=>{this.addAddress()})}} shadow={true} textColor='#FFFFFF' text={"Save"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
           </View>
         </TouchableOpacity>
       </View>

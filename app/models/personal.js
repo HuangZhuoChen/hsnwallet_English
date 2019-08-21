@@ -1,5 +1,5 @@
 import Request from '../utils/RequestUtil';
-import { checkauthentication, realNameAuthentication, setnickname, setteamname, existTradePassword, setTradePassword, resetTradePassword, forgetPayPassword, announcement } from '../utils/Api';
+import { checkauthentication, realNameAuthentication, setnickname, setteamname, existTradePassword, setTradePassword, resetTradePassword, forgetPayPassword, announcement, setVam } from '../utils/Api';
 import store from 'react-native-simple-store';
 import { EasyToast } from '../components/Toast';
 import Constants from '../utils/Constants'
@@ -59,6 +59,22 @@ export default {
         const resp = yield call(Request.request, setteamname, 'post', payload);
         if(resp && resp.code == 0){
           yield put({ type: 'login/findUserInfo', payload: {} })
+        }
+        if (callback) callback(resp);
+      } catch (error) {
+        console.log("+++++app/models/personal.js++++getsetteamname-error:",JSON.stringify(error));
+        if (callback) callback({ code: 500, msg: "" });
+      }
+    },
+
+    // 取消对赌协议
+    *setVam({ payload, callback }, { call, put }) {
+      try {
+        const resp = yield call(Request.request, setVam, 'post', payload);
+        if(resp && resp.code == 0){
+          yield put({type: 'login/findUserInfo', payload: {}})
+        } else {
+          EasyToast.show(resp.msg)
         }
         if (callback) callback(resp);
       } catch (error) {

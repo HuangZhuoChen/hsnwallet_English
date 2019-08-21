@@ -21,6 +21,7 @@ export const payPasswordVerify = rootaddr + '/app/user/payPasswordVerify'; //验
 //个人
 export const setnickname = rootaddr + '/app/user/nickname'; //修改昵称 
 export const setteamname = rootaddr + '/app/user/teamname'; //修改队名 
+export const setVam = rootaddr + '/app/user/cancelprotocol'; //取消对赌协议 
 export const realNameAuthentication = rootaddr + '/app/user/id/authentication'; //实名认证
 export const checkauthentication = rootaddr + '/app/user/check/authentication'; //查询实名认证
 
@@ -33,10 +34,13 @@ export const latestnumber = rootaddr + '/app/issue/latest/number'; //团队积�
 //钱包
 export const wallet = rootaddr + '/app/user/wallet'; //我的钱包
 export const inoutorder = rootaddr + '/app/user/inout/order'; //充提记录
-export const dailypayback = rootaddr + '/app/dailypayback/list'; //返回记录
+export const dailypayback = rootaddr + '/app/user/dailypayback/list'; //返回记录
 export const assets_withdraw = rootaddr + '/app/user/withdraw'; //币种提现
 export const cancel_order = rootaddr + '/app/user/out/cancel'; //取消提现订单
 
+export const exchangeRate = rootaddr + '/app/coininfo/ExchangeRate'; //usdt兑换hsn汇率
+export const usdtToHsn = rootaddr + '/app/user/charge/usdt'; //usdt转换成hsn
+export const rechargeLog = rootaddr + '/app/user/recharge/log'; //usdt兑换hsn记录
 export const insidetransfer = rootaddr + '/app/user/insidetransfer'; //站内转账
 export const linkList = rootaddr+'/app/user/link/list'; //站内联系人列表
 export const insertAdd = rootaddr+'/app/user/link/insert'; //新增站内联系人

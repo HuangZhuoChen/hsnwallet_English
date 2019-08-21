@@ -53,7 +53,7 @@ class SetTeamname extends BaseComponent {
       EasyToast.show('Team name word count up to 14 characters');
       return;
     }
-    EasyShowLD.loadingShow('Modification in progress');
+    EasyShowLD.loadingShow('Modificating');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/getsetteamname',payload:{ teamName: this.state.teamname } });
     if(resp){
       EasyShowLD.loadingClose();
@@ -135,8 +135,7 @@ const styles = StyleSheet.create({
   },
   cardHeaderTitle:{
     color:'#FFFFFF',
-    fontSize:ScreenUtil.setSpText(36),
-    fontWeight: 'bold',
+    fontSize:ScreenUtil.setSpText(24),
     marginTop: ScreenUtil.autoheight(35),
     marginBottom: ScreenUtil.autoheight(122)
   },

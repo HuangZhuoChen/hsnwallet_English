@@ -33,79 +33,52 @@ class PurchaseRecords extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      data: [
-        {
-          users: 'Jack',
-          amount: '888',
-          date: '2019/08/05'
-        },
-        {
-          users: 'Jack',
-          amount: '888',
-          date: '2019/08/05'
-        },
-        {
-          users: 'Jack',
-          amount: '888',
-          date: '2019/08/05'
-        },
-        {
-          users: 'Jack',
-          amount: '888',
-          date: '2019/08/05'
-        },
-        {
-          users: 'Jack',
-          amount: '888',
-          date: '2019/08/05'
-        }
-      ]
+      recordsList: []
     }
   }
 
   //组件加载完成
   async componentDidMount() {
+    let res = await Utils.dispatchActiionData(this, {type: 'assets/getRechargeLog', payload: {}})
+    if (res && res.code === 0) {
+      this.setState({
+        recordsList: res.data
+      })
+    }
   }
-
-  _renderHeader = () => {
-    return (
-      <>
-        <Header {...this.props} onPressLeft={true} title={""} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <LinearGradient colors={["#4F5162", "#1E202C"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1.5 }} style={ styles.person }>
-            <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff' }}>Purchase Records</Text>
-            <View>
-              <View style={{ flexDirection: 'row', marginTop: ScreenUtil.autoheight(25), marginBottom: ScreenUtil.autoheight(16) }}>
-                <Text style={{ fontSize: ScreenUtil.setSpText(14), color: '#fff', flex: 62 }}>Users</Text>
-                <Text style={{ fontSize: ScreenUtil.setSpText(14), color: '#fff', flex: 145, textAlign: 'center' }}>Purchase Records(HSN)</Text>
-                <Text style={{ fontSize: ScreenUtil.setSpText(14), color: '#fff', flex: 70, textAlign: 'right' }}>Date</Text>
-              </View>
-              {
-                this.state.data.map(val => (
-                  <View style={{ flexDirection: 'row', marginBottom: ScreenUtil.autoheight(11) }}>
-                    <Text style={{ fontSize: ScreenUtil.setSpText(11), color: '#fff', flex: 62 }}>{ val.users }</Text>
-                    <Text style={{ fontSize: ScreenUtil.setSpText(11), color: '#fff', flex: 145, textAlign: 'center' }}>{ val.amount }</Text>
-                    <Text style={{ fontSize: ScreenUtil.setSpText(11), color: '#fff', flex: 70, textAlign: 'right' }}>{ val.date }</Text>
-                  </View>
-                ))
-              }
-            </View>
-            <Image source={UImage.set_logo} style={styles.footerBg}/>
-          </LinearGradient>
-        </View>
-      </>
-    )
+  keepFourDecimal(num) {
+    num = parseFloat(num)
+    let m = Math.pow(10, 4)
+    return Math.floor(num * m) / m
   }
 
   render() {
     return (
       <View style={ styles.container }>
-        <FlatList
-          style={{ flex: 1 }}
-          ListHeaderComponent={this._renderHeader()}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item ,index) => "index" + index + item}
-        />
+        <Header {...this.props} onPressLeft={true} title={"Purchase Records"} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <LinearGradient colors={["#4F5162", "#1E202C"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1.5 }} style={ styles.person }>
+              <View>
+                <View style={{ flexDirection: 'row', marginBottom: ScreenUtil.autoheight(16) }}>
+                  <Text style={{ fontSize: ScreenUtil.setSpText(14), color: '#fff', flex: 70 }}>Users</Text>
+                  <Text style={{ fontSize: ScreenUtil.setSpText(14), color: '#fff', flex: 137, textAlign: 'center' }}>Amount(HSN)</Text>
+                  <Text style={{ fontSize: ScreenUtil.setSpText(14), color: '#fff', flex: 70, textAlign: 'right' }}>Date</Text>
+                </View>
+                {
+                  this.state.recordsList.reverse().map((val, index) => (
+                    <View key={index} style={{ flexDirection: 'row', marginBottom: ScreenUtil.autoheight(11) }}>
+                      <Text style={{fontSize: ScreenUtil.setSpText(11), color: '#fff', flex: 70}}>{this.props.loginUser.nickName}</Text>
+                      <Text style={{fontSize: ScreenUtil.setSpText(11), color: '#fff', flex: 137, textAlign: 'center'}}>{this.keepFourDecimal(val.amount)}</Text>
+                      <Text style={{fontSize: ScreenUtil.setSpText(11), color: '#fff', flex: 70, textAlign: 'right'}}>{val.create_date.split(' ')[0]}</Text>
+                    </View>
+                  ))
+                }
+              </View>
+              <Image source={UImage.set_logo} style={styles.footerBg}/>
+            </LinearGradient>
+          </View>
+        </ScrollView>
       </View>
     )
   }
@@ -120,14 +93,14 @@ const styles = StyleSheet.create({
   person: {
     width: ScreenUtil.autowidth(340),
     borderRadius: ScreenUtil.autowidth(10),
-    paddingTop: ScreenUtil.autoheight(54),
+    paddingTop: ScreenUtil.autoheight(30),
     paddingBottom: ScreenUtil.autoheight(50),
     paddingHorizontal: ScreenUtil.autowidth(27)
   },
 
   footerBg: {
     position: 'absolute',
-    bottom: 0,
+    top: 0,
     right: 0,
     zIndex: 0,
     width: ScreenHeight / 3, 

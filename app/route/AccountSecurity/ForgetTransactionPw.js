@@ -129,7 +129,7 @@ class ForgetTransactionPw extends BaseComponent {
   }
 
   async onchangePwd () {
-    EasyShowLD.loadingShow('Modification in progress');
+    EasyShowLD.loadingShow('Modificating');
     let resp = await Utils.dispatchActiionData(this, {type:'personal/forgetPayPassword',
       payload:{
         mobile: Utils.encryptedMsg(this.props.mobile), 
@@ -159,7 +159,7 @@ class ForgetTransactionPw extends BaseComponent {
   }
 
   loaderror = () =>{
-    EasyToast.show('Failed to obtain graphics authentication code, please check the network！');
+    EasyToast.show('Failed to obtain graphics code, please check the network！');
   }
 
   clearFoucs = () =>{

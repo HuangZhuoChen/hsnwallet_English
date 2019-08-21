@@ -84,7 +84,7 @@ class Recharge extends BaseComponent {
   render() {
     return (
       <View style={[styles.container,{backgroundColor: UColor.bgColor, }]}>
-        <Header {...this.props} onPressLeft={true} title={this.state.coinName} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
+        <Header {...this.props} onPressLeft={true} title={'Deposit'} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
         <ScrollView showsVerticalScrollIndicator={false} >
           {this.state.coinName=='USDT'&&
           <View style={styles.businestab}>  
@@ -109,14 +109,15 @@ class Recharge extends BaseComponent {
             <View style={styles.headerout}>
               <Text style={styles.headertitle}>Scan QR Code To Deposit</Text>
               <ViewShot ref="viewShot" style={styles.qrcodeout}>
-                <QRCode size={ScreenUtil.autowidth(140)} logo={UImage.min_logo} logoBorderRadius={5} value={this.state.isOmni?this.props.loginUser.depositUsdtAddress:"0x62e990eF0e485b6345bB04c18D89429A8Ea59317"}/>
+                <QRCode size={ScreenUtil.autowidth(140)} logo={UImage.min_logo} logoBorderRadius={5} value={this.state.isOmni?this.props.loginUser.depositUsdtAddress:this.props.loginUser.depositHsnAddress}/>
               </ViewShot>
               <TextButton onPress={()=>{this.noDoublePress(()=>{this.savePictures()})}} shadow={true} textColor='#FFFFFF' text={"Save The QR Code"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer}/>
               <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={styles.headertext}>{"Deposit Address"}</Text>
-                <Text style={styles.headertext}>{this.state.isErc20 ? "0x62e990eF0e485b6345bB04c18D89429A8Ea59317" : this.props.loginUser.depositUsdtAddress}</Text>
+                {/* <Text style={styles.headertext}>{this.state.isErc20 ? "0x62e990eF0e485b6345bB04c18D89429A8Ea59317" : this.props.loginUser.depositUsdtAddress}</Text> */}
+                <Text style={styles.headertext}>{this.state.isErc20 ? this.props.loginUser.depositHsnAddress : this.props.loginUser.depositUsdtAddress}</Text>
               </View>
-              <TextButton onPress={()=>{this.noDoublePress(()=>{this.onPressCopy(this.state.isErc20?"0x62e990eF0e485b6345bB04c18D89429A8Ea59317":this.props.loginUser.depositUsdtAddress)})}} 
+              <TextButton onPress={()=>{this.noDoublePress(()=>{this.onPressCopy(this.state.isErc20?this.props.loginUser.depositHsnAddress:this.props.loginUser.depositUsdtAddress)})}} 
               shadow={true} textColor='#FFFFFF' text={"Copy The Address"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
             </View>}
             <View style={styles.footerout}>

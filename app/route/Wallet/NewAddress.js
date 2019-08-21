@@ -35,11 +35,11 @@ class NewAddress extends BaseComponent {
 
       coinAddress:"",
       addressSize:16,
-      addressPlaceholder:'输入提币地址',
+      addressPlaceholder:'Enter address',
 
       coinRemarks:"",
       remarkSize:16,
-      remarkPlaceholder:'输入备注信息',
+      remarkPlaceholder:'Enter note information',
 
     };
   }
@@ -51,11 +51,11 @@ class NewAddress extends BaseComponent {
 
   async addAddress(){
     if(this.state.coinAddress==""){
-      EasyToast.show('输入提币地址');
+      EasyToast.show('Please enter the withdrawal address');
       return;
     }
     if(this.state.coinRemarks == ""){
-      EasyToast.show('输入备注信息');
+      EasyToast.show('Please enter notes');
       return;
     }
     let res = await Utils.dispatchActiionData(this,{type:'assets/addressAdd',
@@ -67,7 +67,7 @@ class NewAddress extends BaseComponent {
     });
     if(res){
       if(res.msg==='success'){
-        EasyToast.show('添加成功');
+        EasyToast.show('Added Successfully');
         this.props.navigation.goBack();
       }else{
         EasyToast.show(res.msg);
@@ -85,16 +85,16 @@ class NewAddress extends BaseComponent {
                 <View style={[styles.outsource,{backgroundColor: 'rgba(0, 0, 0, 0.5)'}]}>
                   <LinearGradient colors={["rgba(79, 81, 98, 0.9)","rgba(30, 32, 44, 0.9)"]} style={styles.linearout}>
                     <View style={{flexDirection:"row",justifyContent:'space-between',alignItems:'center'}}>
-                      <Text style={styles.cardHeaderTitle}>新增提币地址</Text>
+                      <Text style={styles.cardHeaderTitle}>New Address</Text>
                       <Image source={this.state.coinName=='HSN'?UImage.icon_hsn:UImage.icon_usdt} style={styles.headrightimg}/>
                     </View>
 
-                    <Text style={styles.inptitle}>提币地址</Text>
+                    <Text style={styles.inptitle}>Address</Text>
                     <TextInput ref={(ref) => this._laddress = ref}
                       returnKeyType="next"
                       autoFocus={false}
-                      onFocus={()=>{ this.setState({addressSize:32,addressPlaceholder:''})}}
-                      onBlur={()=>{ this.state.coinAddress?"":this.setState({addressSize:16,addressPlaceholder:'输入提币地址'}) }}
+                      onFocus={()=>{ this.setState({addressSize:26,addressPlaceholder:''})}}
+                      onBlur={()=>{ this.state.coinAddress?"":this.setState({addressSize:16,addressPlaceholder:'Enter address'}) }}
                       value={this.state.coinAddress}
                       placeholder={this.state.addressPlaceholder}
                       style={[styles.inpt,{fontSize: ScreenUtil.setSpText(this.state.addressSize),}]}
@@ -104,12 +104,12 @@ class NewAddress extends BaseComponent {
                       onChangeText={(coinAddress) => this.setState({ coinAddress })}
                     />
 
-                    <Text style={styles.inptitle}>备注</Text>
+                    <Text style={styles.inptitle}>Notes</Text>
                     <TextInput ref={(ref) => this._lremarks = ref}
                       returnKeyType="next"
                       autoFocus={false}
-                      onFocus={()=>{ this.setState({remarkSize:32,remarkPlaceholder:''})}}
-                      onBlur={()=>{ this.state.coinRemarks?"":this.setState({remarkSize:16,remarkPlaceholder:'输入备注信息'}) }}
+                      onFocus={()=>{ this.setState({remarkSize:26,remarkPlaceholder:''})}}
+                      onBlur={()=>{ this.state.coinRemarks?"":this.setState({remarkSize:16,remarkPlaceholder:'Enter note information'}) }}
                       value={this.state.coinRemarks}
                       placeholder={this.state.remarkPlaceholder}
                       style={[styles.inpt,{fontSize: ScreenUtil.setSpText(this.state.remarkSize),}]}
@@ -122,11 +122,11 @@ class NewAddress extends BaseComponent {
                 </View>
                 <View style={styles.forgetpass}>
                   <Image source={UImage.forgetIcon} style={{width:ScreenUtil.setSpText(14),height:ScreenUtil.setSpText(14)}} />
-                  <Text style={[styles.forgettext,{color: '#B9BBC1'}]} >{" 注：您最多可添加10个地址"}</Text>
+                  <Text style={[styles.forgettext,{color: '#B9BBC1'}]} >{" Tips：You can add up to 10 addresses"}</Text>
                 </View>
 
                 <View style={styles.referout}>
-                  <TextButton onPress={()=>{this.noDoublePress(()=>{this.addAddress()})}} shadow={true} textColor='#FFFFFF' text={"确认添加"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
+                  <TextButton onPress={()=>{this.noDoublePress(()=>{this.addAddress()})}} shadow={true} textColor='#FFFFFF' text={"Confirm"} fontSize={ScreenUtil.setSpText(16)} style={styles.btntransfer} />
                 </View>
 
               </TouchableOpacity>

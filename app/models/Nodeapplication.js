@@ -55,7 +55,7 @@ export default {
     //节点请求/刷新
     *nodeRefresh({payload, callback},{ call, put }){
       try {
-        const res = yield call(Request.request, nodeList,'get');
+        const res = yield call(Request.request, nodeList, 'get');
         if(res && res.msg==="success") {
           yield put({type: "update",payload:{nodeList:res.nodeList, discount: res.discount}})
         }
@@ -85,8 +85,7 @@ export default {
       try {
         const res = yield call(Request.request, tradePass,'post',payload);
         if(res && res.msg === "success"){
-          yield put({ type: 'Nodeapplication/getMyNode', payload: {} })
-          yield put({ type: 'market/getMiningInfo', payload: {} }) 
+          // yield put({ type: 'Nodeapplication/getMyNode', payload: {} })
         }
         if (callback) callback(res);
       }catch (e) {

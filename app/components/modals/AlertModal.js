@@ -6,7 +6,6 @@ import ScreenUtil from '../../utils/ScreenUtil';
 import TextButton from '../TextButton';
 import Constants from '../../utils/Constants';
 import LinearGradient from 'react-native-linear-gradient'
-import {Gamble} from '../../route/Nodeapplication'
 
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
@@ -26,7 +25,11 @@ export class AlertModal {
     this.map["AlertModal"].update(content)
   }
 
-  static show(title,content,ok,cancel,showatmosphere,verif,callback) {
+  static close() {
+    this.map["AlertModal"].dimss()
+  }
+
+  static show(title,content,ok,cancel,showatmosphere,verif,callback,agree) {
     this.map["AlertModal"].show(title,content,ok,cancel,showatmosphere,verif,callback,agree);
   }
 
@@ -119,18 +122,6 @@ export class AlertModalView extends React.Component {
       this.AlertModalCallback && this.AlertModalCallback(true);
     }
 
-    goGamblingAgree() {
-      Gamble.goGamble()
-      this.setState({
-        modalVisible: false
-      })
-    }
-    agree() {
-      this.setState({
-        checked: !this.state.checked
-      })
-    }
-
     render() {
         return (
           this.state.modalVisible && <View style={styles.continer}>
@@ -141,19 +132,10 @@ export class AlertModalView extends React.Component {
                   <Animated.View style={[styles.alert,{opacity:this.state.alert}]}>
                     <TouchableOpacity activeOpacity={1}>
                       {this.state.title && <Text style={styles.title}>{this.state.title}</Text>}
-                      <View style={styles.ctx}>
+                      <View style={[styles.ctx, {marginHorizontal: this.state.ifAgree ? 0 : ScreenUtil.autowidth(20)}]}>
                         <ScrollView showsVerticalScrollIndicator={false}>
                           {(typeof(this.state.content)=='string')?<Text style={styles.contentext}>{this.state.content?this.state.content:""}</Text>:this.state.content}
                         </ScrollView>
-                      </View>
-                      <View style={{flexDirection: 'row', justifyContent: 'center', display: this.state.ifAgree ? 'flex' : 'none'}}>
-                        <TouchableOpacity onPress={() => {this.agree()}} style={{marginRight: ScreenUtil.autowidth(8), paddingTop: ScreenUtil.autoheight(2)}}>
-                          <Image source={this.state.checked ? UImage.onAgree : UImage.offAgree} style={{width: ScreenUtil.autowidth(10), height: ScreenUtil.autowidth(10)}} />
-                        </TouchableOpacity>
-                        <Text style={{color: '#181B29', fontSize: ScreenUtil.setSpText(10)}}>Participate In The</Text>
-                        <TouchableOpacity onPress={() => {this.goGamblingAgree()}}>
-                          <Text style={{color: '#2394F8', fontSize: ScreenUtil.setSpText(10)}}>《Valuation Adjustment Mechanism》</Text>
-                        </TouchableOpacity>
                       </View>
                       {this.state.cancel && 
                         <LinearGradient colors={['#4F5162','#1E202C']}  start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.bottom}>
@@ -246,7 +228,6 @@ const styles = StyleSheet.create({
   },
   ctx:{
     marginBottom:ScreenUtil.autoheight(0),
-    marginHorizontal:ScreenUtil.autowidth(20),
     maxHeight: ScreenHeight/3*2,
   },
   contentext: {

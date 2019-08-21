@@ -43,12 +43,13 @@ class Vam extends BaseComponent {
           <Text style={{fontSize: ScreenUtil.setSpText(14), color: '#000'}}>Do you want to Cancel the《VAM》?</Text>
         </View>
       )
-      let isAuth = await AlertModal.showSync(null, con, 'Yes', 'No', false)
+      let isAuth = await AlertModal.showSync(null, con, 'Confirm', 'Cancel', false)
       if (isAuth) {
-        console.log(this.props.loginUser)
-        this.props.loginUser.agree = 0
-        console.log(this.props.loginUser)
-        this.props.navigation.goBack()
+        let res = await Utils.dispatchActiionData(this, {type: 'personal/setVam', payload: {}})
+        if (res && res.msg === 'success') {
+          EasyToast.show('Cancellation Successful')
+          Utils.pop(this, 3, true)
+        }
       }
     } catch (error) {
 

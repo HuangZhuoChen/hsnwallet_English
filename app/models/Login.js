@@ -64,15 +64,13 @@ export default {
           const loginUser = resp.data;
           yield call(store.save, 'uid', loginUser.uid);
           yield call(store.save, 'token', loginUser.token);
-          // yield call(store.save, 'mobile', loginUser.mobile);
           yield call(store.save, 'mail', loginUser.mail);
           yield call(store.save, 'loginUser', loginUser);
           Constants.uid = loginUser.uid;
           Constants.token = loginUser.token;
           Constants.mail = loginUser.mail;
           Constants.loginUser = loginUser;
-          yield put({ type: 'update', payload: { loginUser, uid: loginUser.uid, token: loginUser.token, mail: loginUser.mail } });
-          console.log(132465)
+          yield put({ type: 'update', payload: { loginUser, uid: loginUser.uid, token: loginUser.token, mail: loginUser.mail } })
           // yield put({ type: 'personal/isSetPayPassword', payload: {} }) 
           // yield put({ type: 'personal/getfindRealNameInfo', payload: {} })
         }
