@@ -38,14 +38,14 @@ export class Home extends BaseComponent {
 
       // 守护者等级
       grade: this.props.loginUser.protectorMasterNode,
-      ifUpdate: true
+      ifUpdate: true,
+      scoreRankList: this.props.scoreRankList
     };
   }
 
   componentDidMount() {
-    // 第二次进入不会渲染，加个监听
+    // 第二次进入不会渲染，加个监听聚焦后做对应处理
     this.props.navigation.addListener("didFocus", () => {
-      this.onRefresh()
       this.setState({
         grade: this.props.loginUser.protectorMasterNode
       })
@@ -62,7 +62,9 @@ export class Home extends BaseComponent {
   async onRefresh () {
     //我的节点信息
     // await Utils.dispatchActiionData(this, {type:'Nodeapplication/getMyNode',payload:{} });
-    await this.setState({isPersonal: true, isTeam: false,});
+    // 初始化显示个人排名
+    await this.setState({isPersonal: true, isTeam: false})
+    // 个人排名
     await this.onSeasonRefresh();
     // 个人产出
     await Utils.dispatchActiionData(this, {type:'market/getMiningInfo', payload: {}})
@@ -143,7 +145,7 @@ export class Home extends BaseComponent {
           keyExtractor={(item ,index) => "index"+index+item}
           refreshControl={<RefreshControl refreshing={(!this.props.marketRefreshing)?false:true} onRefresh={() => this.onRefresh()}
           tintColor={UColor.tintColor} colors={[UColor.tintColor]} progressBackgroundColor={UColor.startup}/>}
-        /> 
+        />
       </View>
     )
   }

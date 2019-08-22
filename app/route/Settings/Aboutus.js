@@ -37,10 +37,10 @@ class Aboutus extends React.Component {
     };
     this.config = [
       {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), disable: false, spot: true, 
-        nameColor: '#FFFFFF',  avatar: UImage.authentication, name: "Official Website", onPress: this.goOfficialWebsite.bind(this) },
+      nameColor: '#FFFFFF', avatar: UImage.authentication, name: "Official Website", onPress: this.goOfficialWebsite.bind(this) },
 
       {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), nameColor: '#FFFFFF', spot: true, 
-      disable: false,  avatar: UImage.invitation_code, name: "TeleGram", onPress: this.goTelegram.bind(this) },
+      disable: false, avatar: UImage.invitation_code, name: "TeleGram", onPress: this.goTelegram.bind(this) },
 
       {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), nameColor: '#FFFFFF', spot: true, 
       disable: false,  avatar: UImage.membership_level, name: "Twitter", onPress: this.goTwitter.bind(this) },
@@ -48,8 +48,8 @@ class Aboutus extends React.Component {
       // {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), disable: false,  spot: true, 
       //   nameColor: '#FFFFFF',   avatar: UImage.safety_center, name: "微信公众号", onPress: this.goWechatPublic.bind(this) },
 
-    {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), disable: false,  spot: true, 
-        nameColor: '#FFFFFF',   avatar: UImage.safety_center, name: "Check For Updates", subName: "V"+Constants.version, onPress: this.goCheckUpdate.bind(this), redDot: Constants.promptUpgrade},
+      {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), disable: false,  spot: true, 
+      nameColor: '#FFFFFF',   avatar: UImage.safety_center, name: "Check For Updates", subName: "V"+Constants.version, onPress: this.goCheckUpdate.bind(this), redDot: Constants.promptUpgrade},
       
     ];
   }

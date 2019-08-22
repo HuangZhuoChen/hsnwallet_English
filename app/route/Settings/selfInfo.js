@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux'
-import { Dimensions, StyleSheet, ScrollView, View, Text, Image, Linking, TouchableOpacity, Animated, Easing, FlatList, Clipboard, ImageBackground} from 'react-native';
+import { Dimensions, StyleSheet, ScrollView, View, Text, Image, Linking, TouchableOpacity, Animated, Easing, FlatList, Clipboard, ImageBackground, TouchableNativeFeedback} from 'react-native';
 import UImage from '../../utils/Img'
 import UColor from '../../utils/Colors'
 import Item from '../../components/Item'
@@ -36,19 +36,19 @@ class SelfInfo extends BaseComponent {
       
     }
     this.config = [
-      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+      {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
       disable: false, nameColor: '#FFFFFF', name: "Information", onPress: this.goPerson.bind(this)},
 
-      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
-      disable: false, nameColor: '#FFFFFF', name: "Security",  onPress: this.goSafety.bind(this) },
+      {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
+      disable: false, nameColor: '#FFFFFF', bgColor: 'teal', name: "Security",  onPress: this.goSafety.bind(this) },
 
-      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+      {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
       disable: false, nameColor: '#FFFFFF', name: "Announcement", onPress: this.goAnnouncement.bind(this) },
       
-      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+      {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
       disable: false, nameColor: '#FFFFFF', name: "Rules", onPress: this.goRuleClause.bind(this) },
 
-      {itemHeight: ScreenUtil.autoheight(49), spot: true, 
+      {itemHeight: ScreenUtil.autoheight(50), paddingHorizontal: ScreenUtil.autowidth(5), spot: true, 
         disable: false, nameColor: '#FFFFFF', name: "About Us", onPress: this.goAboutus.bind(this) },
     ];
   }
@@ -121,26 +121,6 @@ class SelfInfo extends BaseComponent {
     }
   }
 
-  _renderHeader = () => {
-    return (
-      <View style={ styles.container }>
-        <Header {...this.props} onPressLeft={true} title={""} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
-        <LinearGradient colors={["#4F5162", "#1E202C"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1.5 }} style={ styles.person }>
-          <Image source={ UImage.integral_bg } style={{ width: ScreenUtil.autoheight(60), height: ScreenUtil.autoheight(60) }} />
-          <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff', marginVertical: ScreenUtil.autoheight(11) }}>Nick Name：cisay</Text>
-          <Text style={{ fontSize: ScreenUtil.setSpText(15), color: '#fff' }}>Email : 8976127328@qq.com</Text>
-          <View style={{ justifyContent: 'center', marginTop: ScreenUtil.autoheight(10) }}>
-            { this._renderListItem() }
-          </View>
-          <Image source={UImage.set_logo} style={styles.footerBg}/>
-        </LinearGradient>
-        <View style={{ height: ScreenUtil.autoheight(45), alignItems: 'center', marginTop: ScreenUtil.autoheight(35), marginBottom: ScreenUtil.autoheight(79) }}>
-          <TextButton onPress={ () => { this.noDoublePress(() => this.signout()) } } shadow={ true } text="Sign Out" textColor="#fff" style={{ width: ScreenUtil.autowidth(230), borderRadius: ScreenUtil.autoheight(45) / 2 }} />
-        </View>
-      </View>
-    )
-  }
-
   _renderListItem = () => {
     return this.config.map((item, i) => {
       return (<Item key={i} {...item} />)
@@ -149,12 +129,25 @@ class SelfInfo extends BaseComponent {
 
   render() {
     return (
-      <FlatList
-        style={{ flex: 1 }}
-        ListHeaderComponent={this._renderHeader()}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(item ,index) => "index" + index + item}
-      />
+      <View style={ styles.container }>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header {...this.props} onPressLeft={true} title={""} backgroundColors={"rgba(0, 0, 0, 0.0)"} />
+          <LinearGradient colors={["#4F5162", "#1E202C"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1.5 }} style={ styles.person }>
+            <Image source={ UImage.integral_bg } style={{ width: ScreenUtil.autoheight(60), height: ScreenUtil.autoheight(60) }} />
+            <Text style={{ fontSize: ScreenUtil.setSpText(20), color: '#fff', marginVertical: ScreenUtil.autoheight(11) }}>Nick Name：cisay</Text>
+            <Text style={{ fontSize: ScreenUtil.setSpText(15), color: '#fff' }}>Email : 8976127328@qq.com</Text>
+            <View style={{ marginTop: ScreenUtil.autoheight(20) }}>
+              { this._renderListItem() }
+            </View>
+            <View style={styles.footerBg} pointerEvents='none'>
+              <Image source={UImage.set_logo} style={{width: ScreenHeight / 3, height: ScreenHeight / 3 * 1.1672}}/>
+            </View>
+          </LinearGradient>
+          <View style={{ height: ScreenUtil.autoheight(45), alignItems: 'center', marginTop: ScreenUtil.autoheight(35), marginBottom: ScreenUtil.autoheight(79) }}>
+            <TextButton onPress={ () => { this.noDoublePress(() => this.signout()) } } shadow={ true } text="Sign Out" textColor="#fff" style={{ width: ScreenUtil.autowidth(230), borderRadius: ScreenUtil.autoheight(45) / 2 }} />
+          </View>
+        </ScrollView>
+      </View>
     )
   }
 }
@@ -170,17 +163,24 @@ const styles = StyleSheet.create({
     width: ScreenUtil.autowidth(340),
     borderRadius: ScreenUtil.autowidth(10),
     paddingTop: ScreenUtil.autoheight(30),
-    paddingBottom: ScreenUtil.autoheight(60),
+    paddingBottom: ScreenUtil.autoheight(40),
     paddingHorizontal: ScreenUtil.autowidth(25)
+  },
+
+  listStyle: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: 'center',
+    lineHeight: ScreenUtil.autoheight(50),
+    paddingHorizontal: ScreenUtil.autowidth(5)
   },
 
   footerBg: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    zIndex: 0,
-    width: ScreenHeight / 3, 
-    height: (ScreenHeight / 3) * 1.1672,
+    zIndex: 0
   }
 });
 

@@ -21,7 +21,7 @@ import TextButton from '../../components/TextButton'
 const ScreenWidth = Dimensions.get('window').width;
 
 @connect(({login, Nodeapplication, personal, loading }) => ({...login, ...Nodeapplication, ...personal,
-  jdRefreshing: loading.effects['Nodeapplication/nodeRefresh']
+  jdRefreshing: loading.effects['Nodeapplication/getProgress']
 }))
 export default class Nodeapplication extends BaseComponent {
   constructor(props) {
@@ -57,7 +57,7 @@ export default class Nodeapplication extends BaseComponent {
   //组件加载完成
   async componentDidMount() {
     this.getProgress()
-    // this.dataInit()
+    this.onRefresh()
     // this.jdRefresh();
     //是否设置了交易密码
     await Utils.dispatchActiionData(this, {type:'personal/isSetTradePassword',payload:{ } });
@@ -66,10 +66,11 @@ export default class Nodeapplication extends BaseComponent {
   componentWillUnmount(){
     this.setState = (state, callback) => {
       return;
-    };
+    }
   }
-  async dataInit() {
-    let res = await Utils.dispatchActiionData(this, {type: 'Nodeapplication/nodeRefresh', payload: ''})
+
+  async onRefresh() {
+    this.getProgress()
   }
   
   // 购买进度
@@ -158,6 +159,10 @@ export default class Nodeapplication extends BaseComponent {
   //弹窗
   //confirm order
   async confirmOrder (item, index) {
+    if (this.props.loginUser.protectorMasterNode) {
+      EasyToast.show('You have purchased this node')
+      return
+    }
     try {
       this.refreshImage();
       // const { navigate } = this.props.navigation;
@@ -457,12 +462,17 @@ export default class Nodeapplication extends BaseComponent {
         <View style={ styles.guard }>
           <Text style={ styles.guardTitle }>Purchase Progress</Text>
           <View style={ styles.guardProgress }>
-            <LinearGradient colors={['#FAF961','#FFD600']} start={{x:0,y:0}} end={{x:0,y:1}} style={[styles.guardCors, { width: ScreenUtil.autowidth(339) * +this.state.progress }]}>
-              <Text style={{ fontSize: ScreenUtil.setSpText(13), color: '#191B2AFF', paddingRight: ScreenUtil.autowidth(10) }}>{parseFloat((+this.state.progress * 100).toFixed(1))}%</Text>
+            <View style={{width: ScreenUtil.autowidth(339), borderRadius: ScreenUtil.autoheight(15), overflow: 'hidden'}}>
+              <LinearGradient colors={['#FAF961','#FFD600']} start={{x:0,y:0}} end={{x:0,y:1}} style={[styles.guardCors, { width: ScreenUtil.autowidth(339) * this.state.progress }]}>
+              
             </LinearGradient>
+            </View>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ color: '#fff' }}>0</Text>
+            <View style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', flexDirection: 'row', justifyContent: 'center'}}>
+              <Text style={{ color: '#fff' }}>{parseFloat((+this.state.progress * 100).toFixed(1))}%</Text>
+            </View>
             <Text style={{ color: '#fff' }}>10 million</Text>
           </View>
         </View>
@@ -521,7 +531,7 @@ export default class Nodeapplication extends BaseComponent {
             refreshControl={
               <RefreshControl refreshing={this.props.jdRefreshing}
                 colors={[UColor.tintColor]}
-                onRefresh={()=>this.jdRefresh()}
+                onRefresh={()=>this.getProgress()}
                 tintColor={UColor.tintColor}
                 progressBackgroundColor={UColor.startup}
               />
@@ -565,13 +575,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(25, 27, 42, 0.8)',
     borderColor: '#FCE731FF',
     borderWidth: ScreenUtil.autowidth(1),
-    padding: ScreenUtil.autowidth(1.5),
-    borderRadius: ScreenUtil.autoheight(16),
+    padding: ScreenUtil.autowidth(2),
+    borderRadius: ScreenUtil.autoheight(18),
     marginBottom: ScreenUtil.autoheight(5)
   },
   guardCors: {
     height: '100%',
-    borderRadius: ScreenUtil.autoheight(14),
+    // borderRadius: ScreenUtil.autoheight(15),
+    borderTopLeftRadius: ScreenUtil.autoheight(15),
+    borderBottomLeftRadius: ScreenUtil.autoheight(15),
     justifyContent: 'center',
     alignItems: 'flex-end'
   },
